@@ -1,0 +1,28 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Oda eşlemeleri{% endblock %}
+{% block page_title %}Oda eşlemeleri{% endblock %}
+{% block crumbs %}<div class="crumbs">Güveni %{{ (threshold * 100)|int }}'in altındaki eşlemeler inceleme kuyruğuna düşer. Kıyaslama yalnızca aynı kategori içinde yapılır.</div>{% endblock %}
+{% block content %}
+<div class="grid g-4" style="margin-bottom:18px">
+  {{ ui.stat("İnceleme bekleyen", pending|num, "Düşük güvenli eşleme", "alert") }}
+  {{ ui.stat("Kural sözlüğü", stats.get('rule', 0)|num, "Eşleme", "list") }}
+  {{ ui.stat("LLM", stats.get('llm', 0)|num, "Yalnızca belirsiz adlar", "cpu") }}
+  {{ ui.stat("Elle", stats.get('manual', 0)|num, "Otel veya ekip", "user") }}
+</div>
+<div class="row" style="margin-bottom:16px"><div class="seg">
+  {% for k, v in [('inceleme', 'İnceleme kuyruğu'), ('tum', 'Tümü'), ('rule', 'Kural'), ('llm', 'LLM'), ('manual', 'Elle')] + CATEGORY_LABELS.items()|list %}<a class="{{ 'on' if filtre == k }}" href="?filtre={{ k }}">{{ v }}{% if k in cats %} ({{ cats[k] }}){% endif %}</a>{% endfor %}
+</div></div>
+<div class="panel">
+  <form method="post" action="/admin/oda-eslemeleri/toplu-onay" id="bulk">{{ ui.csrf() }}</form>
+  <div class="panel-head"><div><h2>{{ pg.total|num }} kayıt</h2></div><div class="actions"><button class="btn sm" form="bulk" type="submit">{{ ui.icon('check') }}Seçilenleri olduğu gibi onayla</button></div></div>
+  <div class="panel-body flush"><div class="table-wrap"><table class="data">
+    <thead><tr><th><input type="checkbox" data-check-all=".bulk-id" aria-label="Tümünü seç"></th><th>OTA oda adı</th><th>Otel</th><th>Kategori</th><th>Eşleyen</th><th class="num">Güven</th><th>Düzelt</th></tr></thead>
+    <tbody>{% for rt in rows %}
+      <tr><td><input type="checkbox" class="bulk-id" name="ids" value="{{ rt.id }}" form="bulk" aria-label="Seç"></td><td><b>{{ rt.raw_name }}</b></td><td class="small">{{ rt.hotel.name }}</td><td>{{ CATEGORY_LABELS.get(rt.category) }}</td><td>{{ ui.mapped_badge(rt.mapped_by) }}</td>
+        <td class="num"><span class="badge {{ 'good' if rt.confidence|float >= threshold else 'warn' }}">{{ (rt.confidence|float * 100)|round|int }}</span></td>
+        <td><form method="post" action="/admin/oda-eslemeleri/{{ rt.id }}" class="row" style="gap:6px;flex-wrap:nowrap">{{ ui.csrf() }}<input type="hidden" name="filtre" value="{{ filtre }}">
+          <select name="category" class="input-sm" aria-label="Kategori">{% for k, v in CATEGORY_LABELS.items() %}<option value="{{ k }}" {{ 'selected' if k == rt.category }}>{{ v }}</option>{% endfor %}</select><button class="btn sm" type="submit">Kaydet</button></form></td></tr>
+    {% else %}<tr><td colspan="7">{{ ui.empty("Kuyruk boş", "İnceleme bekleyen eşleme yok.") }}</td></tr>{% endfor %}</tbody></table></div>
+    {{ ui.pager(pg, "?filtre=" ~ filtre) }}</div>
+</div>
+{% endblock %}

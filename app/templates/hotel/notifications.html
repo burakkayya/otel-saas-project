@@ -1,0 +1,12 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Bildirimler{% endblock %}
+{% block page_title %}Bildirimler{% endblock %}
+{% block top_actions %}{% if unread %}<form method="post" action="/panel/bildirimler/okundu" class="inline">{{ ui.csrf() }}<button class="btn" type="submit">{{ ui.icon('check') }}Tümünü okundu say</button></form>{% endif %}{% endblock %}
+{% block content %}
+<div class="panel"><div class="panel-body" style="padding-top:6px"><ul class="list">
+  {% for n in notes %}
+  <li><span class="note-dot {{ n.level }}"></span><div style="flex:1"><div class="{{ 'unread' if not n.is_read }}">{{ n.title }}</div><div class="ink-2 small">{{ n.body }}</div>
+    {% if n.link %}<a class="small" href="{{ n.link }}">Ayrıntıya git</a>{% endif %}</div><span class="when">{{ n.created_at|ago }}</span></li>
+  {% else %}<li>{{ ui.empty("Bildirim yok", "Önemli fiyat değişiklikleri ve haftalık özetler burada görünür.") }}</li>{% endfor %}
+</ul></div></div>
+{% endblock %}

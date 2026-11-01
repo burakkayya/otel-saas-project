@@ -1,0 +1,20 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Raporlar{% endblock %}
+{% block page_title %}Raporlar{% endblock %}
+{% block crumbs %}<div class="crumbs">Verilerinizi Excel'de açılabilen CSV dosyaları olarak indirin.</div>{% endblock %}
+{% block content %}
+<div class="grid g-3">
+  {% for title, desc, links in [
+    ("Fiyat önerileri", "Tüm oda tipleri için tarih, mevcut fiyat, rakip medyanı, öneri, taban, tavan ve gerekçe.", [("30 gün", "/panel/raporlar/oneriler.csv?gun=30"), ("60 gün", "/panel/raporlar/oneriler.csv?gun=60"), ("90 gün", "/panel/raporlar/oneriler.csv?gun=90")]),
+    ("Pazar fiyat ızgarası", "Rakip setinizdeki otellerin tarih bazında fiyatları. Kapalı odalar ayrıca işaretlenir.", [("Standard, 30 gün", "/panel/raporlar/pazar.csv?kategori=standard&gun=30"), ("Deluxe, 30 gün", "/panel/raporlar/pazar.csv?kategori=deluxe&gun=30")]),
+    ("Öneriye uyum", "Her fiyat gözlemi, o andaki öneri ve tolerans bandına girip girmediği.", [("Tümü", "/panel/raporlar/uyum.csv")]),
+  ] %}
+  <div class="panel"><div class="panel-body">
+    <div class="row" style="gap:10px;margin-bottom:8px">{{ ui.icon('file') }}<h2>{{ title }}</h2></div>
+    <p class="ink-2 small">{{ desc }}</p>
+    <div class="row">{% for label, href in links %}<a class="btn sm" href="{{ href }}">{{ ui.icon('download') }}{{ label }}</a>{% endfor %}</div>
+  </div></div>
+  {% endfor %}
+</div>
+<div class="panel soft" style="margin-top:18px"><div class="panel-body small ink-2">Dosyalar noktalı virgülle ayrılmış ve UTF-8 kodludur; Excel'de Türkçe karakterler doğru görünür. Yazdırılabilir bir özet için herhangi bir sayfada tarayıcınızın yazdır komutunu kullanabilirsiniz.</div></div>
+{% endblock %}

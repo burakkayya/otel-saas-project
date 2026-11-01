@@ -1,0 +1,52 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Pazar fiyatları{% endblock %}
+{% block page_title %}Pazar fiyatları{% endblock %}
+{% block crumbs %}<div class="crumbs">Rakiplerinizin OTA'da bugün gözlenen fiyatları ve kalan odaları. Fiyatlar EUR'a çevrilmiştir.</div>{% endblock %}
+{% block top_actions %}<a class="btn" href="/panel/raporlar/pazar.csv?kategori={{ cat }}&gun={{ gun }}">{{ ui.icon('download') }}CSV</a>{% endblock %}
+{% block content %}
+<div class="row between" style="margin-bottom:16px">
+  <div class="row">
+    <div class="seg">{% for c in cats %}<a class="{{ 'on' if c == cat }}" href="?kategori={{ c }}&gun={{ gun }}&veri={{ veri }}">{{ CATEGORY_LABELS[c] }}</a>{% endfor %}</div>
+    <div class="seg">{% for g in [7, 14, 30] %}<a class="{{ 'on' if g == gun }}" href="?kategori={{ cat }}&gun={{ g }}&veri={{ veri }}">{{ g }} gün</a>{% endfor %}</div>
+  </div>
+  <div class="seg"><a class="{{ 'on' if veri == 'fiyat' }}" href="?kategori={{ cat }}&gun={{ gun }}&veri=fiyat">Fiyat</a><a class="{{ 'on' if veri == 'oda' }}" href="?kategori={{ cat }}&gun={{ gun }}&veri=oda">Kalan oda</a></div>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><div><h2>{{ CATEGORY_LABELS[cat] }}: {{ 'fiyat ızgarası' if veri == 'fiyat' else 'kalan oda ızgarası' }}</h2>
+    <p>{% if veri == 'fiyat' %}Hücre rengi rakibin fiyatınıza göre farkını gösterir. Küçük rakam son 7 gündeki fiyat değişimi.{% else %}Kalan oda azalması satış kanıtı değildir; oda kapatma ve başka kanal satışı da aynı görüntüyü verir.{% endif %}</p></div>
+    {% if veri == 'fiyat' %}<div class="actions"><div class="cal-legend">Sizden ucuz<div class="scale"><span style="background:color-mix(in srgb,var(--div-neg) 55%,transparent)"></span><span style="background:color-mix(in srgb,var(--div-neg) 25%,transparent)"></span><span style="background:var(--surface-3)"></span><span style="background:color-mix(in srgb,var(--div-pos) 25%,transparent)"></span><span style="background:color-mix(in srgb,var(--div-pos) 55%,transparent)"></span></div>Sizden pahalı</div></div>{% endif %}</div>
+  <div class="panel-body flush"><div class="table-wrap">
+    <table class="rate-grid">
+      <thead><tr><th class="hname">Otel</th>{% for d in grid.dates %}<th class="{{ 'we' if d.weekday() >= 4 and d.weekday() <= 5 }}">{{ d|dt('day') }}</th>{% endfor %}</tr></thead>
+      <tbody>
+      {% for row in grid.rows %}
+        <tr class="{{ 'self' if row.is_self }}"><td class="hname" title="{{ row.hotel.name }}"><div class="hotel-cell">{{ ui.avatar(row.hotel.name, 'sm') }}<span>{{ row.hotel.name }}{% if row.is_self %} <span class="muted small">(siz)</span>{% endif %}</span></div></td>
+        {% for c in row.cells %}{% set own = grid.rows[0].cells[loop.index0].price %}
+          {% if veri == 'oda' %}
+            <td class="num {{ 'closed' if c.available == 0 }}">{{ c.available if c.available is not none else '—' }}</td>
+          {% elif c.closed %}<td class="closed">Kapalı</td>
+          {% elif c.price is none %}<td class="muted">—</td>
+          {% else %}
+            {% set diff = ((c.price / own - 1) * 100) if (own and not row.is_self) else none %}
+            <td class="num heat" {% if diff is not none %}style="background: {{ ui.heat_color(diff) }}"{% endif %} title="{% if diff is not none %}Sizden {{ diff|pct(0, true) }}{% endif %}">
+              {{ c.price|eur }}{% if c.change is not none and c.change|abs >= 1 %}<span class="chg">{{ c.change|pct(0, true) }}</span>{% endif %}</td>
+          {% endif %}
+        {% endfor %}</tr>
+      {% endfor %}
+      {% if veri == 'fiyat' %}
+      <tr class="median"><td class="hname">Rakip medyanı</td>{% for m in grid.median %}<td class="num">{{ m|eur }}</td>{% endfor %}</tr>
+      {% endif %}
+      </tbody>
+    </table>
+  </div></div>
+</div>
+
+<div class="panel" style="margin-top:18px">
+  <div class="panel-head"><div><h2>Fiyatınız ve piyasa</h2><p>Rakip medyanı ve orta %50'lik aralık</p></div></div>
+  <div class="panel-body">
+    <div class="legend"><span><i style="background:var(--series-3)"></i>Rakip medyanı</span><span><i class="band" style="background:var(--series-3)"></i>Rakip P25–P75</span><span><i class="dash" style="background:var(--series-2);color:var(--series-2)"></i>Mevcut fiyatınız</span></div>
+    {{ ui.chart("price", {"labels": grid.dates|map('string')|list, "median": grid.median, "p25": grid.p25, "p75": grid.p75, "own": grid.own, "suggested": []}, "market-line", "", "Fiyatınız ve rakip medyanı") }}
+  </div>
+</div>
+{% endblock %}

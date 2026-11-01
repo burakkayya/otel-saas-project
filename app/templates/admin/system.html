@@ -1,0 +1,25 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Sistem{% endblock %}
+{% block page_title %}Sistem{% endblock %}
+{% block content %}
+<div class="grid g-2">
+  <div class="panel"><div class="panel-head"><div><h2>Ortam</h2></div></div><div class="panel-body">
+    <dl class="kv"><dt>Veri modu</dt><dd>{{ 'Demo (sentetik veri)' if is_demo else 'Canlı API' }}</dd><dt>Veritabanı</dt><dd>{{ db_kind }}</dd>
+      <dt>Ortam</dt><dd>{{ settings.environment }}</dd><dt>Zamanlayıcı</dt><dd>{{ 'Uygulama içinde açık' if settings.scheduler_enabled else 'Kapalı (worker servisi kullanın)' }}</dd>
+      <dt>Pilot bölgeler</dt><dd>{{ settings.pilot_provinces|join(', ') }}</dd><dt>API belgeleri</dt><dd><a href="/api/docs">/api/docs</a></dd></dl>
+    <h3 style="margin:18px 0 8px">API anahtarları</h3>
+    <ul class="list">{% for k, ok in keys.items() %}<li><span style="flex:1">{{ k }}</span>{% if ok %}<span class="badge good">Tanımlı</span>{% elif is_demo %}<span class="badge warn">Demo veri</span>{% else %}<span class="badge bad">Eksik</span>{% endif %}</li>{% endfor %}</ul>
+  </div></div>
+  <div class="stack">
+    <div class="panel"><div class="panel-head"><div><h2>Tarama ayarları</h2><p>Maliyet ve kontrol grubu arasındaki denge</p></div></div><div class="panel-body">
+      <form class="form" method="post" action="/admin/sistem">{{ ui.csrf() }}
+        <div class="field"><span class="label-text">Kapsam</span><div class="choice">
+          <label><input type="radio" name="scan_scope" value="all" {{ 'checked' if scan_scope == 'all' }}><div><strong>Pilot bölgedeki tüm oteller</strong><div class="small muted">Kontrol grubu ölçümü için gerekli; maliyet daha yüksek.</div></div></label>
+          <label><input type="radio" name="scan_scope" value="compset" {{ 'checked' if scan_scope == 'compset' }}><div><strong>Yalnızca aboneler ve rakipleri</strong><div class="small muted">Daha ucuz; etki ölçümü yapılamaz.</div></div></label></div></div>
+        <div class="field"><label>Tarama ufku (gün)</label><input type="number" name="horizon_days" min="7" max="180" value="{{ horizon }}"></div>
+        <button class="btn primary" type="submit">Kaydet</button></form></div></div>
+    <div class="panel"><div class="panel-head"><div><h2>Tablo boyutları</h2></div></div><div class="panel-body flush"><table class="data"><tbody>
+      {% for t, n in counts.items() %}<tr><td><code>{{ t }}</code></td><td class="num">{{ n|num }}</td></tr>{% endfor %}</tbody></table></div></div>
+  </div>
+</div>
+{% endblock %}

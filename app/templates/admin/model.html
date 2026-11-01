@@ -1,0 +1,43 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Öneri modeli{% endblock %}
+{% block page_title %}Öneri modeli{% endblock %}
+{% block crumbs %}<div class="crumbs">Kural tabanlı model: rakip medyanı × konumlama endeksi × (1 + talep + kalan oda + sezon ayarı), taban ve tavanla sınırlı.</div>{% endblock %}
+{% block content %}
+<div class="grid g-2">
+  <div class="panel"><div class="panel-head"><div><h2>Yayındaki ayarlar</h2><p>Sürüm <code>{{ version }}</code>. Her öneri bu sürüm etiketiyle kaydedilir.</p></div></div>
+    <div class="panel-body"><form class="form" method="post" action="/admin/model">{{ ui.csrf() }}
+      <div class="three">
+        <div class="field"><label>Talep ağırlığı</label><input name="demand" value="{{ weights.demand }}"><div class="hint">Varsayılan {{ defaults.demand }}</div></div>
+        <div class="field"><label>Kalan oda ağırlığı</label><input name="inventory" value="{{ weights.inventory }}"><div class="hint">Varsayılan {{ defaults.inventory }}</div></div>
+        <div class="field"><label>Sezon ağırlığı</label><input name="season" value="{{ weights.season }}"><div class="hint">Varsayılan {{ defaults.season }}</div></div>
+      </div>
+      <div class="three">
+        <div class="field"><label>En fazla artış</label><input name="max_up" value="{{ weights.max_up }}"></div>
+        <div class="field"><label>En fazla düşüş</label><input name="max_down" value="{{ weights.max_down }}"></div>
+        <div class="field"><label>Sürüm etiketi</label><input name="version" value="{{ version }}"></div>
+      </div>
+      <p class="small muted">Değişiklikten önce aşağıdaki deneme backtest ile etkisini görün. Kaydettiğinizde yeni öneriler bu ayarlarla üretilir.</p>
+      <button class="btn primary" type="submit" data-confirm="Model ayarları yayına alınsın mı?">Kaydet ve yayına al</button></form></div></div>
+  <div class="panel"><div class="panel-head"><div><h2>Deneme backtest</h2><p>Önerilen ağırlıkları yayına almadan ilk 4 abonenin son 21 günü üzerinde karşılaştırın. Hesaplama birkaç saniye sürebilir.</p></div></div>
+    <div class="panel-body"><form class="form" method="get">
+      <input type="hidden" name="deneme" value="1">
+      <div class="three">
+        <div class="field"><label>Talep</label><input name="demand" value="{{ form.demand if form.demand is not none else weights.demand }}"></div>
+        <div class="field"><label>Kalan oda</label><input name="inventory" value="{{ form.inventory if form.inventory is not none else weights.inventory }}"></div>
+        <div class="field"><label>Sezon</label><input name="season" value="{{ form.season if form.season is not none else weights.season }}"></div>
+      </div>
+      <button class="btn" type="submit">{{ ui.icon('flask') }}Karşılaştır</button></form>
+      {% if comparison %}
+      <table class="data" style="margin-top:16px"><thead><tr><th>Ölçüt (ortalama)</th><th class="num">Yayındaki</th><th class="num">Önerilen</th></tr></thead><tbody>
+        {% for k, label, better_low in [('mape_suggestion', 'Hata (MAPE)', true), ('direction_hit_rate', 'Yön isabeti', false), ('band_hit_rate', 'Bant isabeti', false)] %}{% set a = comparison.agg[k] %}
+        <tr><td>{{ label }}</td><td class="num">{{ a[0]|pct(1) }}</td><td class="num cell-strong {{ 'delta-up' if a[1] is not none and a[0] is not none and ((a[1] < a[0]) if better_low else (a[1] > a[0])) else 'delta-down' if a[1] != a[0] else '' }}">{{ a[1]|pct(1) }}</td></tr>{% endfor %}
+      </tbody></table>
+      <details class="table-view"><summary>Otel bazında</summary><table class="data"><thead><tr><th>Otel</th><th class="num">MAPE (yayın)</th><th class="num">MAPE (öneri)</th></tr></thead><tbody>
+        {% for r in comparison.rows %}<tr><td class="small">{{ r.hotel.name }}</td><td class="num">{{ r.current.mape_suggestion|pct(1) }}</td><td class="num">{{ r.proposed.mape_suggestion|pct(1) }}</td></tr>{% endfor %}</tbody></table></details>
+      {% endif %}
+    </div></div>
+</div>
+<div class="panel" style="margin-top:18px"><div class="panel-head"><div><h2>Sürümlere göre üretilen öneriler</h2></div></div>
+  <div class="panel-body flush"><table class="data"><thead><tr><th>Sürüm</th><th class="num">Öneri sayısı</th></tr></thead><tbody>
+    {% for v, n in by_version %}<tr><td><code>{{ v }}</code></td><td class="num">{{ n|num }}</td></tr>{% endfor %}</tbody></table></div></div>
+{% endblock %}

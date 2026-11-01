@@ -1,0 +1,30 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Oda tipleri{% endblock %}
+{% block page_title %}Oda tipleri{% endblock %}
+{% block crumbs %}<div class="crumbs">OTA'daki oda adlarınız standart kategorilere eşlenir. Kıyaslama yalnızca aynı kategori içinde yapılır.</div>{% endblock %}
+{% block content %}
+<div class="grid g-main-side">
+  <div class="panel">
+    <div class="panel-head"><div><h2>{{ rts|length }} oda tipi</h2><p>Yanlış eşlenen bir oda varsa kategorisini değiştirin; değişiklik bir sonraki hesaplamada kullanılır.</p></div></div>
+    <div class="panel-body flush"><div class="table-wrap"><table class="data">
+      <thead><tr><th>OTA'daki adı</th><th>Kategori</th><th>Eşleyen</th><th>Güven</th><th>Değiştir</th></tr></thead>
+      <tbody>
+      {% for rt in rts %}
+        <tr><td><b>{{ rt.raw_name }}</b></td><td>{{ CATEGORY_LABELS.get(rt.category, rt.category) }}</td><td>{{ ui.mapped_badge(rt.mapped_by) }}</td>
+          <td style="min-width:120px"><div class="row" style="gap:8px;flex-wrap:nowrap"><div class="bar-track" style="flex:1"><div class="bar-fill" style="width:{{ (rt.confidence|float * 100)|round }}%;background:{{ 'var(--series-3)' if rt.confidence|float >= 0.75 else 'var(--series-4)' }}"></div></div><span class="num small">{{ (rt.confidence|float * 100)|round|int }}</span></div></td>
+          <td><form method="post" action="/panel/oda-tipleri/{{ rt.id }}" class="row" style="gap:6px;flex-wrap:nowrap">{{ ui.csrf() }}
+            <select name="category" class="input-sm" aria-label="Kategori">{% for k, v in CATEGORY_LABELS.items() %}<option value="{{ k }}" {{ 'selected' if k == rt.category }}>{{ v }}</option>{% endfor %}</select>
+            <button class="btn sm" type="submit">Kaydet</button></form></td></tr>
+      {% else %}<tr><td colspan="5">{{ ui.empty("Oda tipi bulunamadı", "OTA'da listelenen odalarınız ilk taramada burada görünür.") }}</td></tr>{% endfor %}
+      </tbody></table></div></div>
+  </div>
+  <div class="panel soft"><div class="panel-body">
+    <h3>Eşleme nasıl yapılır?</h3>
+    <ol class="ink-2 small" style="padding-left:18px;margin:10px 0 0">
+      <li style="margin-bottom:8px">Önce Türkçe ve İngilizce anahtar kelime sözlüğü uygulanır (deluxe, süit, aile, standart…).</li>
+      <li style="margin-bottom:8px">Sözlüğün karar veremediği adlar bir dil modeline gönderilir. Yalnızca oda adı gönderilir, kişisel veri gönderilmez.</li>
+      <li>Güveni %75'in altındaki eşlemeler ekibimiz tarafından kontrol edilir. Sizin yaptığınız değişiklik her zaman önceliklidir.</li>
+    </ol>
+  </div></div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Hesabım{% endblock %}
+{% block page_title %}Hesabım{% endblock %}
+{% block content %}
+<div class="grid g-2">
+  <div class="panel"><div class="panel-head"><div><h2>Profil ve parola</h2><p>{{ user.email }}</p></div></div>
+    <div class="panel-body">
+      {{ ui.errors_box(errors) }}
+      <form class="form" method="post" action="/panel/hesap" style="margin-top:{{ '14px' if errors else '0' }}">{{ ui.csrf() }}
+        <div class="field"><label for="full_name">Ad soyad</label><input id="full_name" name="full_name" value="{{ user.full_name }}" required></div>
+        <hr style="margin:6px 0">
+        <div class="field"><label for="current_password">Mevcut parola</label><input id="current_password" type="password" name="current_password" autocomplete="current-password"></div>
+        <div class="field"><label for="new_password">Yeni parola</label><input id="new_password" type="password" name="new_password" autocomplete="new-password"><div class="hint">Değiştirmek istemiyorsanız boş bırakın.</div></div>
+        <button class="btn primary" type="submit">Kaydet</button>
+      </form>
+    </div></div>
+  <div class="panel soft"><div class="panel-body small ink-2">
+    <h3 style="margin-bottom:8px">Verileriniz</h3>
+    <p>Hesabınızda yalnızca ad soyad ve e-posta adresiniz tutulur. Otelinizin iç sistemlerinden veri almıyoruz.</p>
+    <p style="margin:0">Son giriş: {{ user.last_login_at|dt('datetime') if user.last_login_at else '—' }}. KVKK kapsamındaki talepleriniz için <a href="/yasal/kvkk">aydınlatma metnine</a> bakın.</p>
+  </div></div>
+</div>
+{% endblock %}

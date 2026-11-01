@@ -1,0 +1,80 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Rakip seti{% endblock %}
+{% block page_title %}Rakip seti{% endblock %}
+{% block crumbs %}<div class="crumbs">Öneriler yalnızca bu otellerin fiyatlarıyla, aynı oda kategorisinde kıyaslanarak üretilir.</div>{% endblock %}
+{% block top_actions %}
+<form method="post" action="/panel/rakipler/yeniden-hesapla" class="inline" data-confirm="Rakip seti yeniden hesaplansın mı? Elle eklediğiniz rakipler korunur.">{{ ui.csrf() }}<button class="btn" type="submit">{{ ui.icon('refresh') }}Yeniden hesapla</button></form>
+{% endblock %}
+{% block content %}
+<div class="panel">
+  <div class="panel-head"><div><h2>Rakip radarı</h2><p>Oteliniz merkezde. Rakipler gerçek yönlerine ve mesafelerine göre yerleşir; nokta büyüklüğü benzerlik puanını gösterir.</p></div>
+    <div class="actions"><span class="badge">{{ comps|length }} / {{ max_comp }} rakip</span><span class="badge info">Arama yarıçapı {{ radius|num(0) }} km</span></div></div>
+  <div class="panel-body">
+    <div class="radar-wrap">
+      {{ ui.radar(radar, hotel.name) }}
+      <div>
+        <div class="legend small"><span><i style="background:var(--series-2);width:10px;height:10px;transform:rotate(45deg)"></i>Oteliniz</span><span><i style="background:var(--series-1);width:10px;height:10px;border-radius:50%"></i>Sistemin önerdiği</span><span><i style="background:var(--series-4);width:10px;height:10px;border-radius:50%"></i>Elle eklenen</span></div>
+        <ul class="radar-list">
+          {% for p in radar.points|sort(attribute='rank') %}
+          <li><span class="n {{ 'manual' if p.manual }}">{{ p.rank }}</span>
+            <div style="min-width:0"><div class="nm">{{ p.hotel.name }}</div><div class="meta">{{ p.dist|num(1) }} km{% if p.hotel.star_rating %}, {{ p.hotel.star_rating }} yıldız{% endif %}{% if p.score is not none %}, benzerlik {{ (p.score * 100)|round|int }}{% endif %}</div></div>
+            <b class="num">{{ p.price|eur if p.price else '—' }}</b></li>
+          {% else %}<li class="muted">Rakip seti boş.</li>{% endfor %}
+        </ul>
+        <p class="small muted" style="margin:10px 0 0">Fiyatlar: önümüzdeki 14 günün Standard oda ortalaması. Sizin ortalamanız: <b>{{ avg.get(hotel.id)|eur }}</b>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="grid g-main-side" style="margin-top:18px">
+  <div class="panel">
+    <div class="panel-head"><div><h2>Rakipleri değerlendirin</h2><p>Benzerlik puanı mesafe, yıldız, oda tipi ve fiyat bandından hesaplanır. Geri bildiriminiz bir sonraki hesaplamada kullanılır.</p></div></div>
+    <div class="panel-body flush"><div class="table-wrap"><table class="data">
+      <thead><tr><th>#</th><th class="col-name">Otel</th><th class="num">Mesafe</th><th class="num">Yıldız</th><th class="num">14 gün ort.</th><th>Benzerlik</th><th>Durum</th><th></th></tr></thead>
+      <tbody>
+        <tr class="self"><td></td><td class="col-name"><div class="hotel-cell">{{ ui.avatar(hotel.name, 'sm') }}<div>{{ hotel.name }} <span class="muted small">(siz)</span></div></div></td><td class="num">—</td><td class="num">{{ hotel.star_rating or '—' }}</td><td class="num">{{ avg.get(hotel.id)|eur }}</td><td></td><td></td><td></td></tr>
+        {% for c in comps %}{% set h = c.competitor %}
+        <tr>
+          <td class="muted">{{ c.rank }}</td>
+          <td class="col-name"><div class="hotel-cell">{{ ui.avatar(h.name, 'sm') }}<div><div>{{ h.name }}</div><div class="small muted">{{ h.district }}{% if h.hotel_type %}, {{ {'pension':'pansiyon','boutique':'butik','midscale':'orta ölçek','resort':'resort','chain':'zincir'}.get(h.hotel_type) }}{% endif %}</div></div></div></td>
+          <td class="num">{{ c.distance_km|num(1) }} km</td>
+          <td class="num">{{ h.star_rating or '—' }}</td>
+          <td class="num">{{ avg.get(h.id)|eur }}</td>
+          <td style="min-width:150px">{% if c.similarity_score is not none %}
+            <div class="row" style="gap:8px;flex-wrap:nowrap"><div class="bar-track" style="flex:1"><div class="bar-fill" style="width:{{ (c.similarity_score|float * 100)|round }}%"></div></div><span class="num small">{{ (c.similarity_score|float * 100)|round|int }}</span></div>
+            {% if c.components and c.components.distance is defined %}<div class="small muted" style="margin-top:4px">Mesafe {{ (c.components.distance * 100)|round|int }}, yıldız {{ (c.components.star * 100)|round|int }}, oda {{ (c.components.room_types * 100)|round|int }}, fiyat {{ (c.components.price_band * 100)|round|int }}</div>{% endif %}
+            {% else %}<span class="badge">Elle eklendi</span>{% endif %}</td>
+          <td>{% if c.feedback == 'confirmed' %}<span class="badge good">{{ ui.icon('check') }}Onaylı</span>{% elif c.is_manual %}<span class="badge info">Elle</span>{% else %}<span class="badge">Öneri</span>{% endif %}</td>
+          <td class="num"><div class="row" style="gap:4px;flex-wrap:nowrap">
+            {% if c.feedback != 'confirmed' %}<form method="post" action="/panel/rakipler/{{ h.id }}/geri-bildirim" class="inline">{{ ui.csrf() }}<input type="hidden" name="verdict" value="confirmed"><button class="btn sm" type="submit" title="Bu otel gerçekten rakibimiz" aria-label="Rakibimiz olarak onayla">{{ ui.icon('check') }}</button></form>{% endif %}
+            <form method="post" action="/panel/rakipler/{{ h.id }}/geri-bildirim" class="inline" data-confirm="{{ h.name }} rakip setinden çıkarılsın ve bir daha önerilmesin mi?">{{ ui.csrf() }}<input type="hidden" name="verdict" value="rejected"><button class="btn sm ghost" type="submit" title="Rakibimiz değil" aria-label="Rakibimiz değil">{{ ui.icon('x') }}</button></form>
+          </div></td>
+        </tr>
+        {% else %}<tr><td colspan="8">{{ ui.empty("Rakip setiniz boş", "Yeniden hesapla ile sistemin önerdiği rakipleri ekleyin.") }}</td></tr>{% endfor %}
+      </tbody></table></div></div>
+  </div>
+  <div class="stack">
+    <div class="panel">
+      <div class="panel-head"><div><h2>Rakip ekle</h2><p>Benzerliğe göre sıralı adaylar</p></div></div>
+      <div class="panel-body">
+        {% if candidates %}
+        <form class="form" method="post" action="/panel/rakipler/ekle">{{ ui.csrf() }}
+          <div class="field"><label for="competitor_id">Otel</label><select id="competitor_id" name="competitor_id">
+            {% for c in candidates %}<option value="{{ c.hotel.id }}">{{ c.hotel.name }} ({{ c.distance_km|num(1) }} km, puan {{ (c.score * 100)|round|int }})</option>{% endfor %}
+          </select></div>
+          <button class="btn primary" type="submit">{{ ui.icon('plus') }}Rakip setine ekle</button>
+        </form>
+        {% else %}<p class="muted small">Bölgede eklenebilecek başka otel bulunamadı.</p>{% endif %}
+      </div>
+    </div>
+    <div class="panel"><div class="panel-body">
+      <div class="row" style="gap:16px;flex-wrap:nowrap">
+        {{ ui.ring(accuracy.rate, "isabet", 88, "series-3") }}
+        <div><b>Compset isabeti</b>
+          <p class="small ink-2" style="margin:6px 0 0">Geri bildirim verdiğiniz {{ accuracy.rated }} rakipten {{ accuracy.confirmed }} tanesini onayladınız. Bu oran rakip önerme algoritmasını geliştirmek için kullanılır.</p></div>
+      </div>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

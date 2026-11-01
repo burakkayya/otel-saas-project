@@ -1,0 +1,56 @@
+# Geliştirme ve pilot ortamı:  docker compose up --build
+# Uygulama: http://localhost:8000   |   Adminer (veritabanı arayüzü): http://localhost:8080
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: otelradar
+      POSTGRES_USER: otelradar
+      POSTGRES_PASSWORD: otelradar
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U otelradar -d otelradar"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  web:
+    build: .
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: postgresql+psycopg2://otelradar:otelradar@db:5432/otelradar
+      SCHEDULER_ENABLED: "false"
+      SEED_DEMO: "true"
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  worker:
+    build: .
+    command: ["python", "-m", "app.scheduler"]
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: postgresql+psycopg2://otelradar:otelradar@db:5432/otelradar
+    depends_on:
+      web:
+        condition: service_healthy
+
+  adminer:
+    image: adminer:4
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    profiles: ["tools"]
+
+volumes:
+  pgdata:

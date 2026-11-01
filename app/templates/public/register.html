@@ -1,0 +1,36 @@
+{% extends "partials/auth_layout.html" %}
+{% block title %}Kayıt ol{% endblock %}
+{% block card_class %}wide{% endblock %}
+{% block side_quote %}Kayıt için yalnızca otelinizin adı ve adresi gerekir.{% endblock %}
+{% block side_sub %}Konum, yıldız sınıfı ve tesis tipini halka açık kaynaklardan otomatik çekeriz. 14 gün ücretsiz, kart istemez.{% endblock %}
+{% block content %}
+<h1>Otelinizi ekleyin</h1>
+<p class="sub">Adım 1 / 2: otel ve yetkili bilgileri</p>
+{{ ui.errors_box(errors) }}
+<form class="form" method="post" action="/kayit" style="margin-top:16px">
+  {{ ui.csrf() }}
+  <div class="field"><label for="hotel_name">Otel adı</label><input id="hotel_name" name="hotel_name" value="{{ form.hotel_name or '' }}" required minlength="3" placeholder="Örn. Mavi Bodrum Butik Otel"></div>
+  <div class="two">
+    <div class="field"><label for="province">İl</label>
+      <select id="province" name="province" data-province required>{% for p in provinces %}<option {{ 'selected' if form.province == p }}>{{ p }}</option>{% endfor %}</select></div>
+    <div class="field"><label for="district">İlçe / bölge</label><select id="district" name="district" data-district data-current="{{ form.district or '' }}"></select></div>
+  </div>
+  <div class="field"><label for="address">Adres</label><input id="address" name="address" value="{{ form.address or '' }}" placeholder="Mahalle, sokak, numara"></div>
+  <div class="field"><label for="star_rating">Yıldız sınıfı (isteğe bağlı)</label>
+    <select id="star_rating" name="star_rating"><option value="">Bilmiyorum, otomatik bulun</option>{% for s in range(1,6) %}<option value="{{ s }}" {{ 'selected' if form.star_rating|string == s|string }}>{{ s }} yıldız</option>{% endfor %}</select></div>
+  <hr style="margin:4px 0">
+  <div class="two">
+    <div class="field"><label for="full_name">Yetkili ad soyad</label><input id="full_name" name="full_name" value="{{ form.full_name or '' }}" required autocomplete="name"></div>
+    <div class="field"><label for="email">E-posta</label><input id="email" type="email" name="email" value="{{ form.email or '' }}" required autocomplete="email"></div>
+  </div>
+  <div class="field"><span class="label-text">Paket</span>
+    <div class="choice">{% for p in plans %}
+      <label><input type="radio" name="plan_code" value="{{ p.code }}" {{ 'checked' if form.plan_code == p.code }}>
+        <div><strong>{{ p.name }}</strong><div class="small muted">{{ p.target }}</div></div><span class="score cell-strong">€{{ p.monthly_price_eur|num }}/ay</span></label>
+    {% endfor %}</div></div>
+  <label class="check"><input type="checkbox" name="kvkk" value="1" required><span><a href="/yasal/kvkk" target="_blank">KVKK aydınlatma metnini</a> okudum ve kabul ediyorum.</span></label>
+  <button class="btn primary lg" type="submit">Devam et: otelimi bul</button>
+  <p class="small muted">Zaten hesabınız var mı? <a href="/giris">Giriş yapın</a></p>
+</form>
+<script type="application/json" id="district-map">{{ districts|json }}</script>
+{% endblock %}

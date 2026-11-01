@@ -1,0 +1,24 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Etki ölçümü{% endblock %}
+{% block page_title %}Etki ölçümü{% endblock %}
+{% block crumbs %}<div class="crumbs">Fark-içinde-fark (DiD). Bölge başına en az 10-15 kontrol oteli yoksa sonuçlar düşük güvenlidir.</div>{% endblock %}
+{% block content %}
+<div class="grid g-4" style="margin-bottom:18px">
+  {% for p, n in controls.items() %}{{ ui.stat(p ~ " kontrol havuzu", n|num ~ " otel", "Abone olmayan, izlenen tesisler", "users") }}{% endfor %}
+</div>
+<div class="panel"><div class="panel-body flush"><div class="table-wrap"><table class="data">
+  <thead><tr><th>Abone</th><th class="num">Uyum</th><th class="num">Kontrol</th><th class="num">RevPAR vekili farkı</th><th class="num">Tahmini toplam</th><th>Anlamlılık</th><th>Güven</th><th>Güncelleme</th><th></th></tr></thead>
+  <tbody>{% for r in rows %}{% set e = r.est %}
+    <tr><td><a href="/admin/oteller/{{ r.hotel.id }}">{{ r.hotel.name }}</a></td><td class="num">{{ r.uptake|pct(0) if r.uptake is not none else '—' }}</td>
+      <td class="num">{{ e.control_group_size if e else '—' }}</td>
+      <td class="num">{{ e.details.did.revpar.did|eur(2) if e and e.details and e.details.did else '—' }}</td>
+      <td class="num">{{ e.estimated_revenue_delta|eur if e else '—' }}</td>
+      <td>{% if e and e.details %}{% if e.details.significant %}<span class="badge good">Anlamlı</span>{% else %}<span class="badge">Anlamlı değil</span>{% endif %}{% endif %}</td>
+      <td>{{ ui.conf_badge(e.confidence) if e else '' }}</td><td class="small">{{ e.created_at|ago if e else '—' }}</td>
+      <td class="num"><form method="post" action="/admin/etki/{{ r.hotel.id }}" class="inline">{{ ui.csrf() }}<button class="btn sm" type="submit">{{ ui.icon('refresh') }}Hesapla</button></form></td></tr>
+  {% else %}<tr><td colspan="9">{{ ui.empty("Abone yok", "Etki ölçümü abone oteller için yapılır.") }}</td></tr>{% endfor %}</tbody></table></div></div></div>
+<div class="panel soft" style="margin-top:18px"><div class="panel-body small ink-2">
+  <p><b>Yöntem.</b> Abonelik öncesi 8 hafta ile abonelik sonrası dönem karşılaştırılır. Abone otelin değişiminden, aynı ildeki benzer (±1 yıldız) abone olmayan otellerin ortalama değişimi çıkarılır. Fark, kontrol değişimlerinin standart hatasının iki katını aşmıyorsa "anlamlı değil" olarak işaretlenir.</p>
+  <p style="margin:0"><b>Sınırlar.</b> Doluluk OTA kalan oda değişiminden türetilen bir vekildir. Tüm kayıtlar <code>is_estimate = TRUE</code> ile saklanır ve panelde "tahmini" olarak gösterilir.</p>
+</div></div>
+{% endblock %}

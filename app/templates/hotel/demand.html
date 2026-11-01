@@ -1,0 +1,84 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Talep ve sezon{% endblock %}
+{% block page_title %}Talep ve sezon{% endblock %}
+{% block crumbs %}<div class="crumbs">{{ hotel.province }} için talep skoru: uçuş arama trendi (%45), etkinlikler (%35) ve tatil takvimi (%20).</div>{% endblock %}
+{% block content %}
+{% set labels = days|map('string')|list %}
+{% set fl = [] %}{% set ev = [] %}{% set ho = [] %}
+{% for d in days %}{% set s = dm.get(d) %}
+  {% set _ = fl.append((s.flight_score|float * 0.45)|round(1) if s else none) %}
+  {% set _ = ev.append((s.event_score|float * 0.35)|round(1) if s else none) %}
+  {% set _ = ho.append((s.holiday_score|float * 0.20)|round(1) if s else none) %}
+{% endfor %}
+<div class="panel">
+  <div class="panel-head"><div><h2>Talep skoru: son 30 gün ve önümüzdeki 60 gün</h2><p>Çubuk yüksekliği toplam skoru, renkler bileşenlerin katkısını gösterir.</p></div></div>
+  <div class="panel-body">
+    <div class="legend"><span><i style="background:var(--series-1);height:10px"></i>Uçuş arama</span><span><i style="background:var(--series-2);height:10px"></i>Etkinlik</span><span><i style="background:var(--series-3);height:10px"></i>Tatil</span></div>
+    {{ ui.chart("bar", {"labels": labels, "unit": "score", "stacked": true, "max": 100, "todayIndex": 30, "series": [
+        {"label": "Uçuş arama", "data": fl, "color": "series-1"},
+        {"label": "Etkinlik", "data": ev, "color": "series-2"},
+        {"label": "Tatil", "data": ho, "color": "series-3"}]}, "demand-stack", "tall", "Talep skoru bileşenleri") }}
+  </div>
+</div>
+
+{% set hmonths = {} %}
+{% for d in days %}{% if d >= today_ - timedelta_7 %}{% set _ = hmonths.setdefault((d.year, d.month), []).append(d) %}{% endif %}{% endfor %}
+<div class="panel" style="margin-top:18px">
+  <div class="panel-head"><div><h2>Talep takvimi</h2><p>Her gün, talep skoruna göre renklenir. Pembe nokta: o gün etkinlik var. Çerçeveli gün: bugün.</p></div>
+    <div class="actions"><div class="seq-legend">Düşük<span style="background:var(--seq-1)"></span><span style="background:var(--seq-2)"></span><span style="background:var(--seq-3)"></span><span style="background:var(--seq-4)"></span><span style="background:var(--seq-5)"></span><span style="background:var(--seq-6)"></span>Yüksek</div></div></div>
+  <div class="panel-body"><div class="heat-cal">
+    {% for (y, m), ds in hmonths.items() %}
+    <div class="heat-month"><h4>{{ ds[0]|dt('month') }}</h4>
+      <div class="heat-grid">
+        {% for w in ['Pt','Sa','Ça','Pe','Cu','Ct','Pz'] %}<span class="dw">{{ w }}</span>{% endfor %}
+        {% for _ in range(ds[0].weekday()) %}<span class="c blank"></span>{% endfor %}
+        {% for d in ds %}{% set sg = dm.get(d) %}{% set sc = sg.demand_score|float if sg else none %}
+          {% set lvl = 0 if sc is none else (1 + [5, (sc / 100 * 6)|int]|min) %}
+          <span class="c s{{ lvl }} {{ 'today' if d == today_ }} {{ 'past' if d < today_ }} {{ 'ev' if sg and sg.components and sg.components.events }}"
+                title="{{ d|dt('day') }}: talep {{ sc|num if sc is not none else '—' }}{% if sg and sg.components and sg.components.events %}, {{ sg.components.events|join(', ') }}{% endif %}{% if sg and sg.components and sg.components.holiday %}, {{ sg.components.holiday }}{% endif %}">{{ d.day }}</span>
+        {% endfor %}
+      </div></div>
+    {% endfor %}
+  </div></div>
+</div>
+
+<div class="grid g-3" style="margin-top:18px">
+  <div class="panel">
+    <div class="panel-head"><div><h2>Talebin zirve yaptığı günler</h2><p>Önümüzdeki 60 gün</p></div></div>
+    <div class="panel-body" style="padding-top:4px"><ul class="list">
+      {% for d, s in peaks %}<li><div style="flex:1"><b>{{ d|dt('day') }}</b>
+        <div class="small ink-2">{{ (s.components.events or [])|join(', ') or (s.components.holiday or 'Sezon ve uçuş talebi') }}</div></div>{{ ui.demand_badge(s.demand_score|float) }}</li>
+      {% else %}<li class="muted small">Veri yok.</li>{% endfor %}
+    </ul></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><div><h2>Etkinlikler</h2><p>Önümüzdeki 4 ay, {{ hotel.province }}</p></div></div>
+    <div class="panel-body" style="padding-top:4px"><ul class="list">
+      {% for e in events %}<li><div style="flex:1"><b>{{ e.name }}</b><div class="small ink-2">{{ e.start_date|dt }}{% if e.end_date != e.start_date %} – {{ e.end_date|dt }}{% endif %}{% if e.district %}, {{ e.district }}{% endif %}</div></div>
+        <span class="badge {{ 'hot' if e.impact >= 60 else 'info' }}">Etki {{ e.impact }}</span></li>
+      {% else %}<li class="muted small">Yaklaşan etkinlik yok.</li>{% endfor %}
+    </ul></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><div><h2>Resmi tatiller</h2><p>Önümüzdeki 6 ay</p></div></div>
+    <div class="panel-body" style="padding-top:4px"><ul class="list">
+      {% for d, n in holidays %}<li><span class="when" style="min-width:110px">{{ d|dt('day') }}</span><span>{{ n }}</span></li>
+      {% else %}<li class="muted small">Tatil yok.</li>{% endfor %}
+    </ul>
+    <p class="small muted" style="margin-top:8px">Dini bayram tarihleri yaklaşık olarak işlenmiştir.</p></div>
+  </div>
+</div>
+
+<div class="panel" style="margin-top:18px">
+  <div class="panel-head"><div><h2>Mevsim katsayısı</h2><p>1,00 yıllık ortalamayı gösterir. Veri biriktikçe hesaplanan katsayının ağırlığı artar.</p></div></div>
+  <div class="panel-body">
+    <div class="legend"><span><i style="background:var(--series-1)"></i>Kullanılan katsayı</span><span><i class="dash" style="background:var(--series-3);color:var(--series-3)"></i>Bölgesel ön bilgi</span></div>
+    {{ ui.chart("line", {"labels": months, "unit": "", "series": [
+      {"label": "Kullanılan katsayı", "data": season.coef, "color": "series-1", "points": true},
+      {"label": "Bölgesel ön bilgi", "data": season.prior, "color": "series-3", "dash": true}]}, "season-line", "short", "Mevsim katsayısı") }}
+    <div class="table-wrap" style="margin-top:12px"><table class="data"><thead><tr><th>Ay</th>{% for m in months %}<th class="num">{{ m }}</th>{% endfor %}</tr></thead>
+      <tbody><tr><td>Katsayı</td>{% for c in season.coef %}<td class="num">{{ c|num(2) }}</td>{% endfor %}</tr>
+      <tr><td class="muted">Gözlem sayısı</td>{% for n in season.n %}<td class="num muted">{{ n|num }}</td>{% endfor %}</tr></tbody></table></div>
+  </div>
+</div>
+{% endblock %}

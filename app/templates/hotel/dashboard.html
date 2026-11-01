@@ -1,0 +1,125 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Panel{% endblock %}
+{% block page_title %}Panel{% endblock %}
+{% block crumbs %}<div class="crumbs">{{ today()|dt('long') }}. Öneriler {{ data.room_type.raw_name if data.room_type else 'odalarınız' }} ve diğer oda tipleriniz için güncel.</div>{% endblock %}
+{% block top_actions %}<a class="btn" href="/panel/raporlar/oneriler.csv">{{ ui.icon('download') }}CSV</a><a class="btn primary" href="/panel/oneriler">Tüm öneriler</a>{% endblock %}
+{% block content %}
+{% set t = data.today_row %}
+{% set k = data.kpi %}
+{% if hotel.settings and not hotel.settings.onboarding_done %}
+<div class="alert info" style="margin-bottom:18px">{{ ui.icon('info') }}<span>Kurulumunuz neredeyse tamam. <a href="/panel/hos-geldiniz">Rakiplerinizi ve fiyat kurallarınızı gözden geçirin.</a></span></div>
+{% endif %}
+
+{% if t %}
+<section class="hero-rec" aria-label="Bugünün önerisi">
+  <div>
+    <div class="label">Bu gece, {{ t.room_type.raw_name }}</div>
+    <div class="price"><span data-count="{{ t.suggested }}">{{ t.suggested|eur }}</span><small>önerilen</small></div>
+    {% if t.change is not none %}
+      <div style="margin-top:10px"><span class="delta-chip {{ 'up' if t.change >= 0 else 'down' }}">{{ ui.icon('up' if t.change >= 0 else 'down') }}{{ t.change|pct(0, true) }} mevcut fiyata göre</span></div>
+    {% endif %}
+  </div>
+  <div>
+    <p class="why">{{ t.text }}</p>
+    <div class="meta">
+      <span>Mevcut fiyatınız <b>{{ t.own|eur }}</b></span>
+      <span>Rakip medyanı <b>{{ t.median|eur }}</b></span>
+      {% if t.own_available is not none %}<span>Kalan oda <b>{{ t.own_available }}</b></span>{% endif %}
+    </div>
+  </div>
+  <div>
+    <div class="hero-band">
+      <div class="lbl"><span>Fiyat bandı ve konumunuz</span></div>
+      {{ ui.range_bar(t.floor, t.ceiling, t.suggested, t.own, t.median) }}
+    </div>
+    <div class="hero-actions"><a class="btn" href="/panel/oneriler/{{ t.id }}">Gerekçeyi incele</a><a class="btn ghost-light" href="/panel/oneriler?gorunum=takvim">Takvim</a></div>
+  </div>
+</section>
+{% else %}
+<div class="panel"><div class="panel-body">{{ ui.empty("Bugün için öneri yok", "Rakip setiniz hazır olduğunda ilk öneriler oluşturulur.", "/panel/rakipler", "Rakip setine git") }}</div></div>
+{% endif %}
+
+<div class="grid g-4" style="margin-top:18px">
+  {{ ui.kpi("Önümüzdeki 30 gün ort. öneri", k.sug_avg|eur, "tag",
+            ("Mevcut ortalamanıza göre " ~ (k.sug_vs_own|pct(1, true))) if k.sug_vs_own is not none else "Mevcut fiyat gözlenmedi",
+            data.chart.suggested[:30], "series-1") }}
+  {{ ui.kpi("Rakip medyanı (30 gün ort.)", k.median_avg|eur, "users", "Rakip setinizdeki " ~ comps|length ~ " otel",
+            data.chart.median[:30], "series-3", "aqua") }}
+  {{ ui.kpi("Talep skoru (7 gün ort.)", k.demand_7d|num if k.demand_7d is not none else "—", "activity", "0-100 arası; 55 üzeri yüksek",
+            data.chart.demand[:30], "series-4", "warn") }}
+  {{ ui.kpi("Öneriye uyum (60 gün)", uptake.rate|pct(0) if uptake.rate is not none else "—", "check", uptake.total|num ~ " fiyat gözlemi",
+            uptake.weekly|map(attribute='rate')|list, "series-3", "good") }}
+</div>
+
+<div class="panel" style="margin-top:18px">
+  <div class="panel-head">
+    <div><h2>Önümüzdeki 60 gün: öneri ve piyasa</h2><p>{{ CATEGORY_LABELS[data.category] }} kategorisi. Gölgeli alan rakiplerin orta %50'lik fiyat aralığı.</p></div>
+    <div class="actions">
+      {% if k.under %}<span class="badge hot">{{ ui.icon('up') }}{{ k.under }} gün fiyatınız düşük</span>{% endif %}
+      {% if k.over %}<span class="badge bad">{{ ui.icon('down') }}{{ k.over }} gün fiyatınız yüksek</span>{% endif %}
+    </div>
+  </div>
+  <div class="panel-body">
+    <div class="legend">
+      <span><i style="background:var(--series-1)"></i>Önerilen fiyat</span>
+      <span style="color:var(--series-2)"><i class="dash" style="background:var(--series-2)"></i><span class="ink-2">Mevcut fiyatınız</span></span>
+      <span><i style="background:var(--series-3)"></i>Rakip medyanı</span>
+      <span><i class="band" style="background:var(--series-3)"></i>Rakip P25–P75</span>
+    </div>
+    {{ ui.chart("price", data.chart | combine({"suggestedFill": true}), "dash-price", "tall", "Önerilen fiyat, mevcut fiyat ve rakip medyanı") }}
+    <details class="table-view"><summary>Tablo olarak göster</summary>
+      <div class="table-wrap" style="max-height:320px"><table class="data">
+        <thead><tr><th>Tarih</th><th class="num">Öneri</th><th class="num">Mevcut</th><th class="num">Rakip medyanı</th><th class="num">Talep</th></tr></thead>
+        <tbody>{% for i in range(data.chart.labels|length) %}<tr><td>{{ data.chart.labels[i]|dt('day') }}</td><td class="num">{{ data.chart.suggested[i]|eur }}</td><td class="num">{{ data.chart.own[i]|eur }}</td><td class="num">{{ data.chart.median[i]|eur }}</td><td class="num">{{ data.chart.demand[i]|num }}</td></tr>{% endfor %}</tbody>
+      </table></div>
+    </details>
+  </div>
+</div>
+
+<div class="grid g-main-side" style="margin-top:18px">
+  <div class="stack">
+  <div class="panel">
+    <div class="panel-head"><div><h2>Bu hafta</h2><p>Önümüzdeki 7 günün önerileri ve fiyat bantları</p></div><div class="actions"><a class="btn sm" href="/panel/oneriler">Tümü</a></div></div>
+    <div class="panel-body" style="padding-bottom:6px">{{ ui.range_legend() }}</div>
+    <div class="panel-body flush"><div class="table-wrap"><table class="data">
+      <thead><tr><th>Tarih</th><th>Talep</th><th class="num">Mevcut</th><th class="num">Öneri</th><th>Bant</th><th class="num">Fark</th><th></th></tr></thead>
+      <tbody>
+      {% for r in data.next7 %}
+        <tr><td class="nowrap"><b>{{ r.date|dt("day") }}</b></td><td class="nowrap">{{ ui.demand_badge(r.demand) }}</td><td class="num">{{ r.own|eur }}</td>
+          <td class="num cell-strong">{{ r.suggested|eur }}</td>
+          <td class="band-cell">{{ ui.range_bar(r.floor, r.ceiling, r.suggested, r.own, r.median, true) }}</td>
+          <td class="num">{{ ui.change_badge(r.change) }}</td>
+          <td class="num"><a class="btn sm ghost" href="/panel/oneriler/{{ r.id }}" aria-label="Detay">{{ ui.icon('eye') }}</a></td></tr>
+      {% else %}<tr><td colspan="7" class="muted">Öneri bulunamadı.</td></tr>{% endfor %}
+      </tbody></table></div></div>
+  </div>
+    <div class="panel">
+      <div class="panel-head"><div><h2>Talep, 60 gün</h2><p>Uçuş arama, etkinlik ve tatil bileşimi</p></div></div>
+      <div class="panel-body">{{ ui.chart("bar", {"labels": data.chart.labels, "unit": "score", "sequential": true, "max": 100, "series": [{"label": "Talep skoru", "data": data.chart.demand}]}, "dash-demand", "short", "Talep skoru") }}</div>
+    </div>
+  </div>
+  <div class="stack">
+    <div class="panel">
+      <div class="panel-head"><div><h2>Rakip radarı</h2><p>{{ radar.points|length }} rakip, en uzak {{ radar.max_km|num(1) }} km</p></div><div class="actions"><a class="btn sm ghost" href="/panel/rakipler">Yönet</a></div></div>
+      <div class="panel-body">{{ ui.radar(radar, hotel.name) }}</div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><div><h2>Tahmini etki</h2><p>Kontrol grubuna göre (fark-içinde-fark)</p></div>{% if roi %}{{ ui.conf_badge(roi.confidence) }}{% endif %}</div>
+      <div class="panel-body">
+        {% if roi and roi.details and roi.details.did %}
+          <div class="kpi-value" style="margin:0">{{ roi.details.did.revpar.did|eur(1) }}</div>
+          <p class="small ink-2" style="margin-top:6px">Gelir/oda vekilinde, benzer {{ roi.control_group_size }} otele göre tahmini fark. {% if not roi.details.significant %}İstatistiksel olarak anlamlı değil.{% endif %}</p>
+          <a class="small" href="/panel/performans">Yöntemi ve ayrıntıları gör</a>
+        {% else %}<p class="small muted">Tahmin için abonelik sonrası en az 7 günlük veri gerekiyor.</p>{% endif %}
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><div><h2>Bildirimler</h2></div><div class="actions"><a class="btn sm ghost" href="/panel/bildirimler">Tümü</a></div></div>
+      <div class="panel-body" style="padding-top:4px"><ul class="list">
+        {% for n in notes %}<li><span class="note-dot {{ n.level }}"></span><div><div class="{{ 'unread' if not n.is_read }}">{% if n.link %}<a href="{{ n.link }}">{{ n.title }}</a>{% else %}{{ n.title }}{% endif %}</div><div class="small ink-2">{{ n.body }}</div><div class="when">{{ n.created_at|ago }}</div></div></li>
+        {% else %}<li class="muted small">Yeni bildirim yok.</li>{% endfor %}
+      </ul></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

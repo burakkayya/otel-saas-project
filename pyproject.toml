@@ -1,0 +1,23 @@
+[project]
+name = "otelradar"
+version = "1.0.0"
+description = "Otel dinamik fiyatlandırma ve rakip analiz SaaS (MVP)"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+markers = ["e2e: Gerçek tarayıcıyla uçtan uca testler (Playwright + Chromium gerekir)"]
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 130
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["B008", "E501", "B905", "UP017"]
+
+[tool.coverage.run]
+source = ["app"]
+omit = ["app/scheduler.py"]

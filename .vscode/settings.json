@@ -1,0 +1,10 @@
+{
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": ["tests/unit", "tests/integration"],
+  "python.envFile": "${workspaceFolder}/.env",
+  "[python]": { "editor.defaultFormatter": "charliermarsh.ruff", "editor.formatOnSave": false },
+  "files.associations": { "*.html": "jinja-html" },
+  "emmet.includeLanguages": { "jinja-html": "html" },
+  "files.exclude": { "**/__pycache__": true, ".pytest_cache": true, ".ruff_cache": true }
+}

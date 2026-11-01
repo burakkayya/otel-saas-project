@@ -1,0 +1,84 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Öneri ayrıntısı{% endblock %}
+{% block page_title %}{{ s.stay_date|dt('day') }}, {{ s.room_type.raw_name }}{% endblock %}
+{% block crumbs %}<div class="crumbs"><a href="/panel/oneriler">Fiyat önerileri</a> / ayrıntı</div>{% endblock %}
+{% block content %}
+<section class="hero-rec">
+  <div><div class="label">Önerilen fiyat</div><div class="price"><span data-count="{{ s.suggested_price|float }}">{{ s.suggested_price|eur }}</span></div></div>
+  <div><p class="why">{{ r.text }}</p>
+    <div class="meta"><span>Taban <b>{{ s.price_floor|eur }}</b></span><span>Tavan <b>{{ s.price_ceiling|eur }}</b></span>
+      <span>Mevcut fiyat <b>{{ own.price_eur|eur if own else '—' }}</b></span><span>Model <b>{{ s.model_version }}</b></span></div></div>
+  <div>
+    <div class="hero-band">
+      <div class="lbl"><span>Fiyat bandı ve konumunuz</span></div>
+      {{ ui.range_bar(s.price_floor, s.price_ceiling, s.suggested_price, own.price_eur if own else None, r.comp_median) }}
+    </div>
+    <div class="hero-actions">
+    {% if s.user_action %}
+      <span class="badge {{ 'good' if s.user_action == 'applied' else '' }}">{{ 'Uygulandı' if s.user_action == 'applied' else 'Yok sayıldı' }}</span>
+      <form method="post" action="/panel/oneriler/{{ s.id }}/aksiyon" class="inline">{{ ui.csrf() }}<input type="hidden" name="action" value="reset"><input type="hidden" name="next" value="/panel/oneriler/{{ s.id }}"><button class="btn sm ghost-light" type="submit">İşareti kaldır</button></form>
+    {% else %}
+      <form method="post" action="/panel/oneriler/{{ s.id }}/aksiyon" class="inline">{{ ui.csrf() }}<input type="hidden" name="action" value="applied"><input type="hidden" name="next" value="/panel/oneriler/{{ s.id }}"><button class="btn" type="submit">{{ ui.icon('check') }}Uyguladım</button></form>
+    {% endif %}
+    </div>
+  </div>
+</section>
+
+<div class="grid g-2" style="margin-top:18px">
+  <div class="panel">
+    <div class="panel-head"><div><h2>Fiyat nasıl oluştu?</h2><p>Rakip medyanından önerilen fiyata adım adım</p></div></div>
+    <div class="panel-body"><div class="waterfall">
+      {% for st in steps %}
+      <div class="step"><span class="{{ 'cell-strong' if st.kind != 'delta' else 'ink-2' }}">{{ st.label }}</span>
+        <div class="track"><div class="seg-bar" style="left:{{ st.left }}%;width:{{ st.width }}%;background:{{ 'var(--series-3)' if st.kind == 'base' else 'var(--series-1)' if st.kind == 'total' else ('var(--div-pos)' if st.delta > 0 else 'var(--div-neg)') }};{{ 'opacity:.75' if st.kind == 'delta' }}"></div></div>
+        <span class="num {{ 'cell-strong' if st.kind != 'delta' }}">{% if st.kind == 'delta' %}{{ '+' if st.delta > 0 }}{{ st.delta|eur }}{% else %}{{ st.end|eur }}{% endif %}</span></div>
+      {% endfor %}
+    </div>
+    <p class="small muted" style="margin-top:14px">Strateji: {{ {'conservative':'Temkinli','balanced':'Dengeli','aggressive':'Agresif'}.get(r.strategy, r.strategy) }}. Toplam ayarlama {{ r.adjustments_pct.total|pct(1, true) if r.adjustments_pct else '—' }}.</p></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><div><h2>Girdiler</h2><p>Önerinin dayandığı sinyaller</p></div>{{ ui.conf_badge(r.confidence) }}</div>
+    <div class="panel-body">
+      <dl class="kv">
+        <dt>Rakip sayısı</dt><dd>{{ r.comp_count }}{% if r.comp_closed %} ({{ r.comp_closed }} rakipte oda kapalı){% endif %}</dd>
+        <dt>Rakip dağılımı</dt><dd>P25 {{ r.comp_p25|eur }}, medyan {{ r.comp_median|eur }}, P75 {{ r.comp_p75|eur }}, P90 {{ r.comp_p90|eur }}</dd>
+        <dt>Medyan değişimi (7 gün)</dt><dd>{{ r.comp_median_change_7d_pct|pct(1, true) }}</dd>
+        <dt>Konumlama endeksi</dt><dd>{{ r.position_index|num(2) if r.position_index else '1,00' }}</dd>
+        <dt>Talep skoru</dt><dd>{{ ui.demand_badge(r.demand_score) }}</dd>
+        <dt>Sezon</dt><dd>{{ r.season_label }} (katsayı {{ r.season_coef|num(2) }})</dd>
+        <dt>Kalan oda sinyali</dt><dd>{{ r.inventory_pressure|num(2) }} <span class="muted small">(−1 ile +1 arası)</span></dd>
+        <dt>Hesaplandığı gün</dt><dd>{{ r.as_of|dt }}, konaklamaya {{ r.lead_days }} gün</dd>
+        {% if r.demand_components and r.demand_components.events %}<dt>Etkinlikler</dt><dd>{{ r.demand_components.events|join(', ') }}</dd>{% endif %}
+        {% if r.demand_components and r.demand_components.holiday %}<dt>Tatil</dt><dd>{{ r.demand_components.holiday }}</dd>{% endif %}
+      </dl>
+      <div class="alert info small" style="margin-top:14px">{{ ui.icon('info') }}<span>{{ r.wtp_note }} Tahmini üst sınır: {{ r.wtp_upper_estimate|eur }}.</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="grid g-2" style="margin-top:18px">
+  <div class="panel">
+    <div class="panel-head"><div><h2>Bu tarihte rakip fiyatları</h2><p>Aynı kategorideki en uygun satılabilir oda</p></div></div>
+    <div class="panel-body">
+      {% set named = comp_prices|selectattr('price')|list %}
+      <div class="legend"><span><i style="background:var(--series-3);height:10px"></i>Rakip</span><span><i style="background:var(--series-1);height:10px"></i>Öneri</span></div>
+      {% set barcolors = [] %}{% for _ in named %}{% set _ = barcolors.append('series-3') %}{% endfor %}{% set _ = barcolors.append('series-1') %}
+      {{ ui.chart("bar", {"labels": named|map(attribute='name')|list + ['Öneri'], "unit": "eur", "horizontal": true, "series": [{"label": "Fiyat", "data": named|map(attribute='price')|list + [s.suggested_price|float], "colors": barcolors}]}, "comp-bar", "short", "Rakip fiyatları") }}
+      <table class="data" style="margin-top:12px"><thead><tr><th>Otel</th><th class="num">Fiyat</th><th class="num">Kalan oda</th></tr></thead><tbody>
+        {% for c in comp_prices %}<tr><td>{{ c.name }}</td><td class="num">{% if c.price %}{{ c.price|eur }}{% elif c.closed %}<span class="badge">Kapalı</span>{% else %}<span class="muted small">Bu kategoride oda yok</span>{% endif %}</td><td class="num">{{ c.available if c.available is not none else '—' }}</td></tr>{% endfor %}
+      </tbody></table>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><div><h2>Önerinin geçmişi</h2><p>Bu tarih için her hesaplamada üretilen öneri</p></div></div>
+    <div class="panel-body">
+      {% if history|length > 1 %}
+      {{ ui.chart("line", {"labels": history|map(attribute='created_at')|map('string')|map('truncate', 10, True, '')|list, "unit": "eur", "series": [{"label": "Öneri", "data": history|map(attribute='suggested_price')|map('float')|list, "color": "series-1", "points": true}]}, "hist-line", "short", "Önerinin geçmişi") }}
+      {% endif %}
+      <table class="data" style="margin-top:12px"><thead><tr><th>Hesaplama</th><th class="num">Öneri</th><th class="num">Taban</th><th class="num">Tavan</th></tr></thead><tbody>
+        {% for h in history|reverse %}<tr><td>{{ h.created_at|dt('datetime') }}</td><td class="num">{{ h.suggested_price|eur }}</td><td class="num">{{ h.price_floor|eur }}</td><td class="num">{{ h.price_ceiling|eur }}</td></tr>{% endfor %}
+      </tbody></table>
+    </div>
+  </div>
+</div>
+{% endblock %}

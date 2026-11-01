@@ -1,0 +1,102 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Docker: tüm sistemi başlat",
+      "type": "shell",
+      "command": "docker compose up --build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker: durdur",
+      "type": "shell",
+      "command": "docker compose down",
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker: veritabanını sıfırla (demo verisi baştan)",
+      "type": "shell",
+      "command": "docker compose down -v && docker compose up --build",
+      "problemMatcher": [],
+      "windows": {
+        "options": {
+          "shell": {
+            "executable": "cmd.exe",
+            "args": [
+              "/d",
+              "/c"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "label": "Bağımlılıkları kur",
+      "type": "shell",
+      "command": "python -m pip install -r requirements-dev.txt && python -m playwright install chromium",
+      "problemMatcher": [],
+      "windows": {
+        "options": {
+          "shell": {
+            "executable": "cmd.exe",
+            "args": [
+              "/d",
+              "/c"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "label": "Demo veriyi kur (SQLite)",
+      "type": "shell",
+      "command": "python -m app.cli seed",
+      "options": {
+        "env": {
+          "DATABASE_URL": "sqlite:///./data/app.db"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Sunucu (SQLite, demo)",
+      "type": "shell",
+      "command": "python -m uvicorn app.main:app --reload --port 8000",
+      "options": {
+        "env": {
+          "DATABASE_URL": "sqlite:///./data/app.db"
+        }
+      },
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Test: birim + entegrasyon",
+      "type": "shell",
+      "command": "python -m pytest tests/unit tests/integration -q",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Test: kapsam raporu",
+      "type": "shell",
+      "command": "python -m pytest tests/unit tests/integration --cov=app --cov-report=html -q",
+      "problemMatcher": []
+    },
+    {
+      "label": "Test: tarayıcı (E2E)",
+      "type": "shell",
+      "command": "python -m pytest -m e2e tests/e2e -q",
+      "problemMatcher": []
+    },
+    {
+      "label": "Lint (ruff)",
+      "type": "shell",
+      "command": "python -m ruff check app tests",
+      "problemMatcher": []
+    }
+  ]
+}

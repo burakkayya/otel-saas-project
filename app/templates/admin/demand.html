@@ -1,0 +1,31 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Talep ve etkinlikler{% endblock %}
+{% block page_title %}Talep ve etkinlikler{% endblock %}
+{% block crumbs %}<div class="crumbs">Son güncelleme: {{ last|dt('datetime') if last else '—' }}</div>{% endblock %}
+{% block content %}
+<div class="row" style="margin-bottom:16px"><div class="seg">{% for p in provinces %}<a class="{{ 'on' if p == il }}" href="?il={{ p }}">{{ p }}</a>{% endfor %}</div></div>
+{% set ds = dm.keys()|sort|list %}{% set dscore = [] %}{% set dflight = [] %}
+{% for d in ds %}{% set _ = dscore.append(dm[d].demand_score|float) %}{% set _ = dflight.append(dm[d].flight_score|float) %}{% endfor %}
+<div class="panel"><div class="panel-head"><div><h2>{{ il }} talep skoru</h2><p>Son 30 gün ve önümüzdeki 90 gün</p></div></div>
+  <div class="panel-body">
+    <div class="legend"><span><i style="background:var(--series-1)"></i>Talep skoru</span><span><i class="dash" style="background:var(--series-3);color:var(--series-3)"></i>Uçuş arama endeksi</span></div>
+    {{ ui.chart("line", {"labels": ds|map('string')|list, "unit": "score", "zero": true, "hardMax": 100, "series": [
+      {"label": "Talep skoru", "data": dscore, "color": "series-1", "fill": true},
+      {"label": "Uçuş arama", "data": dflight, "color": "series-3", "dash": true}]}, "adm-demand", "", "Talep skoru") }}
+  </div></div>
+<div class="grid g-main-side" style="margin-top:18px">
+  <div class="panel"><div class="panel-head"><div><h2>Etkinlikler</h2><p>PredictHQ'dan veya elle eklenen</p></div></div>
+    <div class="panel-body flush"><div class="table-wrap"><table class="data"><thead><tr><th>Etkinlik</th><th>Tarih</th><th>Kategori</th><th class="num">Etki</th><th>Kaynak</th><th></th></tr></thead><tbody>
+      {% for e in events %}<tr><td><b>{{ e.name }}</b><div class="small muted">{{ e.district or 'Tüm il' }}</div></td><td class="small">{{ e.start_date|dt }} – {{ e.end_date|dt }}</td><td>{{ e.category }}</td><td class="num">{{ e.impact }}</td><td>{{ e.source }}</td>
+        <td class="num"><form method="post" action="/admin/talep/etkinlik/{{ e.id }}/sil" class="inline" data-confirm="{{ e.name }} silinsin mi?">{{ ui.csrf() }}<button class="btn sm ghost" type="submit" aria-label="Sil">{{ ui.icon('trash') }}</button></form></td></tr>
+      {% else %}<tr><td colspan="6" class="muted">Etkinlik yok.</td></tr>{% endfor %}</tbody></table></div></div></div>
+  <div class="panel"><div class="panel-head"><div><h2>Etkinlik ekle</h2><p>Kongre, düğün sezonu, yerel festival gibi API'de olmayanlar</p></div></div>
+    <div class="panel-body"><form class="form" method="post" action="/admin/talep/etkinlik">{{ ui.csrf() }}<input type="hidden" name="province" value="{{ il }}">
+      <div class="field"><label>Ad</label><input name="name" required></div>
+      <div class="two"><div class="field"><label>Başlangıç</label><input type="date" name="start_date" required></div><div class="field"><label>Bitiş</label><input type="date" name="end_date" required></div></div>
+      <div class="two"><div class="field"><label>Kategori</label><select name="category">{% for c in ['festivals','concerts','conferences','expos','sports','community'] %}<option>{{ c }}</option>{% endfor %}</select></div>
+        <div class="field"><label>Etki (0-100)</label><input type="number" name="impact" min="0" max="100" value="50"></div></div>
+      <div class="field"><label>İlçe (isteğe bağlı)</label><input name="district"></div>
+      <button class="btn primary" type="submit">{{ ui.icon('plus') }}Ekle</button></form></div></div>
+</div>
+{% endblock %}

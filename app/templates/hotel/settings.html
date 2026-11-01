@@ -1,0 +1,41 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Fiyat kuralları{% endblock %}
+{% block page_title %}Fiyat kuralları{% endblock %}
+{% block crumbs %}<div class="crumbs">Öneriler bu sınırların dışına hiçbir zaman çıkmaz.</div>{% endblock %}
+{% block content %}
+{{ ui.errors_box(errors) }}
+<form class="form" method="post" action="/panel/ayarlar" style="margin-top:{{ '16px' if errors else '0' }}">
+  {{ ui.csrf() }}
+  <div class="grid g-2">
+    <div class="panel"><div class="panel-head"><div><h2>Strateji</h2><p>Talep ve kalan oda sinyallerine ne kadar güçlü tepki verilsin?</p></div></div>
+      <div class="panel-body"><div class="choice">
+        {% for k, label in strategies.items() %}
+        <label><input type="radio" name="strategy" value="{{ k }}" {{ 'checked' if hs.strategy == k }}><div><strong>{{ label }}</strong>
+          <div class="small muted">{{ {'conservative': 'Ayarlamalar %40 daha küçük; rakip medyanına yakın kalır.', 'balanced': 'Varsayılan; sinyallere ölçülü tepki.', 'aggressive': 'Ayarlamalar %40 daha büyük; talep yükseldiğinde daha cesur artış.'}[k] }}</div></div></label>
+        {% endfor %}
+      </div></div></div>
+    <div class="panel"><div class="panel-head"><div><h2>Mutlak sınırlar</h2><p>Boş bırakırsanız sınırlar rakip dağılımından hesaplanır.</p></div></div>
+      <div class="panel-body">
+        <div class="two">
+          <div class="field"><label for="min_price_eur">En düşük fiyat (€)</label><input id="min_price_eur" type="number" step="1" min="1" name="min_price_eur" value="{{ hs.min_price_eur|int if hs.min_price_eur else '' }}"></div>
+          <div class="field"><label for="max_price_eur">En yüksek fiyat (€)</label><input id="max_price_eur" type="number" step="1" min="1" name="max_price_eur" value="{{ hs.max_price_eur|int if hs.max_price_eur else '' }}"></div>
+        </div>
+        <div class="two" style="margin-top:14px">
+          <div class="field"><label for="floor_below_p25_pct">Taban: rakip P25'in yüzde kaç altı</label><input id="floor_below_p25_pct" type="number" step="0.5" min="0" max="50" name="floor_below_p25_pct" value="{{ hs.floor_below_p25_pct|float }}"></div>
+          <div class="field"><label for="ceiling_margin_pct">Tavan: rakip P90'ın yüzde kaç üstü</label><input id="ceiling_margin_pct" type="number" step="0.5" min="0" max="50" name="ceiling_margin_pct" value="{{ hs.ceiling_margin_pct|float }}"><div class="hint">Yüksek sezonda bu marj otomatik artar.</div></div>
+        </div>
+      </div></div>
+    <div class="panel"><div class="panel-head"><div><h2>Uyum ölçümü</h2><p>OTA'daki fiyatınız önerinin ne kadar yakınındaysa "uygulandı" sayılsın?</p></div></div>
+      <div class="panel-body"><div class="field"><label for="tolerance_pct">Tolerans (±%)</label><input id="tolerance_pct" type="number" step="0.5" min="1" max="25" name="tolerance_pct" value="{{ hs.tolerance_pct|float }}"></div></div></div>
+    <div class="panel"><div class="panel-head"><div><h2>Otel bilgileri</h2><p>Otomatik bulunan bilgileri düzeltebilirsiniz.</p></div></div>
+      <div class="panel-body">
+        <div class="two">
+          <div class="field"><label for="star_rating">Yıldız</label><select id="star_rating" name="star_rating"><option value="">—</option>{% for s in range(1, 6) %}<option value="{{ s }}" {{ 'selected' if hotel.star_rating == s }}>{{ s }}</option>{% endfor %}</select></div>
+          <div class="field"><label for="room_count">Toplam oda sayısı</label><input id="room_count" type="number" min="1" name="room_count" value="{{ hotel.room_count or '' }}"><div class="hint">Etki tahmininde kullanılır.</div></div>
+        </div>
+        <label class="check" style="margin-top:14px"><input type="checkbox" name="notify_email" value="1" {{ 'checked' if hs.notify_email }}><span>Önemli fiyat önerilerinde e-posta bildirimi al</span></label>
+      </div></div>
+  </div>
+  <div class="row" style="justify-content:flex-end"><button class="btn primary lg" type="submit">Ayarları kaydet</button></div>
+</form>
+{% endblock %}

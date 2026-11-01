@@ -1,0 +1,44 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}{{ h.name }}{% endblock %}
+{% block page_title %}{{ h.name }}{% endblock %}
+{% block crumbs %}<div class="crumbs"><a href="/admin/oteller">Oteller</a> / {{ h.district }}, {{ h.province }}</div>{% endblock %}
+{% block top_actions %}{% if h.is_subscriber %}<form method="post" action="/admin/oteller/{{ h.id }}/panel" class="inline">{{ ui.csrf() }}<button class="btn primary" type="submit">{{ ui.icon('eye') }}Otel paneline bak</button></form>{% endif %}{% endblock %}
+{% block content %}
+<div class="grid g-4">
+  {{ ui.stat("Fiyat gözlemi", snap_count|num, "Tüm oda tipleri", "grid") }}
+  {{ ui.stat("Üretilen öneri", sugg_count|num, "Abonelik süresince", "tag") }}
+  {{ ui.stat("Oda tipi", h.room_types|length, "OTA'dan eşlenen", "bed") }}
+  {{ ui.stat("Abonelik", h.active_subscription.plan.name if h.active_subscription else "Yok", (h.active_subscription.status if h.active_subscription else "Rakip/kontrol oteli"), "card") }}
+</div>
+<div class="panel" style="margin-top:18px"><div class="panel-head"><div><h2>Fiyat geçmişi ve ileriye dönük fiyatlar</h2><p>Son 60 gün ve önümüzdeki 60 gün, konaklama tarihine göre son gözlenen fiyat</p></div></div>
+  <div class="panel-body">
+    {% set labels = (series.get('standard') or series.get('deluxe') or [])|map(attribute=0)|list %}
+    {% set sers = [] %}{% for cat, pts in series.items() %}{% set _ = sers.append({"label": CATEGORY_LABELS[cat], "data": pts|map(attribute=1)|list, "color": "series-1" if loop.first else "series-2"}) %}{% endfor %}
+    <div class="legend">{% for s in sers %}<span><i style="background:var(--{{ s.color }})"></i>{{ s.label }}</span>{% endfor %}</div>
+    {% if labels %}{{ ui.chart("line", {"labels": labels, "unit": "eur", "series": sers}, "hd-line", "", "Fiyat geçmişi") }}{% else %}<p class="muted">Fiyat verisi yok.</p>{% endif %}
+  </div></div>
+<div class="grid g-3" style="margin-top:18px">
+  <div class="panel"><div class="panel-head"><div><h2>Profil</h2></div></div><div class="panel-body">
+    <form class="form" method="post" action="/admin/oteller/{{ h.id }}">{{ ui.csrf() }}
+      <div class="two"><div class="field"><label>Yıldız</label><input type="number" min="1" max="5" name="star_rating" value="{{ h.star_rating or '' }}"></div>
+        <div class="field"><label>Oda sayısı</label><input type="number" min="1" name="room_count" value="{{ h.room_count or '' }}"></div></div>
+      <div class="two"><div class="field"><label>Tip</label><select name="hotel_type">{% for k, v in [('pension','Pansiyon'),('boutique','Butik'),('midscale','Orta ölçek'),('resort','Resort'),('chain','Zincir')] %}<option value="{{ k }}" {{ 'selected' if h.hotel_type == k }}>{{ v }}</option>{% endfor %}</select></div>
+        <div class="field"><label>İlçe</label><input name="district" value="{{ h.district or '' }}"></div></div>
+      <label class="check"><input type="checkbox" name="is_active" value="1" {{ 'checked' if h.is_active }}><span>Taramaya dahil (aktif)</span></label>
+      <dl class="kv small"><dt>Kaynak kimliği</dt><dd>{{ h.source_id or '—' }}</dd><dt>Konum</dt><dd>{{ h.lat }}, {{ h.lng }}</dd><dt>Adres</dt><dd>{{ h.address or '—' }}</dd></dl>
+      <button class="btn primary" type="submit">Kaydet</button></form></div></div>
+  <div class="panel"><div class="panel-head"><div><h2>Oda tipleri</h2></div></div><div class="panel-body flush"><table class="data">
+    <thead><tr><th>Ad</th><th>Kategori</th><th class="num">Güven</th></tr></thead><tbody>
+    {% for rt in h.room_types %}<tr><td class="small">{{ rt.raw_name }}</td><td>{{ CATEGORY_LABELS.get(rt.category) }} {{ ui.mapped_badge(rt.mapped_by) }}</td><td class="num">{{ (rt.confidence|float * 100)|round|int }}</td></tr>{% endfor %}
+    </tbody></table></div></div>
+  <div class="stack">
+    <div class="panel"><div class="panel-head"><div><h2>Rakip seti</h2></div></div><div class="panel-body" style="padding-top:4px"><ul class="list">
+      {% for c in comps %}<li><span class="muted">{{ c.rank }}</span><div style="flex:1"><a href="/admin/oteller/{{ c.competitor.id }}">{{ c.competitor.name }}</a><div class="when">{{ c.distance_km|num(1) }} km{% if c.similarity_score is not none %}, puan {{ (c.similarity_score|float * 100)|round|int }}{% endif %}</div></div>{% if c.feedback == 'confirmed' %}<span class="badge good">Onaylı</span>{% endif %}</li>
+      {% else %}<li class="muted small">Rakip seti yok (abone değil).</li>{% endfor %}</ul></div></div>
+    <div class="panel"><div class="panel-head"><div><h2>Kullanıcılar</h2></div></div><div class="panel-body" style="padding-top:4px"><ul class="list">
+      {% for u in users %}<li><div style="flex:1">{{ u.full_name }}<div class="when">{{ u.email }}</div></div>{{ ui.status_badge('active' if u.is_active else 'canceled') }}</li>{% else %}<li class="muted small">Kullanıcı yok.</li>{% endfor %}</ul></div></div>
+    {% if roi %}<div class="panel"><div class="panel-head"><div><h2>Etki tahminleri</h2></div></div><div class="panel-body" style="padding-top:4px"><ul class="list">
+      {% for r in roi %}<li><div style="flex:1">{{ r.estimated_revenue_delta|eur }}<div class="when">{{ r.created_at|dt }}, kontrol {{ r.control_group_size }}</div></div>{{ ui.conf_badge(r.confidence) }}</li>{% endfor %}</ul></div></div>{% endif %}
+  </div>
+</div>
+{% endblock %}

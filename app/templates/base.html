@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>{% block title %}Otel fiyat önerileri{% endblock %} | {{ settings.app_name }}</title>
+  <meta name="description" content="Otelinizin sistemlerine bağlanmadan, halka açık fiyat ve talep verisiyle günlük oda fiyatı önerisi.">
+  <script>try{var t=localStorage.getItem("or-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+  <link rel="preload" href="/static/fonts/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/css/app.css?v=6">
+  <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+  {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+{% block body %}{% endblock %}
+<script src="/static/js/app.js?v=2"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,50 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Backtest{% endblock %}
+{% block page_title %}Backtest raporu{% endblock %}
+{% block crumbs %}<div class="crumbs">Geçmiş tarihler için, yalnızca o gün bilinen veriyle öneri üretilir ve gerçekleşen piyasa fiyatıyla karşılaştırılır.</div>{% endblock %}
+{% block content %}
+<form class="filters" method="get" style="margin-bottom:18px">
+  <div class="field"><label for="kategori">Kategori</label><select id="kategori" name="kategori" data-autosubmit>{% for c in cats %}<option value="{{ c }}" {{ 'selected' if c == cat }}>{{ CATEGORY_LABELS[c] }}</option>{% endfor %}</select></div>
+  <div class="field"><label for="gun">Dönem</label><select id="gun" name="gun" data-autosubmit>{% for g in [30, 45, 60] %}<option value="{{ g }}" {{ 'selected' if g == gun }}>Son {{ g }} gün</option>{% endfor %}</select></div>
+  <div class="field"><label for="oncul">Öneri kaç gün önce verilmiş olsaydı?</label><select id="oncul" name="oncul" data-autosubmit>{% for o in [3, 7, 14] %}<option value="{{ o }}" {{ 'selected' if o == oncul }}>{{ o }} gün önce</option>{% endfor %}</select></div>
+  <noscript><button class="btn" type="submit">Uygula</button></noscript>
+</form>
+{% set sm = result.summary %}
+{% if not sm %}
+  <div class="panel"><div class="panel-body">{{ ui.empty("Backtest için yeterli veri yok", "Seçilen dönemde bu kategori için rakip ve kendi fiyat gözlemleri bulunamadı.") }}</div></div>
+{% else %}
+<div class="grid g-4">
+  {{ ui.stat("Öneri hatası (MAPE)", sm.mape_suggestion|pct(1), "Gerçekleşen piyasa fiyatına uzaklık", "target") }}
+  {{ ui.stat("Kıyas: bugünkü medyanı kopyalamak", sm.mape_naive|pct(1), ("Öneri " ~ ((sm.improvement_vs_naive_pct|abs)|num(1)) ~ " puan " ~ ("daha iyi" if sm.improvement_vs_naive_pct > 0 else "daha kötü")) if sm.improvement_vs_naive_pct is defined and sm.improvement_vs_naive_pct is not none else "", "chart") }}
+  {{ ui.stat("Yön isabeti", sm.direction_hit_rate|pct(0) if sm.direction_hit_rate is not none else "—", "Piyasanın %2+ hareket ettiği " ~ sm.direction_n ~ " günde", "up") }}
+  {{ ui.stat("Bant isabeti", sm.band_hit_rate|pct(0), "Gerçekleşen fiyat taban ile tavan arasında", "check") }}
+</div>
+<div class="panel" style="margin-top:18px">
+  <div class="panel-head"><div><h2>Öneri ve gerçekleşen piyasa</h2><p>{{ result.room_type }}, {{ result.period[0]|dt }} – {{ result.period[1]|dt }}. Hedef: konaklamadan bir gün önceki, konumlamanıza göre ölçeklenmiş rakip medyanı.</p></div></div>
+  <div class="panel-body">
+    <div class="legend"><span><i style="background:var(--series-1)"></i>{{ oncul }} gün önceki öneri</span><span><i style="background:var(--series-3)"></i>Gerçekleşen piyasa</span><span><i class="dash" style="background:var(--series-2);color:var(--series-2)"></i>Gerçekleşen fiyatınız</span></div>
+    {{ ui.chart("line", {"labels": result.rows|map(attribute='stay_date')|list, "unit": "eur", "series": [
+      {"label": "Öneri", "data": result.rows|map(attribute='suggested')|list, "color": "series-1", "width": 2.5},
+      {"label": "Gerçekleşen piyasa", "data": result.rows|map(attribute='market_final')|list, "color": "series-3"},
+      {"label": "Gerçekleşen fiyatınız", "data": result.rows|map(attribute='own_final')|list, "color": "series-2", "dash": true}]}, "bt-line", "tall", "Backtest") }}
+  </div>
+</div>
+<div class="grid g-main-side" style="margin-top:18px">
+  <div class="panel">
+    <div class="panel-head"><div><h2>Günlük sonuçlar</h2></div></div>
+    <div class="panel-body flush"><div class="table-wrap" style="max-height:440px"><table class="data">
+      <thead><tr><th>Konaklama</th><th class="num">O gün piyasa</th><th class="num">Öneri</th><th class="num">Gerçekleşen</th><th class="num">Hata</th><th class="num">Talep</th><th class="num">Satış ilerlemesi*</th></tr></thead>
+      <tbody>{% for r in result.rows %}
+        <tr><td>{{ r.stay_date|dt('day') }}</td><td class="num">{{ r.market_asof|eur }}</td><td class="num cell-strong">{{ r.suggested|eur }}</td><td class="num">{{ r.market_final|eur }}</td>
+          <td class="num">{{ ((r.suggested - r.market_final) / r.market_final * 100)|pct(1, true) }}</td><td class="num">{{ r.demand|num }}</td><td class="num">{{ (r.sell_through * 100)|pct(0) if r.sell_through is not none else '—' }}</td></tr>
+      {% endfor %}</tbody></table></div></div>
+  </div>
+  <div class="panel soft"><div class="panel-body small ink-2">
+    <h3 style="margin-bottom:8px">Nasıl okunur?</h3>
+    <p><b>MAPE</b> ne kadar düşükse önerinin gerçekleşen piyasa fiyatına o kadar yakın olduğunu gösterir. Kıyas yöntemi, o günkü rakip medyanını aynen kopyalamaktır; önerinin değeri bu kıyası geçip geçmediğiyle ölçülür.</p>
+    <p><b>Talep–satış korelasyonu:</b> {{ sm.demand_sell_corr|num(2) if sm.demand_sell_corr is not none else '—' }}. Pozitif değer, talep skorunun yüksek olduğu günlerde odalarınızın daha hızlı azaldığını gösterir.</p>
+    <p style="margin:0">* Satış ilerlemesi, kalan oda sayısındaki düşüşten türetilen bir vekildir; oda kapatma veya başka kanal satışı da aynı düşüşü yaratabilir.</p>
+  </div></div>
+</div>
+{% endif %}
+{% endblock %}

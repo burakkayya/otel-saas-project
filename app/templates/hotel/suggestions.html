@@ -1,0 +1,88 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Fiyat önerileri{% endblock %}
+{% block page_title %}Fiyat önerileri{% endblock %}
+{% block crumbs %}<div class="crumbs">Her oda tipi ve konaklama tarihi için önerilen fiyat, taban, tavan ve gerekçe.</div>{% endblock %}
+{% block top_actions %}
+<form method="post" action="/panel/oneriler/yenile" class="inline">{{ ui.csrf() }}<button class="btn" type="submit">{{ ui.icon('refresh') }}Yeniden hesapla</button></form>
+<a class="btn" href="/panel/raporlar/oneriler.csv?gun={{ gun }}">{{ ui.icon('download') }}CSV</a>
+{% endblock %}
+{% block content %}
+{% set q = "&gun=" ~ gun ~ ("&sadece=onemli" if sadece else "") ~ "&gorunum=" ~ gorunum %}
+<div class="row between" style="margin-bottom:16px">
+  <div class="row">
+    <div class="seg" role="tablist" aria-label="Oda kategorisi">
+      {% for c in cats %}<a class="{{ 'on' if c == cat }}" href="?kategori={{ c }}{{ q }}">{{ CATEGORY_LABELS[c] }}</a>{% endfor %}
+    </div>
+    <div class="seg" aria-label="Dönem">
+      {% for g in [14, 30, 60] %}<a class="{{ 'on' if g == gun }}" href="?kategori={{ cat }}&gun={{ g }}{{ '&sadece=onemli' if sadece }}&gorunum={{ gorunum }}">{{ g }} gün</a>{% endfor %}
+    </div>
+    <a class="btn sm {{ 'primary' if sadece }}" href="?kategori={{ cat }}&gun={{ gun }}&gorunum={{ gorunum }}{{ '' if sadece else '&sadece=onemli' }}">{{ ui.icon('alert') }}Yalnızca %8+ sapanlar</a>
+  </div>
+  <div class="seg" aria-label="Görünüm">
+    <a class="{{ 'on' if gorunum == 'liste' }}" href="?kategori={{ cat }}&gun={{ gun }}{{ '&sadece=onemli' if sadece }}&gorunum=liste">Liste</a>
+    <a class="{{ 'on' if gorunum == 'takvim' }}" href="?kategori={{ cat }}&gun={{ gun }}{{ '&sadece=onemli' if sadece }}&gorunum=takvim">Takvim</a>
+  </div>
+</div>
+
+{% if not rows %}
+  <div class="panel"><div class="panel-body">{{ ui.empty("Bu filtreyle öneri yok", "Farklı bir kategori veya dönem seçin.") }}</div></div>
+{% elif gorunum == 'takvim' %}
+  <div class="panel"><div class="panel-body">
+    <div class="row between" style="margin-bottom:14px">
+      <p class="small ink-2" style="margin:0">Renk, önerinin mevcut fiyatınıza göre farkını gösterir. Mavi: fiyat artırma fırsatı, kırmızı: fiyatınız yüksek.</p>
+      <div class="cal-legend">−%15<div class="scale"><span style="background:var(--div-neg)"></span><span style="background:color-mix(in srgb,var(--div-neg) 45%,var(--div-mid))"></span><span style="background:var(--div-mid)"></span><span style="background:color-mix(in srgb,var(--div-pos) 45%,var(--div-mid))"></span><span style="background:var(--div-pos)"></span></div>+%15</div>
+    </div>
+    {% for (y, m), items in months.items() %}
+      <h3 style="margin:18px 0 10px">{{ items[0].date|dt('month') }}</h3>
+      <div class="cal">
+        {% for d in ['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'] %}<div class="dow">{{ d }}</div>{% endfor %}
+        {% set first = items[0].date %}
+        {% for _ in range(first.weekday()) %}<div class="day blank"></div>{% endfor %}
+        {% set seen = [] %}
+        {% for r in items %}{% if r.date not in seen %}{% set _ = seen.append(r.date) %}
+          {% set c = r.change if r.change is not none else 0 %}
+          {% set strength = [100, (c|abs) / 15 * 100]|min %}
+          {% set base = 'var(--div-pos)' if c > 0 else 'var(--div-neg)' %}
+          <a class="day" href="/panel/oneriler/{{ r.id }}" title="{{ r.date|dt('day') }}: öneri {{ r.suggested|eur }}, mevcut {{ r.own|eur }}"
+             style="background: color-mix(in srgb, {{ base }} {{ strength|round|int }}%, var(--div-mid)); {{ 'color:#fff' if strength > 60 }}">
+            <span class="d" style="{{ 'color:#fff' if strength > 60 }}">{{ r.date.day }}</span>
+            <span class="p">{{ r.suggested|eur }}</span>
+            <span class="c">{{ r.change|pct(0, true) if r.change is not none else 'fiyat yok' }}</span>
+          </a>
+        {% endif %}{% endfor %}
+      </div>
+    {% endfor %}
+  </div></div>
+{% else %}
+  <div class="panel">
+    <div class="panel-head"><div><h2>{{ rows|length }} öneri</h2><p>Uyum toleransınız ±%{{ tolerance|num(0) }}. Fiyatı kendi sisteminizde değiştirdikten sonra “Uyguladım” ile işaretleyebilirsiniz.</p></div><div class="actions">{{ ui.range_legend() }}</div></div>
+    <div class="panel-body flush"><div class="table-wrap"><table class="data">
+      <thead><tr><th>Tarih</th><th>Talep</th><th class="num">Mevcut</th><th class="num">Rakip medyanı</th><th class="num">Öneri</th><th>Bant</th><th class="num">Fark</th><th>Gerekçe</th><th></th></tr></thead>
+      <tbody>
+      {% for r in rows %}
+        <tr>
+          <td class="nowrap"><b>{{ r.date|dt('day') }}</b><div class="small muted">{{ r.room_type.raw_name }}</div></td>
+          <td>{{ ui.demand_badge(r.demand) }}</td>
+          <td class="num">{% if r.own %}{{ r.own|eur }}{% elif r.own_available == 0 %}<span class="badge">Kapalı</span>{% else %}<span class="muted">—</span>{% endif %}</td>
+          <td class="num">{{ r.median|eur }}</td>
+          <td class="num cell-strong">{{ r.suggested|eur }}</td>
+          <td class="band-cell">{{ ui.range_bar(r.floor, r.ceiling, r.suggested, r.own, r.median, true) }}<div class="small muted num" style="text-align:left">{{ r.floor|eur }} – {{ r.ceiling|eur }}</div></td>
+          <td class="num">{{ ui.change_badge(r.change) }}</td>
+          <td><div class="rationale clamp" title="{{ r.text }}">{{ r.text }}</div></td>
+          <td class="num">
+            <div class="row" style="gap:4px;flex-wrap:nowrap">
+            {% if r.action == 'applied' %}<span class="badge good">{{ ui.icon('check') }}Uygulandı</span>
+            {% elif r.action == 'ignored' %}<span class="badge">Yok sayıldı</span>
+            {% else %}
+              <form method="post" action="/panel/oneriler/{{ r.id }}/aksiyon" class="inline">{{ ui.csrf() }}<input type="hidden" name="action" value="applied"><input type="hidden" name="next" value="/panel/oneriler?kategori={{ cat }}{{ q }}"><button class="btn sm" type="submit" title="Fiyatı kendi sistemimde uyguladım">{{ ui.icon('check') }}Uyguladım</button></form>
+              <form method="post" action="/panel/oneriler/{{ r.id }}/aksiyon" class="inline">{{ ui.csrf() }}<input type="hidden" name="action" value="ignored"><input type="hidden" name="next" value="/panel/oneriler?kategori={{ cat }}{{ q }}"><button class="btn sm ghost" type="submit" aria-label="Yok say">{{ ui.icon('x') }}</button></form>
+            {% endif %}
+            <a class="btn sm ghost" href="/panel/oneriler/{{ r.id }}" aria-label="Detay">{{ ui.icon('eye') }}</a>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody></table></div></div>
+  </div>
+{% endif %}
+{% endblock %}

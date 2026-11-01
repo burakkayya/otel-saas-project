@@ -1,0 +1,49 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Abonelik{% endblock %}
+{% block page_title %}Abonelik{% endblock %}
+{% block content %}
+{% set sub = subscription %}
+<div class="grid g-main-side">
+  <div class="stack">
+    <div class="panel"><div class="panel-body">
+      {% if sub %}
+      <div class="row between"><div><div class="muted small">Mevcut paket</div><h2 style="font-size:1.6rem">{{ sub.plan.name }}</h2></div>{{ ui.status_badge(sub.status) }}</div>
+      <dl class="kv" style="margin-top:14px">
+        <dt>Aylık ücret</dt><dd>{{ sub.plan.monthly_price_eur|eur }} + KDV</dd>
+        <dt>Başlangıç</dt><dd>{{ sub.started_at|dt('long') }}</dd>
+        <dt>{{ 'Deneme bitişi' if sub.status == 'trial' else 'Yenileme' }}</dt><dd>{{ sub.renews_at|dt('long') }}</dd>
+        <dt>Rakip seti</dt><dd>{{ comp_count }} / {{ sub.plan.max_competitors }}</dd>
+        <dt>Öneri ufku</dt><dd>{{ sub.plan.horizon_days }} gün</dd>
+      </dl>
+      {% else %}{{ ui.empty("Aktif aboneliğiniz yok", "Önerileri almaya devam etmek için bir paket seçin.", "/fiyatlar", "Paketleri gör") }}{% endif %}
+    </div></div>
+    {% if sub %}
+    <div class="panel"><div class="panel-head"><div><h2>Paketi değiştir</h2><p>Değişiklik hemen geçerli olur, ücret bir sonraki faturaya yansır.</p></div></div>
+      <div class="panel-body"><div class="plans" style="margin-top:0">
+        {% for p in plans %}
+        <div class="plan {{ 'featured' if p.id == sub.plan_id }}">
+          <div class="p-name">{{ p.name }}</div><div class="p-target">{{ p.target }}</div>
+          <div class="p-price" style="font-size:1.8rem">€{{ p.monthly_price_eur|num }}<small> / ay</small></div>
+          <ul>{% for f in p.features or [] %}<li>{{ f }}</li>{% endfor %}</ul>
+          {% if p.id == sub.plan_id %}<span class="badge good" style="align-self:flex-start">Mevcut paketiniz</span>
+          {% else %}<form method="post" action="/panel/abonelik/paket">{{ ui.csrf() }}<input type="hidden" name="plan_id" value="{{ p.id }}"><button class="btn" type="submit">{{ p.name }} paketine geç</button></form>{% endif %}
+        </div>
+        {% endfor %}
+      </div></div></div>
+    {% endif %}
+  </div>
+  <div class="stack">
+    <div class="panel"><div class="panel-head"><div><h2>Faturalar</h2></div></div>
+      <div class="panel-body flush"><table class="data"><thead><tr><th>No</th><th>Dönem</th><th class="num">Tutar</th><th>Durum</th></tr></thead><tbody>
+        {% for i in invoices %}<tr><td class="small">{{ i.number }}</td><td class="small">{{ i.period_start|dt }}</td><td class="num">{{ i.amount_eur|eur }}</td><td>{{ ui.status_badge(i.status) }}</td></tr>
+        {% else %}<tr><td colspan="4" class="muted small">Henüz fatura yok.</td></tr>{% endfor %}
+      </tbody></table></div></div>
+    {% if sub and sub.status != 'canceled' %}
+    <div class="panel"><div class="panel-head"><div><h2>Aboneliği iptal et</h2><p>Verileriniz iptalden sonra 30 gün saklanır.</p></div></div>
+      <div class="panel-body"><form class="form" method="post" action="/panel/abonelik/iptal">{{ ui.csrf() }}
+        <div class="field"><label for="confirm">Onaylamak için IPTAL yazın</label><input id="confirm" name="confirm" autocomplete="off"></div>
+        <button class="btn danger" type="submit">Aboneliği iptal et</button></form></div></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

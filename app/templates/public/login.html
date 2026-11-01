@@ -1,0 +1,22 @@
+{% extends "partials/auth_layout.html" %}
+{% block title %}Giriş{% endblock %}
+{% block content %}
+<h1>Tekrar hoş geldiniz</h1>
+<p class="sub">Panelinize giriş yapın.</p>
+{% if error %}<div class="alert error" role="alert" style="margin-bottom:16px">{{ ui.icon('alert') }}<span>{{ error }}</span></div>{% endif %}
+<form class="form" method="post" action="/giris">
+  {{ ui.csrf() }}
+  <input type="hidden" name="next" value="{{ next }}">
+  <div class="field"><label for="email">E-posta</label><input id="email" type="email" name="email" value="{{ email }}" autocomplete="email" required autofocus></div>
+  <div class="field"><label for="password">Parola</label><input id="password" type="password" name="password" autocomplete="current-password" required></div>
+  <button class="btn primary lg" type="submit">Giriş yap</button>
+  <div class="row between small"><a href="/sifremi-unuttum">Parolamı unuttum</a><span class="muted">Hesabınız yok mu? <a href="/kayit">Ücretsiz deneyin</a></span></div>
+</form>
+{% if is_demo %}
+<div class="panel soft" style="margin-top:28px"><div class="panel-body small">
+  <b>Demo hesapları</b>
+  <dl class="kv" style="margin-top:8px"><dt>Otel</dt><dd><code>otel@otelradar.local</code> / <code>Demo1234!</code></dd>
+  <dt>Yönetici</dt><dd><code>{{ settings.admin_email }}</code> / <code>.env</code> içindeki parola</dd></dl>
+</div></div>
+{% endif %}
+{% endblock %}

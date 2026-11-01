@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% import "partials/ui.html" as ui with context %}
+{% block body %}
+<header class="site-head">
+  <a class="brand" href="/">{{ ui.brand_mark() }}{{ settings.app_name }}</a>
+  <nav aria-label="Site menüsü">
+    <a href="/#nasil">Nasıl çalışır</a>
+    <a href="/#olcum">Ölçüm</a>
+    <a href="/fiyatlar">Paketler</a>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Açık/koyu tema">{{ ui.icon('moon') }}</button>
+    {% if user %}
+      <a class="btn primary" href="{{ '/admin' if user.role == 'admin' else '/panel' }}">Panele git</a>
+    {% else %}
+      <a class="btn" href="/giris">Giriş yap</a>
+      <a class="btn primary" href="/kayit">14 gün ücretsiz dene</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="site">
+  {{ ui.flashes(flashes) }}
+  {% block content %}{% endblock %}
+  <footer class="site-foot">
+    <span>{{ settings.app_name }}, Muğla ve Antalya pilot bölgeleri</span>
+    <a href="/fiyatlar">Paketler</a>
+    <a href="/yasal/gizlilik">Gizlilik</a>
+    <a href="/yasal/kvkk">KVKK</a>
+    <a href="/yasal/kullanim-kosullari">Kullanım koşulları</a>
+    <a href="/api/docs">API</a>
+  </footer>
+</main>
+{% endblock %}

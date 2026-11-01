@@ -1,0 +1,56 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}API ve maliyet{% endblock %}
+{% block page_title %}API ve maliyet{% endblock %}
+{% block crumbs %}<div class="crumbs">Abonelik fiyatı, abone başına API maliyeti hesaplanmadan belirlenmemeli (doküman 4.4).</div>{% endblock %}
+{% block content %}
+<div class="grid g-4">
+  {{ ui.stat("Tahmini aylık API maliyeti", econ.total|eur(2), inp.subscribers ~ " abone senaryosu", "coins") }}
+  {{ ui.stat("Abone başına maliyet", econ.per_subscriber|eur(2), "Tüm sağlayıcılar", "card") }}
+  {{ ui.stat("Ölçülen istek (30 gün)", usage.by_provider.values()|sum|num, usage.errors ~ " hatalı istek", "activity") }}
+  {{ ui.stat("Ölçülen maliyet (30 gün)", usage.cost_total|eur(2), "Kayıtlı birim fiyatlarla", "receipt") }}
+</div>
+
+<div class="grid g-main-side" style="margin-top:18px">
+  <div class="panel">
+    <div class="panel-head"><div><h2>Birim ekonomisi hesaplayıcı</h2><p>Senaryoyu değiştirip paket marjlarını görün</p></div></div>
+    <div class="panel-body">
+      <form class="filters" method="get">
+        <div class="field"><label>Abone sayısı</label><input type="number" name="abone" min="1" value="{{ inp.subscribers }}"></div>
+        <div class="field"><label>Rakip seti</label><input type="number" name="rakip" min="1" max="20" value="{{ inp.compset_size }}"></div>
+        <div class="field"><label>Ufuk (gün)</label><input type="number" name="ufuk" min="7" value="{{ inp.horizon_days }}"></div>
+        <div class="field"><label>Günlük tarama</label><input type="number" name="tarama" min="1" max="24" value="{{ inp.scans_per_day }}"></div>
+        <div class="field"><label>İstek başına tarih</label><input type="number" name="tarih_basina" min="1" value="{{ inp.dates_per_request }}"></div>
+        <div class="field"><label>Ortak rakip (%)</label><input type="number" name="ortak" min="0" max="90" value="{{ inp.overlap_pct|int }}"></div>
+        <button class="btn primary" type="submit">Hesapla</button>
+      </form>
+      <table class="data" style="margin-top:16px"><thead><tr><th>Sağlayıcı</th><th class="num">Aylık istek</th><th class="num">Dahil</th><th class="num">Birim</th><th class="num">Sabit</th><th class="num">Maliyet</th></tr></thead><tbody>
+        {% for r in econ.rows %}<tr><td>{{ r.label }}</td><td class="num">{{ r.requests|num }}</td><td class="num">{{ r.included|num }}</td><td class="num">€{{ r.unit_cost|num(4) }}</td><td class="num">{{ r.monthly_fee|eur }}</td><td class="num cell-strong">{{ r.cost|eur(2) }}</td></tr>{% endfor %}
+        <tr><td><b>Toplam</b></td><td colspan="4"></td><td class="num cell-strong">{{ econ.total|eur(2) }}</td></tr>
+      </tbody></table>
+      <h3 style="margin:22px 0 10px">Paket marjları</h3>
+      <table class="data"><thead><tr><th>Paket</th><th class="num">Fiyat</th><th class="num">Abone başına maliyet</th><th class="num">Brüt marj</th><th class="num">Marj %</th></tr></thead><tbody>
+        {% for p in econ.plans %}<tr><td>{{ p.name }}</td><td class="num">{{ p.price|eur }}</td><td class="num">{{ p.cost_per_sub|eur(2) }}</td><td class="num {{ 'delta-down' if p.margin < 0 }}">{{ p.margin|eur(2) }}</td><td class="num">{% if p.margin_pct is not none %}<span class="badge {{ 'good' if p.margin_pct >= 60 else 'warn' if p.margin_pct >= 20 else 'bad' }}">{{ p.margin_pct|pct(0) }}</span>{% endif %}</td></tr>{% endfor %}
+      </tbody></table>
+    </div>
+  </div>
+  <div class="stack">
+    <div class="panel"><div class="panel-head"><div><h2>API anahtarları</h2><p>.env dosyasından okunur</p></div></div>
+      <div class="panel-body" style="padding-top:4px"><ul class="list">{% for k, ok in keys.items() %}<li><span style="flex:1">{{ k }}</span>{% if ok %}<span class="badge good">{{ ui.icon('check') }}Tanımlı</span>{% elif is_demo %}<span class="badge warn">Demo veri</span>{% else %}<span class="badge bad">Eksik</span>{% endif %}</li>{% endfor %}</ul></div></div>
+    <div class="panel"><div class="panel-head"><div><h2>Ölçülen istekler</h2><p>{{ usage.start|dt }} sonrası, sağlayıcı bazında</p></div></div>
+      <div class="panel-body">{% set provs = usage.by_provider.keys()|list %}{% set vals = usage.by_provider.values()|list %}
+        {{ ui.chart("bar", {"labels": provs, "unit": "score", "horizontal": true, "series": [{"label": "İstek", "data": vals, "color": "series-1"}]}, "usage-bar", "short", "Ölçülen istekler") }}</div></div>
+  </div>
+</div>
+
+<div class="panel" style="margin-top:18px"><div class="panel-head"><div><h2>Sağlayıcı birim fiyatları</h2><p>Varsayılanlar yer tutucudur; sağlayıcıların güncel fiyat sayfalarına göre güncelleyin.</p></div></div>
+  <div class="panel-body flush"><div class="table-wrap"><table class="data">
+    <thead><tr><th>Sağlayıcı</th><th>Birim (€)</th><th>Aylık sabit (€)</th><th>Dahil istek</th><th>Not</th><th>Aktif</th><th></th></tr></thead>
+    <tbody>{% for p in providers %}{% set fid = "pc-" ~ p.provider %}<tr>
+      <td><b>{{ p.label }}</b></td><td><input form="{{ fid }}" class="input-sm" name="unit_cost_eur" value="{{ p.unit_cost_eur|float }}" style="width:90px!important" aria-label="Birim"></td>
+      <td><input form="{{ fid }}" class="input-sm" name="monthly_fee_eur" value="{{ p.monthly_fee_eur|float }}" style="width:80px!important" aria-label="Sabit"></td>
+      <td><input form="{{ fid }}" class="input-sm" name="included_requests" value="{{ p.included_requests }}" style="width:90px!important" aria-label="Dahil"></td>
+      <td><input form="{{ fid }}" class="input-sm" name="notes" value="{{ p.notes or '' }}" style="width:260px!important" aria-label="Not"></td>
+      <td><input form="{{ fid }}" type="checkbox" name="enabled" value="1" {{ 'checked' if p.enabled }} aria-label="Aktif"></td>
+      <td><form id="{{ fid }}" method="post" action="/admin/api-maliyet/{{ p.provider }}">{{ ui.csrf() }}<button class="btn sm" type="submit">Kaydet</button></form></td></tr>{% endfor %}</tbody>
+  </table></div></div></div>
+{% endblock %}

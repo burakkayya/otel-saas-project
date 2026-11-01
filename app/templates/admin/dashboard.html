@@ -1,0 +1,55 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Yönetim özeti{% endblock %}
+{% block page_title %}Özet{% endblock %}
+{% block crumbs %}<div class="crumbs">Son fiyat taraması: {{ ov.last_snapshot|dt('datetime') if ov.last_snapshot else 'henüz yok' }}{% if ov.last_snapshot %} ({{ ov.last_snapshot|ago }}){% endif %}</div>{% endblock %}
+{% block top_actions %}<a class="btn" href="/admin/veri-hatti">{{ ui.icon('flow') }}Veri hattı</a>{% endblock %}
+{% block content %}
+{% if ov.failed_24h %}<div class="alert error" style="margin-bottom:16px">{{ ui.icon('alert') }}<span>Son 24 saatte {{ ov.failed_24h }} iş başarısız oldu. <a href="/admin/veri-hatti">Ayrıntılar</a></span></div>{% endif %}
+{% if ov.low_conf %}<div class="alert warning" style="margin-bottom:16px">{{ ui.icon('shuffle') }}<span>{{ ov.low_conf }} oda eşlemesi inceleme bekliyor. <a href="/admin/oda-eslemeleri">Kuyruğa git</a></span></div>{% endif %}
+<div class="grid g-4">
+  {{ ui.kpi("Aylık yinelenen gelir (MRR)", ov.mrr|eur, "coins", "Yıllık " ~ (ov.arr|eur), ov.mrr_series|map(attribute='value')|list, "series-1") }}
+  {{ ui.kpi("Aktif abone", ov.active, "repeat", ov.trial ~ " deneme, " ~ ov.canceled ~ " iptal", None, "series-1", "good") }}
+  {{ ui.kpi("Abone başına gelir", ov.arpa|eur, "card", "Aktif aboneler", None, "series-1", "hot") }}
+  {{ ui.kpi("İzlenen tesis", ov.hotels|num, "building", (ov.by_province.items()|map('join', ': ')|join(', ')), ov.snap_series|map(attribute='count')|list, "series-3", "aqua") }}
+</div>
+
+<div class="panel" style="margin-top:18px"><div class="panel-body">
+  <div class="row between" style="margin-bottom:10px"><b>Veri hattı sağlığı, son 14 gün</b>
+    <div class="legend small" style="margin:0"><span><i style="background:color-mix(in srgb,var(--good) 70%,transparent);height:10px"></i>Başarılı</span><span><i style="background:var(--warn);height:10px"></i>Kısmi hata</span><span><i style="background:var(--bad);height:10px"></i>Başarısız</span><span><i style="background:var(--surface-3);height:10px"></i>Çalışmadı</span></div></div>
+  <div class="health-strip">{% for h in ov.health %}<span class="{{ h.kind }}" title="{{ h.day|dt('day') }}: {{ h.statuses|join(', ') or 'iş yok' }}"></span>{% endfor %}</div>
+  <div class="row between small muted" style="margin-top:6px"><span>{{ ov.health[0].day|dt }}</span><span>Bugün</span></div>
+</div></div>
+
+<div class="grid g-2" style="margin-top:18px">
+  <div class="panel"><div class="panel-head"><div><h2>MRR, son 6 ay</h2><p>Ay sonundaki aktif ücretli abonelikler</p></div></div>
+    <div class="panel-body">{{ ui.chart("bar", {"labels": ov.mrr_series|map(attribute='label')|list, "unit": "eur", "categoryLabels": true, "series": [{"label": "MRR", "data": ov.mrr_series|map(attribute='value')|list, "color": "series-1"}]}, "mrr-bar", "short", "MRR") }}</div></div>
+  <div class="panel"><div class="panel-head"><div><h2>Günlük fiyat gözlemi</h2><p>Son 14 gün, veri hattının ürettiği kayıt sayısı</p></div></div>
+    <div class="panel-body">{{ ui.chart("bar", {"labels": ov.snap_series|map(attribute='day')|list, "unit": "score", "series": [{"label": "Gözlem", "data": ov.snap_series|map(attribute='count')|list, "color": "series-3"}]}, "snap-bar", "short", "Günlük gözlem") }}</div></div>
+</div>
+<div class="grid g-main-side" style="margin-top:18px">
+  <div class="panel"><div class="panel-head"><div><h2>Aboneler</h2><p>Uyum oranı ve son backtest özeti</p></div><div class="actions"><a class="btn sm" href="/admin/aboneler">Tümü</a></div></div>
+    <div class="panel-body flush"><div class="table-wrap"><table class="data">
+      <thead><tr><th>Otel</th><th>Paket</th><th class="num">Uyum (30 gün)</th><th class="num">Backtest MAPE</th><th class="num">Kıyasa göre</th><th></th></tr></thead>
+      <tbody>{% for s in subs %}{% set bt = s.backtest %}
+        <tr><td><div class="hotel-cell">{{ ui.avatar(s.hotel.name, 'sm') }}<div><a href="/admin/oteller/{{ s.hotel.id }}">{{ s.hotel.name }}</a><div class="small muted">{{ s.hotel.district }}, {{ s.hotel.province }}</div></div></div></td>
+          <td>{{ s.hotel.active_subscription.plan.name if s.hotel.active_subscription else '—' }}</td>
+          <td class="num">{{ s.uptake|pct(0) if s.uptake is not none else '—' }}</td>
+          <td class="num">{{ bt.mape_suggestion|pct(1) if bt else '—' }}</td>
+          <td class="num">{% if bt and bt.improvement_vs_naive_pct is defined %}<span class="{{ 'delta-up' if bt.improvement_vs_naive_pct > 0 else 'delta-down' }}">{{ bt.improvement_vs_naive_pct|num(1) }} puan</span>{% else %}—{% endif %}</td>
+          <td class="num"><form method="post" action="/admin/oteller/{{ s.hotel.id }}/panel" class="inline">{{ ui.csrf() }}<button class="btn sm ghost" type="submit" title="Otel panelini görüntüle">{{ ui.icon('eye') }}</button></form></td></tr>
+      {% else %}<tr><td colspan="6" class="muted">Henüz abone yok.</td></tr>{% endfor %}</tbody></table></div></div></div>
+  <div class="stack">
+    <div class="panel"><div class="panel-head"><div><h2>Paket dağılımı</h2></div></div>
+      <div class="panel-body">{% set total = ov.by_plan.values()|sum %}
+        {% for name, n in ov.by_plan.items() %}{{ ui.meter(name, n, total or 1, n ~ "") }}{% else %}<p class="muted small">Veri yok.</p>{% endfor %}</div></div>
+    <div class="panel"><div class="panel-head"><div><h2>API istekleri (30 gün)</h2></div><div class="actions"><a class="btn sm ghost" href="/admin/api-maliyet">Maliyet</a></div></div>
+      <div class="panel-body">{% set mx = (ov.usage.values()|max) if ov.usage else 1 %}
+        {% for p, n in ov.usage.items()|sort(attribute='1', reverse=true) %}{{ ui.meter(p, n, mx, n|num) }}{% else %}<p class="muted small">Kayıt yok.</p>{% endfor %}</div></div>
+    <div class="panel"><div class="panel-head"><div><h2>Son işler</h2></div></div>
+      <div class="panel-body" style="padding-top:4px"><ul class="list">{% for r in ov.last_runs[:6] %}
+        <li><div style="flex:1"><div>{{ r.job_name }}</div><div class="when">{{ r.started_at|ago }}, {{ r.records|num }} kayıt</div></div>{{ ui.status_badge(r.status) }}</li>
+      {% endfor %}</ul></div></div>
+    <div class="panel soft"><div class="panel-body small ink-2"><b>Compset isabeti:</b> {{ accuracy.rate|pct(0) if accuracy.rate is not none else '—' }} ({{ accuracy.confirmed }}/{{ accuracy.rated }} geri bildirim onaylı)</div></div>
+  </div>
+</div>
+{% endblock %}

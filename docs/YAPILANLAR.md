@@ -1,0 +1,132 @@
+# Yapılanlar
+
+Tarih: 1 Kasım 2026 · Kaynak: `otel-fiyatlandirma-proje-dokumani.md` (v1.0)
+
+Bu belge, proje dokümanındaki MVP kapsamının nasıl hayata geçirildiğini ve dokümana göre bilinçli olarak
+yapılan farklılıkları listeler. Açık kalan konular için: [`ACIK_KONULAR.md`](ACIK_KONULAR.md).
+
+## 1. Teknoloji yığını (doküman 4.1)
+
+| Katman | Dokümandaki öneri | Uygulanan |
+|---|---|---|
+| Dil | Python 3.12 | Python 3.12 (Docker); 3.13 ile de test edildi |
+| Web/API | FastAPI | FastAPI + Jinja şablonları (ayrı frontend yok) |
+| Veritabanı | PostgreSQL | PostgreSQL 16 (Docker). Geliştirme/test için SQLite da desteklenir |
+| Veri işleme | pandas | **Kullanılmadı.** Ortalama/yüzdelik hesapları standart kütüphaneyle yapıldı; bağımlılık ve imaj boyutu küçüldü. Gelişmiş modellerde eklenebilir |
+| Zamanlama | APScheduler veya cron | APScheduler, Docker'da ayrı `worker` servisi |
+| Oda eşleme | Kural + LLM | Kural sözlüğü (TR/EN) + yalnızca belirsiz kayıtlar için LLM (anahtar varsa) |
+| Arayüz | Basit şablonlar | Kendi tasarım sistemi, açık/koyu tema, mobil uyum, Chart.js grafikleri |
+
+## 2. Veri modeli (doküman 7)
+
+Dokümandaki 8 tablonun tamamı aynı alanlarla oluşturuldu: `hotels`, `room_types`, `rate_snapshots`,
+`competitor_sets`, `price_suggestions`, `applied_observations`, `inventory_events`, `roi_estimates`.
+Dokümana eklenen alanlar: `hotels.address/hotel_type/place_id/is_active`, `room_types.reviewed`,
+`competitor_sets.distance_km/components/feedback`, `price_suggestions.user_action`, `roi_estimates.details`.
+
+Uygulamanın çalışması için eklenen tablolar: `users`, `plans`, `subscriptions`, `invoices`, `hotel_settings`,
+`notifications`, `compset_feedback` (compset isabeti), `demand_signals`, `events`, `fx_rates`, `job_runs`,
+`api_usage`, `provider_costs`, `app_settings`, `compliance_items`, `audit_logs`.
+
+## 3. Algoritmalar (doküman 5)
+
+- **Compset (5.1):** puan = %40 mesafe + %25 yıldız + %15 oda tipi benzerliği + %20 fiyat bandı. 5 rakip;
+  izole otelde yarıçap 5 → 12 → 30 → 80 km genişler. Elle eklenen rakipler korunur (`is_manual`), otelin
+  "rakibimiz değil" dediği oteller bir daha önerilmez. Onay oranı "compset isabeti" olarak raporlanır.
+- **Oda tipi eşleme (5.2):** Türkçe karakter normalizasyonlu kural sözlüğü; belirsiz adlar için LLM;
+  `mapped_by` + `confidence` saklanır; güveni 0,75 altı kayıtlar yönetim inceleme kuyruğuna düşer;
+  kıyaslama yalnızca aynı kategori içinde yapılır.
+- **Mevsim katsayısı (5.3):** gözlenen aylık ortalama / genel ortalama; veri az olan aylarda bölgesel ön bilgi
+  (Bodrum yaz yoğun, Antalya uzun sezon, Kapadokya dönemsel) ile harmanlanır.
+- **Fiyat önerisi (5.4):** rakip medyanı ve dağılımı, kalan oda sinyali, talep skoru, mevsim katsayısı; taban ve
+  tavan zorunlu; "maksimum kâr" P90 tabanlı ödeme istekliliği tahmini olarak uygulanır ve panelde dönüşüm
+  verisi olmadığı açıkça yazılır; her öneri `model_version` ile kaydedilir.
+  **Dokümana ek:** "konumlama endeksi" (otelin tarihsel fiyatı / rakip medyanı). Bu olmadan bir pansiyona
+  resort fiyatı önerilebiliyordu (ilk denemede +%117 öneri görüldü).
+- **Talep skoru:** %45 uçuş arama endeksi + %35 etkinlik etkisi + %20 tatil takvimi (resmi tatiller, bayramlar,
+  köprü günleri, okul tatili, hafta sonu).
+
+## 4. ROI ve başarı ölçümü (doküman 6, revize)
+
+- Kalan oda düşüşü hiçbir yerde **satış** olarak sayılmıyor; arayüzde "satış ilerlemesi vekili" olarak ve
+  uyarıyla gösteriliyor.
+- **Öneriye uyum (6.1a):** gözlenen fiyat, gözlemden en az 1 saat önce üretilmiş son önerinin ±%tolerans
+  bandında mı? `applied_observations` tablosu. Gelir iddiası değil, davranış ölçüsü olarak etiketli.
+- **Kontrol grubu (6.1b):** fark-içinde-fark; abonelik öncesi 8 hafta ve sonrası; aynı ilde ±1 yıldız
+  abone olmayan oteller; standart hata ile anlamlılık testi; 10'dan az kontrol oteli veya anlamsız sonuçta
+  güven "düşük".
+- **Etiketleme (6.1c):** tüm `roi_estimates` kayıtları `is_estimate = TRUE`; arayüzde "tahmini etki"; "ek kâr"
+  veya "kurtarılan gelir" ifadesi hiçbir yerde yok (testle doğrulanıyor).
+- **Backtest (6.2):** as_of = konaklama − öncül gün; yalnızca o gün bilinen veriyle öneri; gerçekleşen
+  (konumlamaya göre ölçeklenmiş) piyasa medyanıyla MAPE, "bugünkü medyanı kopyala" kıyas yöntemi, yön isabeti,
+  bant isabeti, talep–satış korelasyonu. Demo veride öneri bazı otellerde kıyası geçemiyor; bu dürüstçe
+  gösteriliyor ve yönetim panelindeki deneme backtest ile ağırlıklar ayarlanabiliyor.
+
+## 5. Ekranlar
+
+**Herkese açık (8):** tanıtım, paketler, giriş, kayıt (2 adım: bilgiler → OTA kaydıyla eşleştirme), parola
+sıfırlama talebi, KVKK, gizlilik, kullanım koşulları, hata sayfaları.
+
+**Otel paneli (16):** panel, ilk kurulum, fiyat önerileri (liste/takvim), öneri ayrıntısı (şelale grafiği),
+pazar fiyatları (fiyat/kalan oda ızgarası), rakip seti (harita, ekle/çıkar/onayla), talep ve sezon, oda tipleri,
+uyum ve etki, backtest, raporlar (3 CSV), bildirimler, fiyat kuralları, abonelik, hesabım.
+
+**Yönetim paneli (16):** özet, oteller, otel ayrıntısı (+ otel paneline yönetici olarak bakma), abonelikler,
+paketler, faturalar, kullanıcılar (geçici parola), veri hattı, API ve maliyet (birim ekonomisi hesaplayıcı),
+oda eşleme kuyruğu (toplu onay), öneri modeli (deneme backtest), etki ölçümü, talep ve etkinlikler, yasal
+kontrol listesi (kanıt notu zorunlu), denetim kaydı, sistem ayarları (tarama kapsamı, ufuk).
+
+**JSON API:** `/api/v1/me`, `/suggestions`, `/market`, `/demand`, `/admin/overview`; belgeler `/api/docs`.
+
+## 5b. Görsel tasarım katmanı (2. tur)
+
+- **Rakip radarı:** oteliniz merkezde; rakipler gerçek kerteriz ve mesafelerine göre (karekök ölçek) yerleşir,
+  nokta büyüklüğü benzerlik puanı, sarı noktalar elle eklenen rakipler. Panelde, rakip setinde, tanıtım ve giriş
+  sayfalarında kullanılır.
+- **Fiyat bandı göstergesi:** taban–tavan bandı, öneri, mevcut fiyat ve rakip medyanı tek çizgide; panel
+  kahraman alanında, haftalık tabloda, öneri listesinde ve öneri ayrıntısında.
+- **KPI kutuları:** renkli ikon çipleri ve küçük eğilim grafikleri (sparkline).
+- **Halka göstergeler:** öneriye uyum ve compset isabeti.
+- **Isı haritaları:** pazar ızgarasında rakip fiyatının sizinkine göre farkı (ıraksak mavi/kırmızı), talep
+  sayfasında 3 aylık talep takvimi (sıralı mavi, etkinlik günleri işaretli).
+- **Grafikler:** öneri çizgisinin altında renk geçişi, fareyle dikey kılavuz çizgi, talep grafiğinde "Bugün"
+  işareti.
+- **Diğer:** otel adlarından otomatik renkli avatarlar, kayan bildirim kutuları (kendiliğinden kapanır),
+  etkin menü vurgusu, tek seferlik sayfa açılış animasyonu ve öneri fiyatı sayacı (hareket azaltma tercihine
+  uyar), yönetim panelinde 14 günlük veri hattı sağlık şeridi, tanıtım sayfasında ürün önizlemesi.
+- Açık/koyu tema ve 390 px mobil genişlikte tüm ekranlar ekran görüntüsüyle kontrol edildi.
+
+## 6. Veri sağlayıcıları
+
+- **Demo sağlayıcı:** 72 kurgusal otel (Muğla 34, Antalya 38), deterministik fiyat/kalan oda/talep/kur üretimi,
+  ara sıra oda kapatma (stop-sell) simülasyonu. Arayüzde her sayfada "Demo veri modu" uyarısı var.
+- **Canlı istemciler:** RapidAPI (Makcorps/Caviar), Amadeus, PredictHQ, Google Places (New), Fixer, ECB.
+  Yeniden deneme, hata kaydı, istek sayacı. Canlı modda eksik anahtar için sahte veriye düşülmez.
+- **İstek sayacı:** demo modda bile "gerçek API kullanılsaydı yapılacak istek" sayılır; birim ekonomisi bu
+  sayılarla ölçülür.
+
+## 7. Güvenlik
+
+PBKDF2-SHA256 parola özeti, oturum çerezi (HttpOnly, SameSite=Lax, üretimde Secure), tüm POST'larda CSRF,
+giriş denemesi sınırı (5 deneme / 5 dk), açık yönlendirme koruması, rol ayrımı (otel / yönetici), başka otelin
+verisine erişim engeli, güvenlik başlıkları, denetim kaydı, parola sıfırlamada hesap varlığı sızdırmama.
+
+## 8. Testler (hepsi geçiyor)
+
+| Takım | Sayı | Kapsam |
+|---|---|---|
+| Birim | 60 | oda eşleme, fiyat motoru, takvim, sezon, güvenlik, biçimlendirme, maliyet, demo ve canlı API istemcileri (sahte HTTP ile) |
+| Entegrasyon | 118 | tüm servisler, tüm sayfalar (otel 19, yönetim 26), tüm form işlemleri, yetki, CSRF, kayıt akışı, CSV, JSON API, CLI, veri hattı işleri |
+| Tarayıcı (E2E) | 7 | gerçek Chromium: tüm menü sayfaları, grafiklerin çizildiği, JS hatası olmadığı, tema, mobil menü, kayıt, yönetim akışları |
+
+- SQLite **ve PostgreSQL 16** üzerinde 178/178 geçti; kod kapsamı ~%94.
+- Tam ölçekli demo (72 otel, ~187.000 gözlem) PostgreSQL'de ~70 sn'de kuruluyor; günlük veri hattı ~4 sn;
+  sayfalar 0,1 sn altında, backtest ekranı ~2,5 sn.
+- Mobil (390 px) genişlikte tüm otel ve yönetim sayfalarında yatay taşma olmadığı otomatik kontrol edildi.
+
+## 9. Geliştirme ortamı
+
+- `docker-compose.yml`: `db` (PostgreSQL 16), `web` (ilk açılışta demo veri), `worker` (zamanlayıcı),
+  isteğe bağlı `adminer`. `scripts/start.sh` yerel PostgreSQL'e karşı denendi.
+- `.vscode/`: hata ayıklama yapılandırmaları, görevler (Docker, testler, demo veri, lint), önerilen eklentiler.
+- `ruff` ile lint temiz.

@@ -1,0 +1,109 @@
+{% extends "partials/public_layout.html" %}
+{% block title %}Her sabah, her oda için fiyat önerisi{% endblock %}
+{% block content %}
+<section class="landing-hero">
+  <div>
+    <h1>Her sabah, her oda için gerekçesiyle bir fiyat.</h1>
+    <p class="lede">Rakiplerinizin fiyatını, kalan odalarını ve bölgedeki talebi her gün tarıyoruz. Size yalnızca tek bir şey kalıyor: önerilen fiyatı kendi sisteminize girmek.</p>
+    <div class="row">
+      <a class="btn primary lg" href="/kayit">14 gün ücretsiz dene</a>
+      <a class="btn lg" href="#nasil">Nasıl çalıştığını gör</a>
+    </div>
+    <p class="fine">PMS veya kanal yöneticisi bağlantısı yok. Sizden doluluk ya da satış verisi istemiyoruz. Şu an Muğla ve Antalya'daki {{ tracked|num }} tesisi izliyoruz.</p>
+  </div>
+  <aside class="rec-card" aria-label="Örnek öneri">
+    <div class="top"><span>Deluxe Deniz Manzaralı</span><span>Cumartesi, 14 Haziran</span></div>
+    <div class="big">€168<small> önerilen</small></div>
+    <p class="why">Rakip medyan fiyat bu hafta %12 arttı, talep skoru yüksek (71), rakiplerde kalan oda hızla azalıyor. Öneri mevcut fiyatınıza göre +%8.</p>
+    <div class="range">
+      <div><span>Taban</span><b>€139</b></div>
+      <div><span>Rakip medyanı</span><b>€161</b></div>
+      <div><span>Tavan</span><b>€192</b></div>
+    </div>
+    <svg class="spark" viewBox="0 0 400 90" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 60 C40 58 70 52 100 54 S160 44 200 40 S260 30 300 34 S360 22 400 18 L400 70 C360 72 330 76 300 74 S240 80 200 78 S140 80 100 80 S40 82 0 82 Z" fill="#1baf7a" opacity=".18"/>
+      <path d="M0 70 C40 68 70 66 100 66 S160 60 200 58 S260 52 300 54 S360 46 400 42" fill="none" stroke="#1baf7a" stroke-width="2"/>
+      <path d="M0 74 C40 74 70 72 100 70 S160 66 200 64 S260 62 300 62 S360 58 400 56" fill="none" stroke="#eb6834" stroke-width="2" stroke-dasharray="5 4"/>
+      <path d="M0 68 C40 66 70 62 100 62 S160 54 200 50 S260 42 300 46 S360 36 400 30" fill="none" stroke="#5fa4f0" stroke-width="2.6"/>
+    </svg>
+    <div class="legend" style="color:#9fb6c8;margin:8px 0 0">
+      <span><i style="background:#5fa4f0"></i>Öneri</span><span><i style="background:#eb6834"></i>Mevcut fiyat</span><span><i style="background:#1baf7a"></i>Rakip medyanı</span>
+    </div>
+  </aside>
+</section>
+
+<section style="padding:8px 0 56px">
+  <div class="stat-band">
+    <div><b>{{ tracked|num }}</b><span>tesis her gün izleniyor</span></div>
+    <div><b>5</b><span>rakiple, aynı oda kategorisinde kıyas</span></div>
+    <div><b>60 gün</b><span>ileriye dönük günlük öneri</span></div>
+    <div><b>0</b><span>sistem entegrasyonu veya manuel veri</span></div>
+  </div>
+  <div class="preview">
+    <div class="panel">
+      <div class="panel-head"><div><h2>Haftanın fiyat bantları</h2><p>Her gün için taban, tavan, öneri ve mevcut fiyatınız tek çizgide.</p></div></div>
+      <div class="panel-body">
+        {{ ui.range_legend() }}
+        <table class="data" style="margin-top:6px"><tbody>
+          {% for day, fl, ce, sg, ow, md, ch in [("Cuma", 118, 171, 152, 139, 147, 9), ("Cumartesi", 124, 182, 168, 155, 161, 8), ("Pazar", 105, 150, 121, 139, 128, -13), ("Pazartesi", 98, 141, 109, 112, 115, -3)] %}
+          <tr><td><b>{{ day }}</b></td><td class="num cell-strong">€{{ sg }}</td><td class="band-cell" style="width:55%">{{ ui.range_bar(fl, ce, sg, ow, md, true) }}</td><td class="num">{{ ui.change_badge(ch) }}</td></tr>
+          {% endfor %}
+        </tbody></table>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><div><h2>Rakip radarı</h2><p>Oteliniz merkezde; rakipleriniz yönlerine ve uzaklıklarına göre.</p></div></div>
+      <div class="panel-body">{{ ui.radar(radar, "Oteliniz") }}</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="nasil">
+  <h2>Kurulum beş dakika, sonrası her sabah tek bir ekran.</h2>
+  <p class="intro">Sistem tamamen halka açık fiyat ve envanter verisiyle çalışır. Otelinizin hiçbir iç sistemine dokunmayız.</p>
+  <div class="flow">
+    <div><span class="step-n">1. adım</span><b>Otelinizi tanıtın</b><p>Otel adı ve adresi yeterli. Konum, yıldız ve tesis tipini otomatik buluruz.</p></div>
+    <div><span class="step-n">2. adım</span><b>Rakiplerinizi onaylayın</b><p>Mesafe, yıldız, oda tipi ve fiyat bandına göre 5 rakip öneririz. Listeyi siz değiştirebilirsiniz.</p></div>
+    <div><span class="step-n">3. adım</span><b>Her gün tarıyoruz</b><p>Rakip fiyatları, kalan odalar, uçuş arama trendi, etkinlikler ve tatiller günlük güncellenir.</p></div>
+    <div><span class="step-n">4. adım</span><b>Öneriyi uygulayın</b><p>Her oda tipi ve tarih için önerilen fiyat, taban, tavan ve gerekçe. Fiyatı kendi sisteminize siz girersiniz.</p></div>
+  </div>
+</section>
+
+<section class="section" id="olcum">
+  <h2>Ne iddia ettiğimizi de, etmediğimizi de açıkça söylüyoruz.</h2>
+  <div class="honest">
+    <div>
+      <h3>Ölçtüklerimiz</h3>
+      <ul>
+        <li><b>Backtest:</b> geçmiş tarihlerde, o gün bilinen veriyle üretilen önerinin gerçekleşen piyasa fiyatına ne kadar yaklaştığı.</li>
+        <li><b>Öneriye uyum:</b> OTA'da gözlenen fiyatınızın önerinin tolerans bandına girdiği günlerin oranı.</li>
+        <li><b>Kontrol grubu:</b> aynı bölgedeki benzer, abone olmayan otellerle fark-içinde-fark karşılaştırması.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>İddia etmediklerimiz</h3>
+      <ul>
+        <li>Kalan oda düşüşünü satış saymıyoruz; oda kapatma ve başka kanal satışı aynı görüntüyü verir.</li>
+        <li>"Kazandırdığımız gelir" demiyoruz. Tüm etki rakamları <b>tahmini</b> olarak ve güven düzeyiyle gösterilir.</li>
+        <li>Ödeme istekliliğini ölçemiyoruz; üst sınırı rakip fiyat dağılımından tahmin ediyoruz ve bunu panelde yazıyoruz.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="paketler">
+  <h2>Pansiyondan resorta, tesisinize göre paket.</h2>
+  <div class="plans">
+    {% for p in plans %}
+    <div class="plan {{ 'featured' if loop.index == 2 }}">
+      <div class="p-name">{{ p.name }}</div>
+      <div class="p-target">{{ p.target }}</div>
+      <div class="p-price">€{{ p.monthly_price_eur|num }}<small> / ay</small></div>
+      <ul>{% for f in p.features or [] %}<li>{{ f }}</li>{% endfor %}</ul>
+      <a class="btn {{ 'primary' if loop.index == 2 }}" href="/kayit?paket={{ p.code }}">{{ p.name }} ile başla</a>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="muted small" style="margin-top:14px">Fiyatlara KDV dahil değildir. Paket fiyatları pilot dönem içindir.</p>
+</section>
+{% endblock %}

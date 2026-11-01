@@ -1,0 +1,60 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Uyum ve etki{% endblock %}
+{% block page_title %}Uyum ve etki{% endblock %}
+{% block crumbs %}<div class="crumbs">Sistemin ne kadar kullanıldığı ve tahmini etkisi. Hiçbir rakam kesin gelir iddiası değildir.</div>{% endblock %}
+{% block content %}
+<div class="grid g-4">
+  <div class="kpi good"><div class="row" style="gap:16px;flex-wrap:nowrap;align-items:center">
+    {{ ui.ring(uptake.rate, "uyum", 92, "series-3") }}
+    <div><div class="kpi-label">Öneriye uyum (90 gün)</div><div class="kpi-foot" style="margin-top:6px">Fiyatınızın önerinin ±%{{ tolerance|num(0) }} bandında olduğu gözlemler</div></div>
+  </div></div>
+  {{ ui.kpi("Değerlendirilen gözlem", uptake.total|num, "eye", uptake.within|num ~ " tanesi bant içinde", uptake.weekly|map(attribute='total')|list, "series-1") }}
+  {{ ui.kpi("Uyguladım işaretleri", (feedback.get('applied', 0))|num, "tag", (feedback.get('ignored', 0))|num ~ " öneri yok sayıldı", None, "series-1", "hot") }}
+  {{ ui.kpi("Kontrol grubu", (roi.control_group_size if roi else 0)|num ~ " otel", "users", "Bölge başına en az 10-15 gerekli", None, "series-1", "aqua") }}
+</div>
+
+<div class="grid g-2" style="margin-top:18px">
+  <div class="panel">
+    <div class="panel-head"><div><h2>Haftalık uyum oranı</h2><p>OTA'da gözlenen fiyatınızın tolerans bandına girme oranı</p></div></div>
+    <div class="panel-body">
+      {% if uptake.weekly %}
+      {{ ui.chart("bar", {"labels": uptake.weekly|map(attribute='week')|list, "unit": "pct", "hardMax": 100, "series": [{"label": "Uyum oranı", "data": uptake.weekly|map(attribute='rate')|list, "color": "series-1"}]}, "uptake-bar", "", "Haftalık uyum oranı") }}
+      {% else %}{{ ui.empty("Henüz uyum verisi yok", "Önerilerden sonra OTA'daki fiyatınız gözlendikçe burada görünür.") }}{% endif %}
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><div><h2>Tahmini etki: kontrol grubu</h2><p>Fark-içinde-fark: abonelik öncesi ve sonrası, benzer abone olmayan otellere göre</p></div>{% if roi %}{{ ui.conf_badge(roi.confidence) }}{% endif %}</div>
+    <div class="panel-body">
+      {% if roi and roi.details and roi.details.did %}{% set d = roi.details.did %}
+        <div class="legend"><span><i style="background:var(--series-1)"></i>Oteliniz</span><span><i class="dash" style="background:var(--series-3);color:var(--series-3)"></i>Kontrol grubu ortalaması</span></div>
+        {{ ui.chart("line", {"labels": roi.details.series|map(attribute='week')|list, "unit": "eur", "series": [
+          {"label": "Oteliniz (gelir/oda vekili)", "data": roi.details.series|map(attribute='subscriber')|list, "color": "series-1", "points": true},
+          {"label": "Kontrol grubu", "data": roi.details.series|map(attribute='control')|list, "color": "series-3", "dash": true}]}, "did-line", "short", "Gelir/oda vekili") }}
+        <table class="data" style="margin-top:12px"><thead><tr><th>Ölçüt</th><th class="num">Sizdeki değişim</th><th class="num">Kontrol değişimi</th><th class="num">Tahmini fark</th></tr></thead><tbody>
+          <tr><td>Ortalama fiyat (ADR vekili)</td><td class="num">{{ d.adr.subscriber_change|eur(1) }}</td><td class="num">{{ d.adr.control_change|eur(1) }}</td><td class="num cell-strong">{{ d.adr.did|eur(1) }}</td></tr>
+          <tr><td>Doluluk vekili</td><td class="num">{{ (d.occ.subscriber_change * 100)|pct(1, true) }}</td><td class="num">{{ (d.occ.control_change * 100)|pct(1, true) }}</td><td class="num cell-strong">{{ (d.occ.did * 100)|pct(1, true) }}</td></tr>
+          <tr><td>Gelir/oda vekili (RevPAR)</td><td class="num">{{ d.revpar.subscriber_change|eur(1) }}</td><td class="num">{{ d.revpar.control_change|eur(1) }}</td><td class="num cell-strong">{{ d.revpar.did|eur(1) }}</td></tr>
+        </tbody></table>
+        <p class="small ink-2" style="margin-top:12px">Dönem: {{ roi.details.pre[0]|dt }} – {{ roi.details.pre[1]|dt }} öncesi, {{ roi.period_start|dt }} – {{ roi.period_end|dt }} sonrası. Tahmini toplam fark {{ roi.estimated_revenue_delta|eur }} ({{ hotel.room_count or 20 }} oda × {{ roi.details.post_days }} gün varsayımıyla).
+          {% if not roi.details.significant %}<b>Fark istatistiksel olarak anlamlı değil</b>; kontrol grubundaki doğal oynaklık içinde kalıyor.{% endif %}</p>
+      {% else %}{{ ui.empty("Henüz tahmin yok", "Abonelik sonrası en az 7 günlük veri ve bölgede benzer kontrol otelleri gerekiyor.") }}{% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="panel" style="margin-top:18px">
+  <div class="panel-head"><div><h2>Son uyum gözlemleri</h2><p>OTA'da gözlenen fiyatınız ve o andaki öneri</p></div><div class="actions"><a class="btn sm" href="/panel/raporlar/uyum.csv">{{ ui.icon('download') }}CSV</a></div></div>
+  <div class="panel-body flush"><div class="table-wrap"><table class="data">
+    <thead><tr><th>Gözlem</th><th>Oda</th><th>Konaklama</th><th class="num">Gözlenen fiyat</th><th class="num">Öneri</th><th>Sonuç</th></tr></thead>
+    <tbody>{% for a, name in recent %}
+      <tr><td>{{ a.observed_at|dt('datetime') }}</td><td class="small">{{ name }}</td><td>{{ a.stay_date|dt('day') }}</td><td class="num">{{ a.observed_price|eur }}</td><td class="num">{{ sugg_prices.get(a.suggestion_id)|eur }}</td>
+        <td>{% if a.within_tolerance %}<span class="badge good">{{ ui.icon('check') }}Bant içinde</span>{% else %}<span class="badge">Bant dışında</span>{% endif %}</td></tr>
+    {% else %}<tr><td colspan="6" class="muted">Henüz gözlem yok.</td></tr>{% endfor %}</tbody></table></div></div>
+</div>
+
+<div class="panel soft" style="margin-top:18px"><div class="panel-body small ink-2">
+  <h3 style="margin-bottom:8px">Bu rakamları nasıl okumalı?</h3>
+  <p>Uyum oranı bir davranış ölçüsüdür: önerileri ne kadar uyguladığınızı gösterir, gelir etkisini göstermez. Fiyatınızın öneriyle eşleşmesi tesadüf de olabilir.</p>
+  <p style="margin:0">Etki tahmini, otelinizin fiyat ve doluluk vekilindeki değişimi aynı bölgedeki benzer otellerin değişimiyle karşılaştırır. Doluluk vekili OTA'daki kalan oda değişiminden türetildiği için kesin doluluk değildir. Kendi satış verinizi paylaşmayı seçerseniz ileride kesin ölçüm yapılabilir.</p>
+</div></div>
+{% endblock %}

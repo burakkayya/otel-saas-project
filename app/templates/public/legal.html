@@ -1,0 +1,23 @@
+{% extends "partials/public_layout.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<article class="prose" style="padding:40px 0">
+  <h1>{{ title }}</h1>
+  <div class="alert warning" style="margin:16px 0 24px">{{ ui.icon('alert') }}<span>Bu metin bir taslaktır ve yayına alınmadan önce bir hukukçu tarafından gözden geçirilmelidir.</span></div>
+  {% if slug == 'kvkk' %}
+    <h2>Veri sorumlusu</h2><p>{{ settings.app_name }} hizmeti kapsamında, otel yetkilisinin ad soyad ve e-posta bilgileri hesabın oluşturulması ve hizmetin sunulması amacıyla işlenir.</p>
+    <h2>İşlenen veriler</h2><p>Yetkili ad soyad, e-posta adresi, oturum ve işlem kayıtları (IP adresi, zaman). Otelin iç sistemlerinden (PMS, kanal yöneticisi) hiçbir veri alınmaz.</p>
+    <h2>Amaç ve hukuki sebep</h2><p>Sözleşmenin kurulması ve ifası, hukuki yükümlülüklerin yerine getirilmesi ve meşru menfaat kapsamında hizmet güvenliğinin sağlanması.</p>
+    <h2>Haklarınız</h2><p>KVKK madde 11 kapsamındaki haklarınız için hesap ayarlarındaki iletişim kanalından bize ulaşabilirsiniz.</p>
+  {% elif slug == 'gizlilik' %}
+    <h2>Topladığımız veriler</h2><p>Hesap bilgileri ve hizmet kullanım kayıtları. Rakip analizi için kullanılan fiyat verileri halka açık kaynaklardan ve lisanslı API sağlayıcılarından alınır.</p>
+    <h2>Çerezler</h2><p>Yalnızca oturum açık kalsın diye zorunlu bir oturum çerezi kullanılır. Reklam veya izleme çerezi kullanılmaz.</p>
+    <h2>Saklama süresi</h2><p>Abonelik iptalinden sonra hesap verileri 30 gün saklanır, ardından silinir veya anonimleştirilir.</p>
+  {% else %}
+    <h2>Hizmetin kapsamı</h2><p>{{ settings.app_name }}, fiyat önerisi sunan bir karar destek aracıdır. Fiyatların uygulanması ve sonuçları tamamen tesisin sorumluluğundadır.</p>
+    <h2>Etki rakamları</h2><p>Panelde gösterilen tüm gelir ve etki rakamları tahminidir; garanti edilmiş bir sonuç değildir.</p>
+    <h2>Abonelik ve iptal</h2><p>Abonelik aylık yenilenir ve panelden istenildiği zaman iptal edilebilir.</p>
+  {% endif %}
+  <p class="muted small">Diğer metinler: {% for k, v in legal_pages.items() if k != slug %}<a href="/yasal/{{ k }}">{{ v }}</a>{{ ", " if not loop.last }}{% endfor %}</p>
+</article>
+{% endblock %}

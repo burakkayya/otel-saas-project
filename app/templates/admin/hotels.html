@@ -1,0 +1,22 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Oteller{% endblock %}
+{% block page_title %}Oteller{% endblock %}
+{% block crumbs %}<div class="crumbs">Pilot bölgelerde izlenen tüm tesisler. Abone olmayanlar rakip seti ve kontrol grubu için kullanılır.</div>{% endblock %}
+{% block content %}
+<form class="filters" method="get" style="margin-bottom:16px">
+  <div class="field" style="min-width:240px"><label for="q">Ara</label><input id="q" type="search" name="q" value="{{ q }}" placeholder="Otel adı veya ilçe"></div>
+  <div class="field"><label for="il">İl</label><select id="il" name="il" data-autosubmit><option value="">Tümü</option>{% for p in provinces %}<option {{ 'selected' if il == p }}>{{ p }}</option>{% endfor %}</select></div>
+  <div class="field"><label for="abone">Abone</label><select id="abone" name="abone" data-autosubmit><option value="">Tümü</option><option value="evet" {{ 'selected' if abone == 'evet' }}>Abone</option><option value="hayir" {{ 'selected' if abone == 'hayir' }}>Abone değil</option></select></div>
+  <button class="btn" type="submit">Filtrele</button>
+</form>
+<div class="panel"><div class="panel-body flush"><div class="table-wrap"><table class="data">
+  <thead><tr><th>Otel</th><th>Bölge</th><th>Tip</th><th class="num">Yıldız</th><th class="num">Oda</th><th class="num">Oda tipi</th><th>Durum</th><th></th></tr></thead>
+  <tbody>{% for h in rows %}
+    <tr><td><a href="/admin/oteller/{{ h.id }}">{{ h.name }}</a><div class="small muted">{{ h.source_id or 'OTA kaydı yok' }}</div></td><td>{{ h.district }}, {{ h.province }}</td>
+      <td>{{ {'pension':'Pansiyon','boutique':'Butik','midscale':'Orta ölçek','resort':'Resort','chain':'Zincir'}.get(h.hotel_type, '—') }}</td>
+      <td class="num">{{ h.star_rating or '—' }}</td><td class="num">{{ h.room_count or '—' }}</td><td class="num">{{ rt_counts.get(h.id, 0) }}</td>
+      <td>{% if h.is_subscriber %}<span class="badge good"><span class="dot"></span>Abone</span>{% elif not h.is_active %}<span class="badge">Pasif</span>{% else %}<span class="badge">İzleniyor</span>{% endif %}</td>
+      <td class="num"><a class="btn sm ghost" href="/admin/oteller/{{ h.id }}">Ayrıntı</a></td></tr>
+  {% else %}<tr><td colspan="8">{{ ui.empty("Otel bulunamadı", "Filtreleri değiştirin.") }}</td></tr>{% endfor %}</tbody></table></div>
+  {{ ui.pager(pg, "?q=" ~ q ~ "&il=" ~ il ~ "&abone=" ~ abone) }}</div></div>
+{% endblock %}

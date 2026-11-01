@@ -1,0 +1,27 @@
+{% extends "partials/auth_layout.html" %}
+{% block title %}Otelinizi seçin{% endblock %}
+{% block card_class %}wide{% endblock %}
+{% block side_quote %}Otelinizi OTA kayıtlarıyla eşleştirelim.{% endblock %}
+{% block side_sub %}Doğru kaydı seçerseniz kendi fiyatlarınızı da izleyebilir, önerileri mevcut fiyatınızla karşılaştırabiliriz.{% endblock %}
+{% block content %}
+<h1>Bu otel siz misiniz?</h1>
+<p class="sub">Adım 2 / 2: “{{ form.hotel_name }}” için {{ form.province }} bölgesinde bulduğumuz kayıtlar</p>
+{{ ui.errors_box(errors) }}
+<form class="form" method="post" action="/kayit/tamamla" style="margin-top:16px">
+  {{ ui.csrf() }}
+  <div class="choice">
+    {% for c in candidates %}
+    <label><input type="radio" name="hotel_choice" value="{{ c.hotel.id }}" {{ 'checked' if loop.first and c.score >= 0.5 }}>
+      <div><strong>{{ c.hotel.name }}</strong><div class="small muted">{{ c.hotel.district }}, {{ c.hotel.province }}{% if c.hotel.star_rating %}, {{ c.hotel.star_rating }} yıldız{% endif %}</div></div>
+      <span class="score badge {{ 'good' if c.score >= 0.7 else 'info' if c.score >= 0.5 else '' }}">%{{ (c.score * 100)|round|int if c.score <= 1 else 100 }} eşleşme</span></label>
+    {% endfor %}
+    <label><input type="radio" name="hotel_choice" value="new" {{ 'checked' if not candidates or candidates[0].score < 0.5 }}>
+      <div><strong>Listede yok, yeni kayıt oluştur</strong><div class="small muted">Konumunuzu adresinizden bulur, önerileri rakip dağılımına göre üretiriz.</div></div></label>
+  </div>
+  <div class="two">
+    <div class="field"><label for="password">Parola</label><input id="password" type="password" name="password" required minlength="8" autocomplete="new-password"><div class="hint">En az 8 karakter, harf ve rakam.</div></div>
+    <div class="field"><label for="password2">Parola (tekrar)</label><input id="password2" type="password" name="password2" required autocomplete="new-password"></div>
+  </div>
+  <div class="row"><a class="btn" href="/kayit">Geri dön</a><button class="btn primary lg" type="submit">Hesabımı oluştur</button></div>
+</form>
+{% endblock %}

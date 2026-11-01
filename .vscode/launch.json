@@ -1,0 +1,39 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "OtelRadar: sunucuyu çalıştır (SQLite, demo)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["app.main:app", "--reload", "--port", "8000"],
+      "env": { "DATABASE_URL": "sqlite:///./data/app.db", "DATA_PROVIDER": "demo" },
+      "jinja": true,
+      "justMyCode": true
+    },
+    {
+      "name": "OtelRadar: sunucuyu çalıştır (.env / PostgreSQL)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["app.main:app", "--reload", "--port", "8000"],
+      "envFile": "${workspaceFolder}/.env",
+      "jinja": true
+    },
+    {
+      "name": "Demo veriyi kur (SQLite)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "app.cli",
+      "args": ["seed"],
+      "env": { "DATABASE_URL": "sqlite:///./data/app.db" }
+    },
+    {
+      "name": "Testler: tümü (birim + entegrasyon)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["tests/unit", "tests/integration", "-q"]
+    }
+  ]
+}

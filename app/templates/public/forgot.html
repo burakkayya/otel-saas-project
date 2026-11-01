@@ -1,0 +1,17 @@
+{% extends "partials/auth_layout.html" %}
+{% block title %}Parola sıfırlama{% endblock %}
+{% block content %}
+<h1>Parolanızı mı unuttunuz?</h1>
+{% if sent %}
+<div class="alert info" style="margin:16px 0">{{ ui.icon('info') }}<span>Bu e-posta ile kayıtlı bir hesap varsa sıfırlama talebiniz alındı. E-posta gönderimi pilot dönemde destek ekibi üzerinden yapılmaktadır.</span></div>
+<a class="btn" href="/giris">Girişe dön</a>
+{% else %}
+<p class="sub">E-posta adresinizi girin, sıfırlama talebinizi iletelim.</p>
+<form class="form" method="post" action="/sifremi-unuttum">
+  {{ ui.csrf() }}
+  <div class="field"><label for="email">E-posta</label><input id="email" type="email" name="email" required></div>
+  <button class="btn primary lg" type="submit">Sıfırlama talebi gönder</button>
+  <a class="small" href="/giris">Girişe dön</a>
+</form>
+{% endif %}
+{% endblock %}

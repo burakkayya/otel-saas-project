@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% import "partials/ui.html" as ui with context %}
+{% block body %}
+{% if admin %}
+  {% set nav = [
+    ("Genel", [("dashboard", "/admin", "home", "Özet"), ("hotels", "/admin/oteller", "building", "Oteller"),
+               ("subscriptions", "/admin/aboneler", "repeat", "Abonelikler"), ("plans", "/admin/paketler", "package", "Paketler"),
+               ("invoices", "/admin/faturalar", "receipt", "Faturalar"), ("users", "/admin/kullanicilar", "users", "Kullanıcılar")]),
+    ("Veri ve model", [("pipeline", "/admin/veri-hatti", "flow", "Veri hattı"), ("costs", "/admin/api-maliyet", "coins", "API ve maliyet"),
+               ("mappings", "/admin/oda-eslemeleri", "shuffle", "Oda eşlemeleri"), ("model", "/admin/model", "cpu", "Öneri modeli"),
+               ("impact", "/admin/etki", "target", "Etki ölçümü"), ("demand", "/admin/talep", "calendar", "Talep ve etkinlikler")]),
+    ("Yönetim", [("compliance", "/admin/uyumluluk", "shield", "Yasal kontrol listesi"), ("audit", "/admin/denetim", "list", "Denetim kaydı"),
+               ("system", "/admin/sistem", "server", "Sistem")]),
+  ] %}
+{% else %}
+  {% set nav = [
+    ("Fiyatlama", [("dashboard", "/panel", "home", "Panel"), ("suggestions", "/panel/oneriler", "tag", "Fiyat önerileri"),
+                   ("market", "/panel/pazar", "grid", "Pazar fiyatları"), ("competitors", "/panel/rakipler", "users", "Rakip seti"),
+                   ("demand", "/panel/talep", "activity", "Talep ve sezon")]),
+    ("Ölçüm", [("performance", "/panel/performans", "chart", "Uyum ve etki"), ("backtest", "/panel/backtest", "flask", "Backtest"),
+               ("reports", "/panel/raporlar", "file", "Raporlar")]),
+    ("Hesap", [("room_types", "/panel/oda-tipleri", "bed", "Oda tipleri"), ("notifications", "/panel/bildirimler", "bell", "Bildirimler"),
+               ("settings", "/panel/ayarlar", "sliders", "Fiyat kuralları"), ("subscription", "/panel/abonelik", "card", "Abonelik"),
+               ("account", "/panel/hesap", "user", "Hesabım")]),
+  ] %}
+{% endif %}
+<div class="app">
+  <aside class="sidebar" aria-label="Ana menü">
+    <a class="brand" href="{{ '/admin' if admin else '/panel' }}">{{ ui.brand_mark() }}{{ settings.app_name }}</a>
+    {% if not admin and hotel %}
+    <div class="hotel-chip">{{ ui.avatar(hotel.name) }}<div><strong>{{ hotel.name }}</strong><span>{{ hotel.district ~ ', ' if hotel.district }}{{ hotel.province }}{% if hotel.star_rating %}, {{ hotel.star_rating }} yıldız{% endif %}</span></div></div>
+    {% elif admin %}
+    <div class="hotel-chip"><span class="avatar" style="--h: 205">{{ ui.icon('shield') }}</span><div><strong>Yönetim paneli</strong><span>Pilot: Muğla ve Antalya</span></div></div>
+    {% endif %}
+    <nav class="nav">
+      {% for group, items in nav %}
+        <div class="nav-group">{{ group }}</div>
+        {% for key, href, ic, label in items %}
+          <a href="{{ href }}" class="{{ 'active' if active == key }}" {% if active == key %}aria-current="page"{% endif %}>{{ ui.icon(ic) }}<span>{{ label }}</span>
+            {% if key == 'notifications' and unread %}<span class="count">{{ unread }}</span>{% endif %}
+            {% if key == 'mappings' and pending_mappings %}<span class="count">{{ pending_mappings }}</span>{% endif %}
+          </a>
+        {% endfor %}
+      {% endfor %}
+    </nav>
+    <div class="sidebar-foot">
+      <div class="row between" style="flex-wrap:nowrap">
+        <div class="user-chip">{{ ui.avatar(user.full_name, 'sm') }}<div class="who"><b>{{ user.full_name }}</b><span>{{ 'Yönetici' if user.role == 'admin' else 'Otel yetkilisi' }}</span></div></div>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Açık/koyu tema">{{ ui.icon('moon') }}</button>
+      </div>
+      <form method="post" action="/cikis" style="margin-top:10px">{{ ui.csrf() }}
+        <button class="btn sm ghost" style="color:var(--harbour-ink);padding-left:0" type="submit">{{ ui.icon('logout') }}Çıkış yap</button>
+      </form>
+    </div>
+  </aside>
+  <div class="main">
+    {% if impersonating %}
+    <div class="imp-banner">{{ ui.icon('eye') }}<span>Yönetici görünümü: <b>{{ hotel.name }}</b> panelini görüntülüyorsunuz.</span>
+      <form method="post" action="/admin/panel-cik">{{ ui.csrf() }}<button class="btn sm" type="submit">Yönetime dön</button></form></div>
+    {% endif %}
+    {% if is_demo %}
+    <div class="demo-banner">{{ ui.icon('info') }}<span>Demo veri modu: otel adları, fiyatlar ve etkinlikler kurgusaldır. Gerçek API anahtarları <code>.env</code> dosyasında tanımlanınca canlı veriye geçilir.</span></div>
+    {% endif %}
+    <header class="topbar">
+      <button class="btn ghost menu-btn" type="button" data-menu aria-label="Menüyü aç">{{ ui.icon('menu') }}</button>
+      <div class="title">
+        <h1>{% block page_title %}{% endblock %}</h1>
+        {% block crumbs %}{% endblock %}
+      </div>
+      <div class="actions row">{% block top_actions %}{% endblock %}</div>
+    </header>
+    <main class="content" id="icerik">
+      {{ ui.flashes(flashes) }}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="/static/vendor/chart.umd.min.js"></script>
+<script src="/static/js/charts.js?v=2"></script>
+{% endblock %}

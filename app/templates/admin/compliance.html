@@ -1,0 +1,23 @@
+{% extends "partials/app_layout.html" %}
+{% block title %}Yasal kontrol listesi{% endblock %}
+{% block page_title %}Yasal ve teyit kontrol listesi{% endblock %}
+{% block crumbs %}<div class="crumbs">Doküman bölüm 11. Bir maddeyi tamamlandı saymak için yazılı kanıtın nerede saklandığını not edin.</div>{% endblock %}
+{% block content %}
+{% set done = items|selectattr('is_done')|list|length %}
+<div class="panel" style="margin-bottom:18px"><div class="panel-body">
+  <div class="row between"><b>{{ done }} / {{ items|length }} madde tamamlandı</b><span class="muted small">Canlıya geçmeden önce tümü tamamlanmalı.</span></div>
+  <div class="bar-track" style="margin-top:10px;height:10px"><div class="bar-fill" style="width:{{ (done / (items|length or 1) * 100)|round }}%;background:var(--series-3)"></div></div>
+</div></div>
+<div class="stack">
+  {% for it in items %}
+  <form class="panel" method="post" action="/admin/uyumluluk/{{ it.id }}">{{ ui.csrf() }}
+    <div class="panel-body">
+      <div class="row between"><label class="check" style="font-size:.98rem"><input type="checkbox" name="is_done" value="1" {{ 'checked' if it.is_done }}><span><b>{{ it.title }}</b></span></label>
+        <span class="badge {{ 'bad' if it.risk == 'high' else 'warn' }}">{{ 'Yüksek risk' if it.risk == 'high' else 'Orta risk' }}</span></div>
+      <div class="row" style="margin-top:10px;flex-wrap:nowrap"><input name="evidence_note" value="{{ it.evidence_note or '' }}" placeholder="Kanıt: belge adı, e-posta tarihi, sözleşme bağlantısı…"><button class="btn" type="submit">Kaydet</button></div>
+      {% if it.is_done %}<div class="small muted" style="margin-top:6px">Güncellendi: {{ it.updated_at|dt('datetime') }}</div>{% endif %}
+    </div>
+  </form>
+  {% endfor %}
+</div>
+{% endblock %}
