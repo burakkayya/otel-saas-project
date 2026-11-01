@@ -24,13 +24,28 @@
       });
     });
 
+    // Mobil menü: aria-expanded, dışarı tıklama ve Esc ile kapanma, kapanınca odak düğmeye döner
     var menu = document.querySelector("[data-menu]");
     if (menu) {
-      menu.addEventListener("click", function () { document.body.classList.toggle("nav-open"); });
+      var setOpen = function (open, returnFocus) {
+        document.body.classList.toggle("nav-open", open);
+        menu.setAttribute("aria-expanded", open ? "true" : "false");
+        menu.setAttribute("aria-label", open ? "Menüyü kapat" : "Menüyü aç");
+        if (open) {
+          var first = document.querySelector(".sidebar a, .sidebar button");
+          if (first) setTimeout(function () { first.focus(); }, 50);
+        } else if (returnFocus) {
+          menu.focus();
+        }
+      };
+      menu.addEventListener("click", function () { setOpen(!document.body.classList.contains("nav-open"), false); });
       document.addEventListener("click", function (e) {
         if (document.body.classList.contains("nav-open") && !e.target.closest(".sidebar") && !e.target.closest("[data-menu]")) {
-          document.body.classList.remove("nav-open");
+          setOpen(false, false);
         }
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && document.body.classList.contains("nav-open")) setOpen(false, true);
       });
     }
 

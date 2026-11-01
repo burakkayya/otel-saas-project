@@ -56,20 +56,20 @@
 {% else %}
   <div class="panel">
     <div class="panel-head"><div><h2>{{ rows|length }} öneri</h2><p>Uyum toleransınız ±%{{ tolerance|num(0) }}. Fiyatı kendi sisteminizde değiştirdikten sonra “Uyguladım” ile işaretleyebilirsiniz.</p></div><div class="actions">{{ ui.range_legend() }}</div></div>
-    <div class="panel-body flush"><div class="table-wrap"><table class="data">
-      <thead><tr><th>Tarih</th><th>Talep</th><th class="num">Mevcut</th><th class="num">Rakip medyanı</th><th class="num">Öneri</th><th>Bant</th><th class="num">Fark</th><th>Gerekçe</th><th></th></tr></thead>
+    <div class="panel-body flush"><div class="table-wrap"><table class="data stack-sm">
+      <thead><tr><th>Tarih</th><th>Talep</th><th class="num">Mevcut</th><th class="num">Rakip medyanı</th><th class="num">Öneri</th><th>Bant</th><th class="num">Fark</th><th>Gerekçe</th><th><span class="sr-only">İşlemler</span></th></tr></thead>
       <tbody>
       {% for r in rows %}
         <tr>
-          <td class="nowrap"><b>{{ r.date|dt('day') }}</b><div class="small muted">{{ r.room_type.raw_name }}</div></td>
-          <td>{{ ui.demand_badge(r.demand) }}</td>
-          <td class="num">{% if r.own %}{{ r.own|eur }}{% elif r.own_available == 0 %}<span class="badge">Kapalı</span>{% else %}<span class="muted">—</span>{% endif %}</td>
-          <td class="num">{{ r.median|eur }}</td>
-          <td class="num cell-strong">{{ r.suggested|eur }}</td>
-          <td class="band-cell">{{ ui.range_bar(r.floor, r.ceiling, r.suggested, r.own, r.median, true) }}<div class="small muted num" style="text-align:left">{{ r.floor|eur }} – {{ r.ceiling|eur }}</div></td>
-          <td class="num">{{ ui.change_badge(r.change) }}</td>
-          <td><div class="rationale clamp" title="{{ r.text }}">{{ r.text }}</div></td>
-          <td class="num">
+          <td class="nowrap cell-head"><b>{{ r.date|dt('day') }}</b><div class="small muted">{{ r.room_type.raw_name }}</div></td>
+          <td data-label="Talep">{{ ui.demand_badge(r.demand) }}</td>
+          <td class="num" data-label="Mevcut">{% if r.own %}{{ r.own|eur }}{% elif r.own_available == 0 %}<span class="badge">Kapalı</span>{% else %}<span class="muted">—</span>{% endif %}</td>
+          <td class="num" data-label="Rakip medyanı">{{ r.median|eur }}</td>
+          <td class="num cell-strong cell-key" data-label="Öneri">{{ r.suggested|eur }}</td>
+          <td class="band-cell cell-wide" data-label="Bant">{{ ui.range_bar(r.floor, r.ceiling, r.suggested, r.own, r.median, true) }}<div class="small muted num" style="text-align:left">{{ r.floor|eur }} – {{ r.ceiling|eur }}</div></td>
+          <td class="num" data-label="Fark">{{ ui.change_badge(r.change) }}</td>
+          <td class="cell-wide" data-label="Gerekçe"><div class="rationale clamp" title="{{ r.text }}">{{ r.text }}</div></td>
+          <td class="num cell-actions">
             <div class="row" style="gap:4px;flex-wrap:nowrap">
             {% if r.action == 'applied' %}<span class="badge good">{{ ui.icon('check') }}Uygulandı</span>
             {% elif r.action == 'ignored' %}<span class="badge">Yok sayıldı</span>
