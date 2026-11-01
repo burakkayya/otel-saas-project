@@ -29,8 +29,8 @@
 {% elif gorunum == 'takvim' %}
   <div class="panel"><div class="panel-body">
     <div class="row between" style="margin-bottom:14px">
-      <p class="small ink-2" style="margin:0">Renk, önerinin mevcut fiyatınıza göre farkını gösterir. Mavi: fiyat artırma fırsatı, kırmızı: fiyatınız yüksek.</p>
-      <div class="cal-legend">−%15<div class="scale"><span style="background:var(--div-neg)"></span><span style="background:color-mix(in srgb,var(--div-neg) 45%,var(--div-mid))"></span><span style="background:var(--div-mid)"></span><span style="background:color-mix(in srgb,var(--div-pos) 45%,var(--div-mid))"></span><span style="background:var(--div-pos)"></span></div>+%15</div>
+      <p class="small ink-2" style="margin:0">Renk, önerinin mevcut fiyatınıza göre farkını gösterir. Begonvil: fiyat artırma fırsatı, gri-mavi: öneri mevcut fiyatınızın altında.</p>
+      <div class="cal-legend">−%15<div class="scale"><span style="background:color-mix(in srgb,var(--cal-down) 45%,var(--div-mid))"></span><span style="background:color-mix(in srgb,var(--cal-down) 22%,var(--div-mid))"></span><span style="background:var(--div-mid)"></span><span style="background:color-mix(in srgb,var(--cal-up) 22%,var(--div-mid))"></span><span style="background:color-mix(in srgb,var(--cal-up) 45%,var(--div-mid))"></span></div>+%15</div>
     </div>
     {% for (y, m), items in months.items() %}
       <h3 style="margin:18px 0 10px">{{ items[0].date|dt('month') }}</h3>
@@ -41,11 +41,11 @@
         {% set seen = [] %}
         {% for r in items %}{% if r.date not in seen %}{% set _ = seen.append(r.date) %}
           {% set c = r.change if r.change is not none else 0 %}
-          {% set strength = [100, (c|abs) / 15 * 100]|min %}
-          {% set base = 'var(--div-pos)' if c > 0 else 'var(--div-neg)' %}
+          {% set strength = [45, (c|abs) / 15 * 45]|min %}
+          {% set base = 'var(--cal-up)' if c > 0 else 'var(--cal-down)' %}
           <a class="day" href="/panel/oneriler/{{ r.id }}" title="{{ r.date|dt('day') }}: öneri {{ r.suggested|eur }}, mevcut {{ r.own|eur }}"
-             style="background: color-mix(in srgb, {{ base }} {{ strength|round|int }}%, var(--div-mid)); {{ 'color:#fff' if strength > 60 }}">
-            <span class="d" style="{{ 'color:#fff' if strength > 60 }}">{{ r.date.day }}</span>
+             style="background: color-mix(in srgb, {{ base }} {{ strength|round|int }}%, var(--div-mid))">
+            <span class="d">{{ r.date.day }}</span>
             <span class="p">{{ r.suggested|eur }}</span>
             <span class="c">{{ r.change|pct(0, true) if r.change is not none else 'fiyat yok' }}</span>
           </a>

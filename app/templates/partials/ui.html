@@ -57,6 +57,10 @@
 </svg>
 {%- endmacro %}
 
+{% macro demo_banner(for_admin=False) -%}
+{% if is_demo %}<div class="demo-banner" role="note">{{ icon('info') }}<span><b>Demo veri modu:</b> otel adları, fiyatlar ve etkinlikler kurgusaldır.{% if for_admin %} Gerçek API anahtarları <code>.env</code> dosyasında tanımlanınca canlı veriye geçilir.{% endif %}</span></div>{% endif %}
+{%- endmacro %}
+
 {% macro csrf() -%}<input type="hidden" name="csrf_token" value="{{ csrf_token }}">{%- endmacro %}
 
 {% macro flashes(items) -%}
@@ -71,10 +75,10 @@
 
 {% macro change_badge(v, threshold=8) -%}
 {% if v is none %}<span class="muted">—</span>
-{% elif v >= threshold %}<span class="badge hot">{{ icon('up', 'ico') }}{{ v|pct(0, true) }}</span>
-{% elif v <= -threshold %}<span class="badge bad">{{ icon('down', 'ico') }}{{ v|pct(0, true) }}</span>
-{% elif v > 0 %}<span class="delta-up">{{ v|pct(1, true) }}</span>
-{% elif v < 0 %}<span class="delta-down">{{ v|pct(1, true) }}</span>
+{% elif v >= threshold %}<span class="badge hot" title="Fiyat artırma fırsatı">{{ icon('up', 'ico') }}{{ v|pct(0, true) }}</span>
+{% elif v <= -threshold %}<span class="badge down" title="Öneri mevcut fiyatın altında">{{ icon('down', 'ico') }}{{ v|pct(0, true) }}</span>
+{% elif v > 0 %}<span class="delta">{{ icon('up', 'ico') }}{{ v|pct(0, true) }}</span>
+{% elif v < 0 %}<span class="delta">{{ icon('down', 'ico') }}{{ v|pct(0, true) }}</span>
 {% else %}<span class="muted">%0</span>{% endif %}
 {%- endmacro %}
 

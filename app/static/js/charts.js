@@ -5,6 +5,7 @@
   "use strict";
   var instances = [];
 
+  var reduceMotion = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
   function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
   function alpha(hex, a) {
     var h = hex.replace("#", "");
@@ -35,7 +36,7 @@
     opts = opts || {};
     var ink2 = css("--ink-2"), grid = css("--grid"), axis = css("--axis"), surface = css("--surface"), ink = css("--ink");
     return {
-      responsive: true, maintainAspectRatio: false, animation: { duration: 350 },
+      responsive: true, maintainAspectRatio: false, animation: reduceMotion && reduceMotion.matches ? false : { duration: 250 },
       interaction: { mode: opts.mode || "index", intersect: false },
       plugins: {
         legend: { display: false },

@@ -56,7 +56,7 @@
     <div><h2>Önümüzdeki 60 gün: öneri ve piyasa</h2><p>{{ CATEGORY_LABELS[data.category] }} kategorisi. Gölgeli alan rakiplerin orta %50'lik fiyat aralığı.</p></div>
     <div class="actions">
       {% if k.under %}<span class="badge hot">{{ ui.icon('up') }}{{ k.under }} gün fiyatınız düşük</span>{% endif %}
-      {% if k.over %}<span class="badge bad">{{ ui.icon('down') }}{{ k.over }} gün fiyatınız yüksek</span>{% endif %}
+      {% if k.over %}<span class="badge down">{{ ui.icon('down') }}{{ k.over }} gün fiyatınız yüksek</span>{% endif %}
     </div>
   </div>
   <div class="panel-body">
