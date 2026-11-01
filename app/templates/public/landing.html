@@ -9,10 +9,10 @@
       <a class="btn primary lg" href="/kayit">14 gün ücretsiz dene</a>
       <a class="btn lg" href="#nasil">Nasıl çalıştığını gör</a>
     </div>
-    <p class="fine">PMS veya kanal yöneticisi bağlantısı yok. Sizden doluluk ya da satış verisi istemiyoruz. Şu an Muğla ve Antalya'daki {{ tracked|num }} tesisi izliyoruz.</p>
+    <p class="fine">PMS veya kanal yöneticisi bağlantısı yok. Sizden doluluk ya da satış verisi istemiyoruz. {% if is_demo %}Bu kurulum demo modunda: Muğla ve Antalya'da {{ tracked|num }} örnek (kurgusal) tesis izleniyor.{% else %}Şu an Muğla ve Antalya'daki {{ tracked|num }} tesisi izliyoruz.{% endif %}</p>
   </div>
   <aside class="rec-card" aria-label="Örnek öneri">
-    <div class="top"><span>Deluxe Deniz Manzaralı</span><span>Cumartesi, 14 Haziran</span></div>
+    <div class="top"><span><span class="sample-chip">Örnek</span> Deluxe Deniz Manzaralı</span><span>Cumartesi, 14 Haziran</span></div>
     <div class="big">€168<small> önerilen</small></div>
     <p class="why">Rakip medyan fiyat bu hafta %12 arttı, talep skoru yüksek (71), rakiplerde kalan oda hızla azalıyor. Öneri mevcut fiyatınıza göre +%8.</p>
     <div class="range">
@@ -34,9 +34,9 @@
 
 <section style="padding:8px 0 56px">
   <div class="stat-band">
-    <div><b>{{ tracked|num }}</b><span>tesis her gün izleniyor</span></div>
-    <div><b>5</b><span>rakiple, aynı oda kategorisinde kıyas</span></div>
-    <div><b>60 gün</b><span>ileriye dönük günlük öneri</span></div>
+    <div><b>{{ tracked|num }}</b><span>{{ 'örnek tesis (demo verisi)' if is_demo else 'tesis her gün izleniyor' }}</span></div>
+    <div><b>5–12</b><span>rakiple, aynı oda kategorisinde kıyas (pakete göre)</span></div>
+    <div><b>30–90 gün</b><span>ileriye dönük günlük öneri (pakete göre)</span></div>
     <div><b>0</b><span>sistem entegrasyonu veya manuel veri</span></div>
   </div>
   <div class="preview">
@@ -53,7 +53,7 @@
     </div>
     <div class="panel">
       <div class="panel-head"><div><h2>Rakip radarı</h2><p>Oteliniz merkezde; rakipleriniz yönlerine ve uzaklıklarına göre.</p></div></div>
-      <div class="panel-body">{{ ui.radar(radar, "Oteliniz") }}</div>
+      <div class="panel-body">{{ ui.radar(radar, "Oteliniz") }}{{ ui.radar_legend() }}</div>
     </div>
   </div>
 </section>

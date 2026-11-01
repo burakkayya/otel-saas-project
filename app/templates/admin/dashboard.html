@@ -35,7 +35,7 @@
           <td>{{ s.hotel.active_subscription.plan.name if s.hotel.active_subscription else '—' }}</td>
           <td class="num">{{ s.uptake|pct(0) if s.uptake is not none else '—' }}</td>
           <td class="num">{{ bt.mape_suggestion|pct(1) if bt else '—' }}</td>
-          <td class="num">{% if bt and bt.improvement_vs_naive_pct is defined %}<span class="{{ 'delta-up' if bt.improvement_vs_naive_pct > 0 else 'delta-down' }}">{{ bt.improvement_vs_naive_pct|num(1) }} puan</span>{% else %}—{% endif %}</td>
+          <td class="num">{% if bt and bt.improvement_vs_naive_pct is defined %}<span class="{{ 'delta-up' if bt.improvement_vs_naive_pct > 0 else 'delta-down' }}">{{ bt.improvement_vs_naive_pct|signed(1) }} puan</span>{% else %}—{% endif %}</td>
           <td class="num"><form method="post" action="/admin/oteller/{{ s.hotel.id }}/panel" class="inline">{{ ui.csrf() }}<button class="btn sm ghost" type="submit" title="Otel panelini görüntüle">{{ ui.icon('eye') }}</button></form></td></tr>
       {% else %}<tr><td colspan="6" class="muted">Henüz abone yok.</td></tr>{% endfor %}</tbody></table></div></div></div>
   <div class="stack">
@@ -49,7 +49,7 @@
       <div class="panel-body" style="padding-top:4px"><ul class="list">{% for r in ov.last_runs[:6] %}
         <li><div style="flex:1"><div>{{ r.job_name }}</div><div class="when">{{ r.started_at|ago }}, {{ r.records|num }} kayıt</div></div>{{ ui.status_badge(r.status) }}</li>
       {% endfor %}</ul></div></div>
-    <div class="panel soft"><div class="panel-body small ink-2"><b>Compset isabeti:</b> {{ accuracy.rate|pct(0) if accuracy.rate is not none else '—' }} ({{ accuracy.confirmed }}/{{ accuracy.rated }} geri bildirim onaylı)</div></div>
+    <div class="panel soft"><div class="panel-body small ink-2"><b>Rakip seti isabeti:</b> {{ accuracy.rate|pct(0) if accuracy.rate is not none else '—' }} ({{ accuracy.confirmed }}/{{ accuracy.rated }} geri bildirim onaylı)</div></div>
   </div>
 </div>
 {% endblock %}

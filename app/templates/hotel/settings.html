@@ -33,7 +33,7 @@
           <div class="field"><label for="star_rating">Yıldız</label><select id="star_rating" name="star_rating"><option value="">—</option>{% for s in range(1, 6) %}<option value="{{ s }}" {{ 'selected' if hotel.star_rating == s }}>{{ s }}</option>{% endfor %}</select></div>
           <div class="field"><label for="room_count">Toplam oda sayısı</label><input id="room_count" type="number" min="1" name="room_count" value="{{ hotel.room_count or '' }}"><div class="hint">Etki tahmininde kullanılır.</div></div>
         </div>
-        <label class="check" style="margin-top:14px"><input type="checkbox" name="notify_email" value="1" {{ 'checked' if hs.notify_email }}><span>Önemli fiyat önerilerinde e-posta bildirimi al</span></label>
+        <label class="check" style="margin-top:14px"><input type="checkbox" name="notify_email" value="1" {{ 'checked' if hs.notify_email }}><span>Önemli fiyat önerilerinde e-posta bildirimi al <span class="badge">Yakında</span><span class="hint" style="display:block">E-posta gönderimi henüz açılmadı; şimdilik bu öneriler panelde Bildirimler'e düşer.</span></span></label>
       </div></div>
   </div>
   <div class="row" style="justify-content:flex-end"><button class="btn primary lg" type="submit">Ayarları kaydet</button></div>

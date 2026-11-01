@@ -5,7 +5,7 @@
   <aside class="auth-side">
     <a class="brand" href="/">{{ ui.brand_mark() }}{{ settings.app_name }}</a>
     {{ ui.radar(radar_sample, "Oteliniz") if radar_sample else '' }}
-    <div class="mini-rec"><div class="s">Bu gece için önerilen</div><div class="p">€142</div><div class="s">Rakip medyanı %6 arttı, talep yüksek. Bant €118 – €171.</div></div>
+    <div class="mini-rec"><div class="s"><span class="sample-chip">Örnek</span> Bu gece için önerilen</div><div class="p">€142</div><div class="s">Rakip medyanı %6 arttı, talep yüksek. Bant €118 – €171.</div></div>
     <p class="quote">{% block side_quote %}Rakip fiyatı, kalan oda ve talep. Her sabah tek ekranda.{% endblock %}</p>
     <p class="sub">{% block side_sub %}Otelinizin sistemlerine bağlanmadan, halka açık veriyle çalışır.{% endblock %}</p>
   </aside>

@@ -1,6 +1,6 @@
 {% extends "partials/app_layout.html" %}
 {% block title %}Backtest{% endblock %}
-{% block page_title %}Backtest raporu{% endblock %}
+{% block page_title %}Backtest: geçmiş günlerde öneri nasıl olurdu?{% endblock %}
 {% block crumbs %}<div class="crumbs">Geçmiş tarihler için, yalnızca o gün bilinen veriyle öneri üretilir ve gerçekleşen piyasa fiyatıyla karşılaştırılır.</div>{% endblock %}
 {% block content %}
 <form class="filters" method="get" style="margin-bottom:18px">
@@ -33,7 +33,7 @@
   <div class="panel">
     <div class="panel-head"><div><h2>Günlük sonuçlar</h2></div></div>
     <div class="panel-body flush"><div class="table-wrap" style="max-height:440px"><table class="data">
-      <thead><tr><th>Konaklama</th><th class="num">O gün piyasa</th><th class="num">Öneri</th><th class="num">Gerçekleşen</th><th class="num">Hata</th><th class="num">Talep</th><th class="num">Satış ilerlemesi*</th></tr></thead>
+      <thead><tr><th>Konaklama</th><th class="num">O gün piyasa</th><th class="num">Öneri</th><th class="num">Gerçekleşen</th><th class="num">Hata</th><th class="num">Talep</th><th class="num">Kalan oda düşüşü*</th></tr></thead>
       <tbody>{% for r in result.rows %}
         <tr><td>{{ r.stay_date|dt('day') }}</td><td class="num">{{ r.market_asof|eur }}</td><td class="num cell-strong">{{ r.suggested|eur }}</td><td class="num">{{ r.market_final|eur }}</td>
           <td class="num">{{ ((r.suggested - r.market_final) / r.market_final * 100)|pct(1, true) }}</td><td class="num">{{ r.demand|num }}</td><td class="num">{{ (r.sell_through * 100)|pct(0) if r.sell_through is not none else '—' }}</td></tr>
@@ -42,8 +42,8 @@
   <div class="panel soft"><div class="panel-body small ink-2">
     <h3 style="margin-bottom:8px">Nasıl okunur?</h3>
     <p><b>MAPE</b> ne kadar düşükse önerinin gerçekleşen piyasa fiyatına o kadar yakın olduğunu gösterir. Kıyas yöntemi, o günkü rakip medyanını aynen kopyalamaktır; önerinin değeri bu kıyası geçip geçmediğiyle ölçülür.</p>
-    <p><b>Talep–satış korelasyonu:</b> {{ sm.demand_sell_corr|num(2) if sm.demand_sell_corr is not none else '—' }}. Pozitif değer, talep skorunun yüksek olduğu günlerde odalarınızın daha hızlı azaldığını gösterir.</p>
-    <p style="margin:0">* Satış ilerlemesi, kalan oda sayısındaki düşüşten türetilen bir vekildir; oda kapatma veya başka kanal satışı da aynı düşüşü yaratabilir.</p>
+    <p><b>Talep ile kalan oda düşüşü ilişkisi:</b> {{ sm.demand_sell_corr|num(2) if sm.demand_sell_corr is not none else '—' }} (korelasyon). Pozitif değer, talep skorunun yüksek olduğu günlerde kalan oda sayınızın daha hızlı azaldığını gösterir.</p>
+    <p style="margin:0">* Kalan oda düşüşü bir satış kanıtı değildir: oda kapatma, stop-sell veya başka kanaldan satış da aynı düşüşü yaratır. Yalnızca talep sinyalinin yönünü sınamak için vekil olarak kullanılır.</p>
   </div></div>
 </div>
 {% endif %}

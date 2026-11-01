@@ -92,8 +92,8 @@
 {%- endmacro %}
 
 {% macro conf_badge(c) -%}
-{% if c == 'high' %}<span class="badge good">{{ icon('check') }}Yüksek güven</span>
-{% elif c == 'medium' %}<span class="badge info">{{ icon('info') }}Orta güven</span>
+{% if c == 'high' %}<span class="badge info">{{ icon('check') }}Yüksek güven</span>
+{% elif c == 'medium' %}<span class="badge">{{ icon('info') }}Orta güven</span>
 {% else %}<span class="badge warn">{{ icon('alert') }}Düşük güven</span>{% endif %}
 {%- endmacro %}
 
@@ -219,14 +219,18 @@
     <g class="radar-sweep"><path d="M50 50 L50 2 A48 48 0 0 1 83.9 16.1 Z" fill="url(#rg-sweep)"/></g>
     {% for p in layout.points %}
       <g class="radar-pt" style="--d: {{ loop.index0 * 0.12 }}s">
-        <title>{{ p.rank }}. {{ p.hotel.name }}, {{ p.dist|num(1) }} km{% if p.price %}, {{ p.price|eur }}{% endif %}</title>
-        <circle cx="{{ p.x }}" cy="{{ p.y }}" r="{{ 2.6 + (p.score or 0.5) * 1.6 }}" class="{{ 'manual' if p.manual }}"/>
+        <title>{{ p.rank }}. {{ p.hotel.name }}, {{ p.dist|num(1) }} km{% if p.outlier %} (ölçek dışı, kenarda gösteriliyor){% endif %}{% if p.price %}, {{ p.price|eur }}{% endif %}</title>
+        <circle cx="{{ p.x }}" cy="{{ p.y }}" r="{{ 2.6 + (p.score or 0.5) * 1.6 }}" class="{{ 'manual' if p.manual }} {{ 'outlier' if p.outlier }}"/>
         <text x="{{ p.x }}" y="{{ p.y + 1.15 }}" text-anchor="middle">{{ p.rank }}</text>
       </g>
     {% endfor %}
     <g class="radar-self"><title>{{ hotel_name }} (siz)</title><rect x="47.2" y="47.2" width="5.6" height="5.6" rx="1" transform="rotate(45 50 50)"/></g>
   </svg>
 </div>
+{%- endmacro %}
+
+{% macro radar_legend() -%}
+<div class="legend small radar-legend"><span><i class="lg-own"></i>Oteliniz</span><span><i class="lg-sug"></i>Sistemin önerdiği rakip</span><span><i class="lg-sug" style="background:var(--series-4)"></i>Sizin eklediğiniz</span><span class="muted">Nokta büyüklüğü: benzerlik</span></div>
 {%- endmacro %}
 
 {% macro heat_color(change, max=50) -%}

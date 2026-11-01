@@ -144,6 +144,86 @@ def test_register_kvkk_wording_is_acknowledgement(client):
     assert "bilgilendirildim" in html and "kabul ediyorum" not in html
 
 
+def test_backtest_does_not_call_inventory_drop_sales(hotel_browser):
+    """Kalan oda düşüşü satış olarak sunulmaz (doküman 6)."""
+    html = hotel_browser.get("/panel/backtest").text
+    for phrase in ("Satış ilerlemesi", "Talep–satış", "satış korelasyonu"):
+        assert phrase not in html
+    assert "Kalan oda düşüşü" in html
+
+
+def test_plan_features_match_limits(db):
+    """Paket özellik maddeleri sınırlarla çelişmez; olmayan e-posta altyapısı vaat edilmez."""
+    from sqlalchemy import select
+
+    from app.models import Plan
+
+    for plan in db.execute(select(Plan)).scalars():
+        text = " ".join(plan.features or []).lower()
+        if plan.max_room_types:
+            assert "sınırsız oda" not in text, plan.code
+        if "e-posta" in text:
+            assert "yakında" in text, plan.code
+        assert "compset" not in text, plan.code
+
+
+def test_signed_number_filter():
+    from app.web import fmt_signed
+
+    assert fmt_signed(-5.73, 1) == "−5,7"
+    assert fmt_signed(2.04, 1) == "+2,0"
+    assert fmt_signed(-0.01, 1) == "0,0"
+    assert fmt_signed(None) == "—"
+
+
+def test_rationale_drivers_plain_language():
+    """Gerekçe en etkili 3 etkene, jargonsuz Türkçe ile ayrılır; en güçlü etken başta gelir."""
+    from app.web import rationale_drivers
+
+    r = {"position_index": 0.6, "comp_median_change_7d_pct": 1.0, "demand_score": 17, "demand_level": "Çok düşük",
+         "inventory_pressure": 0.02, "season_label": "Ölü sezon", "season_coef": 0.7,
+         "adjustments_pct": {"demand": -3.1, "inventory": 0.2, "season": -2.0, "total": -4.9}}
+    d = rationale_drivers(r)
+    assert 1 <= len(d) <= 3
+    assert d[0]["text"].startswith("Fiyat konumunuz") and "%60" in d[0]["text"]
+    assert all("endeks" not in x["text"].lower() for x in d)
+    assert {"text", "dir"} <= set(d[0])
+    assert rationale_drivers(None) == []
+
+
+def test_dashboard_hero_shows_confidence_and_drivers(hotel_browser):
+    html = hotel_browser.get("/panel").text
+    hero = html.split('class="hero-rec"', 1)[1].split("</section>", 1)[0]
+    assert "güven" in hero.lower()
+    assert 'class="drivers"' in hero
+
+
+def test_radar_outlier_does_not_crush_near_competitors():
+    """Çok uzak tek bir rakip, yakın rakipleri merkeze sıkıştırmaz; kenara 'uzak' işaretiyle yerleşir."""
+    from types import SimpleNamespace as NS
+
+    from app.services.analytics import radar_layout
+
+    me = NS(lat=37.03, lng=27.43)
+
+    def comp(rank, dlat, dlng):
+        return NS(competitor=NS(id=rank, lat=37.03 + dlat, lng=27.43 + dlng, name=f"R{rank}", star_rating=4),
+                  rank=rank, is_manual=False, similarity_score=0.7)
+
+    comps = [comp(1, 0.01, 0), comp(2, 0, 0.02), comp(3, -0.02, 0), comp(4, 0, -0.03), comp(5, 0.85, 0)]  # 5: ~94 km
+    lay = radar_layout(me, comps)
+    near = [p for p in lay["points"] if p["rank"] != 5]
+    far = next(p for p in lay["points"] if p["rank"] == 5)
+    assert far["outlier"] is True and abs(far["y"] - 50) > 40
+    assert max(((p["x"] - 50) ** 2 + (p["y"] - 50) ** 2) ** 0.5 for p in near) > 15
+    assert lay["max_km"] > 90
+
+
+def test_settings_email_option_is_honest(hotel_browser):
+    html = hotel_browser.get("/panel/ayarlar").text
+    assert "e-posta" in html.lower() and "yakında" in html.lower()
+
+
 def test_error_toasts_are_not_auto_dismissed():
     """Hata ve uyarı bildirimleri kullanıcı kapatana kadar ekranda kalır (WCAG 2.2.1)."""
     js = Path("app/static/js/app.js").read_text(encoding="utf-8")

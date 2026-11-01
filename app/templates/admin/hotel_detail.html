@@ -38,7 +38,7 @@
     <div class="panel"><div class="panel-head"><div><h2>Kullanıcılar</h2></div></div><div class="panel-body" style="padding-top:4px"><ul class="list">
       {% for u in users %}<li><div style="flex:1">{{ u.full_name }}<div class="when">{{ u.email }}</div></div>{{ ui.status_badge('active' if u.is_active else 'canceled') }}</li>{% else %}<li class="muted small">Kullanıcı yok.</li>{% endfor %}</ul></div></div>
     {% if roi %}<div class="panel"><div class="panel-head"><div><h2>Etki tahminleri</h2></div></div><div class="panel-body" style="padding-top:4px"><ul class="list">
-      {% for r in roi %}<li><div style="flex:1">{{ r.estimated_revenue_delta|eur }}<div class="when">{{ r.created_at|dt }}, kontrol {{ r.control_group_size }}</div></div>{{ ui.conf_badge(r.confidence) }}</li>{% endfor %}</ul></div></div>{% endif %}
+      {% for r in roi %}<li><div style="flex:1"><span class="small muted">tahmini</span> {{ r.estimated_revenue_delta|eur }}<div class="when">{{ r.period_start|dt }} – {{ r.period_end|dt }}, kontrol {{ r.control_group_size }}{% if r.details and r.details.significant is defined %}, {{ 'anlamlı' if r.details.significant else 'anlamlı değil' }}{% endif %}</div></div>{{ ui.conf_badge(r.confidence) }}</li>{% endfor %}</ul></div></div>{% endif %}
   </div>
 </div>
 {% endblock %}

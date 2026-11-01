@@ -55,6 +55,55 @@ def fmt_pct(value: Any, digits: int = 1, sign: bool = False) -> str:
     return f"{prefix}\u2060%\u2060{fmt_number(abs(v), digits)}"
 
 
+def fmt_signed(value: Any, digits: int = 1) -> str:
+    """İşaretli sayı: +2,0 / −5,7; yuvarlanınca sıfır olan değer işaretsiz yazılır."""
+    if value is None:
+        return "—"
+    v = float(value)
+    if round(abs(v), digits) == 0:
+        return fmt_number(0, digits)
+    return ("+" if v > 0 else "−") + fmt_number(abs(v), digits)
+
+
+def rationale_drivers(r: dict | None, limit: int = 3) -> list[dict]:
+    """Öneri gerekçesini (price_suggestions.rationale) sade Türkçe etkenlere ayırır, en etkili olan başta.
+
+    Her etken: {"text": ..., "dir": "up" | "down" | "flat"}. Sunum katmanıdır; motorun gerekçe metnine dokunmaz.
+    """
+    if not r:
+        return []
+    adj = r.get("adjustments_pct") or {}
+    out: list[tuple[float, dict]] = []
+    pi = r.get("position_index")
+    if pi is not None and abs(float(pi) - 1) >= 0.05:
+        pct = round(float(pi) * 100)
+        out.append((abs(float(pi) - 1) * 100, {"dir": "down" if pi < 1 else "up",
+                    "text": f"Fiyat konumunuz: geçmişte rakip medyanının %{pct}'i düzeyinde"}))
+    mc = r.get("comp_median_change_7d_pct")
+    if mc is not None and abs(float(mc)) >= 1:
+        out.append((abs(float(mc)), {"dir": "up" if mc > 0 else "down",
+                    "text": f"Rakip fiyatları 7 günde %{abs(float(mc)):.0f} {'arttı' if mc > 0 else 'azaldı'}"}))
+    else:
+        out.append((0.5, {"dir": "flat", "text": "Rakip fiyatları 7 gündür yatay"}))
+    if r.get("demand_level"):
+        d = float(adj.get("demand") or 0)
+        out.append((abs(d) + 0.4, {"dir": "up" if d > 0 else "down" if d < 0 else "flat",
+                    "text": f"Talep {str(r['demand_level']).lower()} ({float(r.get('demand_score') or 0):.0f}/100)"}))
+    inv = float(r.get("inventory_pressure") or 0)
+    if abs(inv) >= 0.15:
+        out.append((abs(float(adj.get("inventory") or 0)) + 0.3, {"dir": "up" if inv > 0 else "down",
+                    "text": "Rakiplerde kalan oda hızla azalıyor" if inv > 0 else "Rakiplerde boş oda artıyor"}))
+    if r.get("season_label"):
+        s = float(adj.get("season") or 0)
+        out.append((abs(s) + 0.2, {"dir": "up" if s > 0 else "down" if s < 0 else "flat", "text": str(r["season_label"])}))
+    if r.get("clamped") == "floor":
+        out.append((100.0, {"dir": "flat", "text": "Öneri taban fiyatınıza dayandı"}))
+    elif r.get("clamped") == "ceiling":
+        out.append((100.0, {"dir": "flat", "text": "Öneri tavan fiyatınıza dayandı"}))
+    out.sort(key=lambda x: x[0], reverse=True)
+    return [d for _, d in out[:limit]]
+
+
 def fmt_date(value: Any, style: str = "short") -> str:
     if value is None:
         return "—"
@@ -136,9 +185,9 @@ def hue_for(name: str | None) -> int:
 
 
 templates.env.filters.update(combine=lambda a, b: {**(a or {}), **(b or {})}, spark=spark_path, initials=initials, hue=hue_for,
-    num=fmt_number, eur=fmt_eur, pct=fmt_pct, dt=fmt_date, ago=ago, json=to_json,
+    num=fmt_number, eur=fmt_eur, pct=fmt_pct, signed=fmt_signed, dt=fmt_date, ago=ago, json=to_json,
 )
-templates.env.globals.update(settings=settings, today=date.today)
+templates.env.globals.update(settings=settings, today=date.today, rationale_drivers=rationale_drivers)
 
 
 def _sample_radar():
