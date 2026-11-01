@@ -10,6 +10,9 @@
     <p class="sub">{% block side_sub %}Otelinizin sistemlerine bağlanmadan, halka açık veriyle çalışır.{% endblock %}</p>
   </aside>
   <main class="auth-main">
+    {{ ui.demo_banner() }}
+    <div class="auth-mobile-head"><a class="brand" href="/">{{ ui.brand_mark() }}{{ settings.app_name }}</a>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Açık/koyu tema">{{ ui.icon('moon') }}</button></div>
     <div class="auth-card {% block card_class %}{% endblock %}">
       {{ ui.flashes(flashes) }}
       {% block content %}{% endblock %}

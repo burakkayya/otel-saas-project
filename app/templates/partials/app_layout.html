@@ -58,9 +58,7 @@
     <div class="imp-banner">{{ ui.icon('eye') }}<span>Yönetici görünümü: <b>{{ hotel.name }}</b> panelini görüntülüyorsunuz.</span>
       <form method="post" action="/admin/panel-cik">{{ ui.csrf() }}<button class="btn sm" type="submit">Yönetime dön</button></form></div>
     {% endif %}
-    {% if is_demo %}
-    <div class="demo-banner">{{ ui.icon('info') }}<span>Demo veri modu: otel adları, fiyatlar ve etkinlikler kurgusaldır. Gerçek API anahtarları <code>.env</code> dosyasında tanımlanınca canlı veriye geçilir.</span></div>
-    {% endif %}
+    {{ ui.demo_banner(admin) }}
     <header class="topbar">
       <button class="btn ghost menu-btn" type="button" data-menu aria-label="Menüyü aç">{{ ui.icon('menu') }}</button>
       <div class="title">

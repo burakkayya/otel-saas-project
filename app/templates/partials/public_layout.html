@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% import "partials/ui.html" as ui with context %}
 {% block body %}
+{{ ui.demo_banner() }}
 <header class="site-head">
   <a class="brand" href="/">{{ ui.brand_mark() }}{{ settings.app_name }}</a>
   <nav aria-label="Site menüsü">
@@ -12,7 +13,7 @@
       <a class="btn primary" href="{{ '/admin' if user.role == 'admin' else '/panel' }}">Panele git</a>
     {% else %}
       <a class="btn" href="/giris">Giriş yap</a>
-      <a class="btn primary" href="/kayit">14 gün ücretsiz dene</a>
+      <a class="btn primary" href="/kayit"><span class="cta-long">14 gün ücretsiz dene</span><span class="cta-short">Ücretsiz dene</span></a>
     {% endif %}
   </nav>
 </header>

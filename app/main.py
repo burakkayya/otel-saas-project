@@ -17,6 +17,26 @@ from app.db import SessionLocal, init_db
 from app.routers import admin, api, auth, hotel, public
 from app.web import CsrfError, Forbidden, LoginRequired, render
 
+
+def _viewer(request: Request):
+    """Hata sayfaları için oturumdaki kullanıcı (bağımlılık enjeksiyonu olmadan)."""
+    uid = request.session.get("user_id") if "session" in request.scope else None
+    if not uid:
+        return None
+    from app.models import User
+
+    with SessionLocal() as db:
+        user = db.get(User, uid)
+        if user is None or not user.is_active:
+            return None
+        db.expunge(user)
+        return user
+
+
+def _error(request: Request, status_code: int, title: str, message: str):
+    return render(request, "errors/error.html", status_code=status_code, code=status_code, title=title,
+                  message=message, user=_viewer(request))
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 log = logging.getLogger("app")
 
@@ -73,39 +93,34 @@ def create_app() -> FastAPI:
     async def _forbidden(request: Request, exc: Forbidden):
         if request.url.path.startswith("/api/"):
             return JSONResponse({"detail": "Yetkisiz"}, status_code=403)
-        return render(request, "errors/error.html", status_code=403, code=403,
-                      title="Bu sayfaya erişim yetkiniz yok",
-                      message="Hesabınızın rolü bu ekranı görüntülemeye izin vermiyor.")
+        return _error(request, 403, "Bu sayfaya erişim yetkiniz yok",
+                      "Bu ekran yalnızca yönetici hesaplarına açık. Kendi panelinizden devam edebilirsiniz.")
 
     @app.exception_handler(CsrfError)
     async def _csrf(request: Request, exc: CsrfError):
-        return render(request, "errors/error.html", status_code=400, code=400,
-                      title="Oturum doğrulaması başarısız",
-                      message="Form süresi dolmuş olabilir. Sayfayı yenileyip tekrar deneyin.")
+        return _error(request, 400, "Oturum doğrulaması başarısız",
+                      "Form süresi dolmuş olabilir. Sayfayı yenileyip tekrar deneyin.")
 
     @app.exception_handler(StarletteHTTPException)
     async def _http(request: Request, exc: StarletteHTTPException):
         if request.url.path.startswith("/api/"):
             return JSONResponse({"detail": exc.detail}, status_code=exc.status_code)
         title = "Sayfa bulunamadı" if exc.status_code == 404 else "Bir hata oluştu"
-        return render(request, "errors/error.html", status_code=exc.status_code, code=exc.status_code,
-                      title=title, message=str(exc.detail) if exc.status_code != 404 else
+        return _error(request, exc.status_code, title, str(exc.detail) if exc.status_code != 404 else
                       "Aradığınız sayfa taşınmış ya da hiç var olmamış olabilir.")
 
     @app.exception_handler(RequestValidationError)
     async def _validation(request: Request, exc: RequestValidationError):
         if request.url.path.startswith("/api/"):
             return JSONResponse({"detail": exc.errors()}, status_code=422)
-        return render(request, "errors/error.html", status_code=422, code=422, title="Geçersiz istek",
-                      message="Gönderilen bilgiler eksik ya da hatalı biçimde.")
+        return _error(request, 422, "Geçersiz istek", "Gönderilen bilgiler eksik ya da hatalı biçimde.")
 
     @app.exception_handler(Exception)
     async def _unhandled(request: Request, exc: Exception):  # pragma: no cover - savunma
         log.exception("Beklenmeyen hata: %s", request.url.path)
         if request.url.path.startswith("/api/"):
             return JSONResponse({"detail": "Sunucu hatası"}, status_code=500)
-        return render(request, "errors/error.html", status_code=500, code=500, title="Beklenmeyen bir hata oluştu",
-                      message="Hata kaydedildi. Lütfen birkaç dakika sonra tekrar deneyin.")
+        return _error(request, 500, "Beklenmeyen bir hata oluştu", "Hata kaydedildi. Lütfen birkaç dakika sonra tekrar deneyin.")
 
     return app
 
