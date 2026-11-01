@@ -15,12 +15,12 @@
     <div class="panel-head"><div><h2>Birim ekonomisi hesaplayıcı</h2><p>Senaryoyu değiştirip paket marjlarını görün</p></div></div>
     <div class="panel-body">
       <form class="filters" method="get">
-        <div class="field"><label>Abone sayısı</label><input type="number" name="abone" min="1" value="{{ inp.subscribers }}"></div>
-        <div class="field"><label>Rakip seti</label><input type="number" name="rakip" min="1" max="20" value="{{ inp.compset_size }}"></div>
-        <div class="field"><label>Ufuk (gün)</label><input type="number" name="ufuk" min="7" value="{{ inp.horizon_days }}"></div>
-        <div class="field"><label>Günlük tarama</label><input type="number" name="tarama" min="1" max="24" value="{{ inp.scans_per_day }}"></div>
-        <div class="field"><label>İstek başına tarih</label><input type="number" name="tarih_basina" min="1" value="{{ inp.dates_per_request }}"></div>
-        <div class="field"><label>Ortak rakip (%)</label><input type="number" name="ortak" min="0" max="90" value="{{ inp.overlap_pct|int }}"></div>
+        <div class="field"><label for="c-abone">Abone sayısı</label><input id="c-abone" type="number" name="abone" min="1" value="{{ inp.subscribers }}"></div>
+        <div class="field"><label for="c-rakip">Rakip seti</label><input id="c-rakip" type="number" name="rakip" min="1" max="20" value="{{ inp.compset_size }}"></div>
+        <div class="field"><label for="c-ufuk">Ufuk (gün)</label><input id="c-ufuk" type="number" name="ufuk" min="7" value="{{ inp.horizon_days }}"></div>
+        <div class="field"><label for="c-tarama">Günlük tarama</label><input id="c-tarama" type="number" name="tarama" min="1" max="24" value="{{ inp.scans_per_day }}"></div>
+        <div class="field"><label for="c-tarih_basina">İstek başına tarih</label><input id="c-tarih_basina" type="number" name="tarih_basina" min="1" value="{{ inp.dates_per_request }}"></div>
+        <div class="field"><label for="c-ortak">Ortak rakip (%)</label><input id="c-ortak" type="number" name="ortak" min="0" max="90" value="{{ inp.overlap_pct|int }}"></div>
         <button class="btn primary" type="submit">Hesapla</button>
       </form>
       <table class="data" style="margin-top:16px"><thead><tr><th>Sağlayıcı</th><th class="num">Aylık istek</th><th class="num">Dahil</th><th class="num">Birim</th><th class="num">Sabit</th><th class="num">Maliyet</th></tr></thead><tbody>

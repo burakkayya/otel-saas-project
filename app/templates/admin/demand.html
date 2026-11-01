@@ -21,11 +21,11 @@
       {% else %}<tr><td colspan="6" class="muted">Etkinlik yok.</td></tr>{% endfor %}</tbody></table></div></div></div>
   <div class="panel"><div class="panel-head"><div><h2>Etkinlik ekle</h2><p>Kongre, düğün sezonu, yerel festival gibi API'de olmayanlar</p></div></div>
     <div class="panel-body"><form class="form" method="post" action="/admin/talep/etkinlik">{{ ui.csrf() }}<input type="hidden" name="province" value="{{ il }}">
-      <div class="field"><label>Ad</label><input name="name" required></div>
-      <div class="two"><div class="field"><label>Başlangıç</label><input type="date" name="start_date" required></div><div class="field"><label>Bitiş</label><input type="date" name="end_date" required></div></div>
-      <div class="two"><div class="field"><label>Kategori</label><select name="category">{% for c in ['festivals','concerts','conferences','expos','sports','community'] %}<option>{{ c }}</option>{% endfor %}</select></div>
-        <div class="field"><label>Etki (0-100)</label><input type="number" name="impact" min="0" max="100" value="50"></div></div>
-      <div class="field"><label>İlçe (isteğe bağlı)</label><input name="district"></div>
+      <div class="field"><label for="ev-name">Ad</label><input id="ev-name" name="name" required></div>
+      <div class="two"><div class="field"><label for="ev-start_date">Başlangıç</label><input id="ev-start_date" type="date" name="start_date" required></div><div class="field"><label for="ev-end_date">Bitiş</label><input id="ev-end_date" type="date" name="end_date" required></div></div>
+      <div class="two"><div class="field"><label for="ev-category">Kategori</label><select id="ev-category" name="category">{% for c in ['festivals','concerts','conferences','expos','sports','community'] %}<option>{{ c }}</option>{% endfor %}</select></div>
+        <div class="field"><label for="ev-impact">Etki (0-100)</label><input id="ev-impact" type="number" name="impact" min="0" max="100" value="50"></div></div>
+      <div class="field"><label for="ev-district">İlçe (isteğe bağlı)</label><input id="ev-district" name="district"></div>
       <button class="btn primary" type="submit">{{ ui.icon('plus') }}Ekle</button></form></div></div>
 </div>
 {% endblock %}

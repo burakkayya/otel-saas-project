@@ -20,10 +20,10 @@
 <div class="grid g-3" style="margin-top:18px">
   <div class="panel"><div class="panel-head"><div><h2>Profil</h2></div></div><div class="panel-body">
     <form class="form" method="post" action="/admin/oteller/{{ h.id }}">{{ ui.csrf() }}
-      <div class="two"><div class="field"><label>Yıldız</label><input type="number" min="1" max="5" name="star_rating" value="{{ h.star_rating or '' }}"></div>
-        <div class="field"><label>Oda sayısı</label><input type="number" min="1" name="room_count" value="{{ h.room_count or '' }}"></div></div>
-      <div class="two"><div class="field"><label>Tip</label><select name="hotel_type">{% for k, v in [('pension','Pansiyon'),('boutique','Butik'),('midscale','Orta ölçek'),('resort','Resort'),('chain','Zincir')] %}<option value="{{ k }}" {{ 'selected' if h.hotel_type == k }}>{{ v }}</option>{% endfor %}</select></div>
-        <div class="field"><label>İlçe</label><input name="district" value="{{ h.district or '' }}"></div></div>
+      <div class="two"><div class="field"><label for="h-star_rating">Yıldız</label><input id="h-star_rating" type="number" min="1" max="5" name="star_rating" value="{{ h.star_rating or '' }}"></div>
+        <div class="field"><label for="h-room_count">Oda sayısı</label><input id="h-room_count" type="number" min="1" name="room_count" value="{{ h.room_count or '' }}"></div></div>
+      <div class="two"><div class="field"><label for="h-hotel_type">Tip</label><select id="h-hotel_type" name="hotel_type">{% for k, v in [('pension','Pansiyon'),('boutique','Butik'),('midscale','Orta ölçek'),('resort','Resort'),('chain','Zincir')] %}<option value="{{ k }}" {{ 'selected' if h.hotel_type == k }}>{{ v }}</option>{% endfor %}</select></div>
+        <div class="field"><label for="h-district">İlçe</label><input id="h-district" name="district" value="{{ h.district or '' }}"></div></div>
       <label class="check"><input type="checkbox" name="is_active" value="1" {{ 'checked' if h.is_active }}><span>Taramaya dahil (aktif)</span></label>
       <dl class="kv small"><dt>Kaynak kimliği</dt><dd>{{ h.source_id or '—' }}</dd><dt>Konum</dt><dd>{{ h.lat }}, {{ h.lng }}</dd><dt>Adres</dt><dd>{{ h.address or '—' }}</dd></dl>
       <button class="btn primary" type="submit">Kaydet</button></form></div></div>

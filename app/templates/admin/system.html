@@ -16,7 +16,7 @@
         <div class="field"><span class="label-text">Kapsam</span><div class="choice">
           <label><input type="radio" name="scan_scope" value="all" {{ 'checked' if scan_scope == 'all' }}><div><strong>Pilot bölgedeki tüm oteller</strong><div class="small muted">Kontrol grubu ölçümü için gerekli; maliyet daha yüksek.</div></div></label>
           <label><input type="radio" name="scan_scope" value="compset" {{ 'checked' if scan_scope == 'compset' }}><div><strong>Yalnızca aboneler ve rakipleri</strong><div class="small muted">Daha ucuz; etki ölçümü yapılamaz.</div></div></label></div></div>
-        <div class="field"><label>Tarama ufku (gün)</label><input type="number" name="horizon_days" min="7" max="180" value="{{ horizon }}"></div>
+        <div class="field"><label for="s-horizon_days">Tarama ufku (gün)</label><input id="s-horizon_days" type="number" name="horizon_days" min="7" max="180" value="{{ horizon }}"></div>
         <button class="btn primary" type="submit">Kaydet</button></form></div></div>
     <div class="panel"><div class="panel-head"><div><h2>Tablo boyutları</h2></div></div><div class="panel-body flush"><table class="data"><tbody>
       {% for t, n in counts.items() %}<tr><td><code>{{ t }}</code></td><td class="num">{{ n|num }}</td></tr>{% endfor %}</tbody></table></div></div>

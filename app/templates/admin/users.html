@@ -5,7 +5,7 @@
 {% if temp_password %}<div class="alert warning" style="margin-bottom:16px">{{ ui.icon('alert') }}<span><b>{{ temp_password.email }}</b> için geçici parola: <code>{{ temp_password.password }}</code>. Bu parola yalnızca bir kez gösterilir; kullanıcıya güvenli bir kanaldan iletin.</span></div>{% endif %}
 <div class="grid g-main-side">
   <div class="panel">
-    <div class="panel-head"><div><h2>{{ rows|length }} kullanıcı</h2></div><div class="actions"><form method="get" class="row" style="gap:6px"><input type="search" name="q" value="{{ q }}" placeholder="E-posta veya ad" class="input-sm" style="width:200px!important"><button class="btn sm" type="submit">Ara</button></form></div></div>
+    <div class="panel-head"><div><h2>{{ rows|length }} kullanıcı</h2></div><div class="actions"><form method="get" class="row" style="gap:6px"><input type="search" name="q" value="{{ q }}" aria-label="Kullanıcı ara" placeholder="E-posta veya ad" class="input-sm" style="width:200px!important"><button class="btn sm" type="submit">Ara</button></form></div></div>
     <div class="panel-body flush"><div class="table-wrap"><table class="data">
       <thead><tr><th>Kullanıcı</th><th>Rol</th><th>Otel</th><th>Son giriş</th><th>Durum</th><th></th></tr></thead>
       <tbody>{% for u in rows %}
@@ -18,11 +18,11 @@
   </div>
   <div class="panel"><div class="panel-head"><div><h2>Kullanıcı ekle</h2></div></div>
     <div class="panel-body"><form class="form" method="post" action="/admin/kullanicilar">{{ ui.csrf() }}
-      <div class="field"><label>Ad soyad</label><input name="full_name" required></div>
-      <div class="field"><label>E-posta</label><input type="email" name="email" required></div>
-      <div class="two"><div class="field"><label>Rol</label><select name="role"><option value="hotel">Otel</option><option value="admin">Yönetici</option></select></div>
-        <div class="field"><label>Otel</label><select name="hotel_id"><option value="">—</option>{% for h in hotels %}<option value="{{ h.id }}">{{ h.name }}</option>{% endfor %}</select></div></div>
-      <div class="field"><label>Başlangıç parolası</label><input type="password" name="password" required minlength="8" autocomplete="new-password"></div>
+      <div class="field"><label for="u-full_name">Ad soyad</label><input id="u-full_name" name="full_name" required></div>
+      <div class="field"><label for="u-email">E-posta</label><input id="u-email" type="email" name="email" required></div>
+      <div class="two"><div class="field"><label for="u-role">Rol</label><select id="u-role" name="role"><option value="hotel">Otel</option><option value="admin">Yönetici</option></select></div>
+        <div class="field"><label for="u-hotel_id">Otel</label><select id="u-hotel_id" name="hotel_id"><option value="">—</option>{% for h in hotels %}<option value="{{ h.id }}">{{ h.name }}</option>{% endfor %}</select></div></div>
+      <div class="field"><label for="u-password">Başlangıç parolası</label><input id="u-password" type="password" name="password" required minlength="8" autocomplete="new-password"></div>
       <button class="btn primary" type="submit">{{ ui.icon('plus') }}Ekle</button></form></div></div>
 </div>
 {% endblock %}
