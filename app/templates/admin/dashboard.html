@@ -22,7 +22,7 @@
 
 <div class="grid g-2" style="margin-top:18px">
   <div class="panel"><div class="panel-head"><div><h2>MRR, son 6 ay</h2><p>Ay sonundaki aktif ücretli abonelikler</p></div></div>
-    <div class="panel-body">{{ ui.chart("bar", {"labels": ov.mrr_series|map(attribute='label')|list, "unit": "eur", "categoryLabels": true, "series": [{"label": "MRR", "data": ov.mrr_series|map(attribute='value')|list, "color": "series-1"}]}, "mrr-bar", "short", "MRR") }}</div></div>
+    <div class="panel-body">{{ ui.chart("bar", {"labels": ov.mrr_series|map(attribute='label')|list, "unit": "eur", "categoryLabels": true, "series": [{"label": "MRR", "data": ov.mrr_series|map(attribute='value')|list, "color": "series-1"}]}, "mrr-bar", "short", "MRR", true, "Ay") }}</div></div>
   <div class="panel"><div class="panel-head"><div><h2>Günlük fiyat gözlemi</h2><p>Son 14 gün, veri hattının ürettiği kayıt sayısı</p></div></div>
     <div class="panel-body">{{ ui.chart("bar", {"labels": ov.snap_series|map(attribute='day')|list, "unit": "score", "series": [{"label": "Gözlem", "data": ov.snap_series|map(attribute='count')|list, "color": "series-3"}]}, "snap-bar", "short", "Günlük gözlem") }}</div></div>
 </div>

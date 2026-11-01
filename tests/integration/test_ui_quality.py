@@ -219,6 +219,28 @@ def test_radar_outlier_does_not_crush_near_competitors():
     assert lay["max_km"] > 90
 
 
+def test_admin_destructive_forms_confirm(admin_browser):
+    """Geri dönüşü zor yönetim işlemleri sonucu açıklayan bir onay ister; yönetici kendini devre dışı bırakamaz."""
+    for url, action in (("/admin/aboneler", "/admin/aboneler/"), ("/admin/faturalar", "/admin/faturalar/"),
+                        ("/admin/kullanicilar", "/durum")):
+        html = admin_browser.get(url).text
+        forms = re.findall(r"<form[^>]*>", html)
+        target = [f for f in forms if action in f and 'method="post"' in f]
+        assert target, url
+        assert all("data-confirm" in f for f in target), url
+    users = admin_browser.get("/admin/kullanicilar").text
+    me_row = next(r for r in users.split("<tr>") if "admin@otelradar.local" in r)
+    assert "/durum" not in me_row
+    bulk = admin_browser.get("/admin/oda-eslemeleri").text
+    assert re.search(r'<form[^>]*id="bulk"[^>]*data-confirm', bulk)
+
+
+def test_pipeline_has_single_primary_action(admin_browser):
+    html = admin_browser.get("/admin/veri-hatti").text
+    assert html.count("btn sm primary") <= 1
+    assert "daily_pipeline</td>" not in html  # iş adları Türkçe etiketle gösterilir
+
+
 def test_settings_email_option_is_honest(hotel_browser):
     html = hotel_browser.get("/panel/ayarlar").text
     assert "e-posta" in html.lower() and "yakında" in html.lower()

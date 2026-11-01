@@ -33,7 +33,7 @@
       <div class="cal-legend">−%15<div class="scale"><span style="background:color-mix(in srgb,var(--cal-down) 45%,var(--div-mid))"></span><span style="background:color-mix(in srgb,var(--cal-down) 22%,var(--div-mid))"></span><span style="background:var(--div-mid)"></span><span style="background:color-mix(in srgb,var(--cal-up) 22%,var(--div-mid))"></span><span style="background:color-mix(in srgb,var(--cal-up) 45%,var(--div-mid))"></span></div>+%15</div>
     </div>
     {% for (y, m), items in months.items() %}
-      <h3 style="margin:18px 0 10px">{{ items[0].date|dt('month') }}</h3>
+      <h2 class="h3" style="margin:18px 0 10px">{{ items[0].date|dt('month') }}</h2>
       <div class="cal">
         {% for d in ['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'] %}<div class="dow">{{ d }}</div>{% endfor %}
         {% set first = items[0].date %}

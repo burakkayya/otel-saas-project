@@ -17,7 +17,7 @@
     {{ ui.chart("bar", {"labels": labels, "unit": "score", "stacked": true, "max": 100, "todayIndex": 30, "series": [
         {"label": "Uçuş arama", "data": fl, "color": "series-1"},
         {"label": "Etkinlik", "data": ev, "color": "series-2"},
-        {"label": "Tatil", "data": ho, "color": "series-3"}]}, "demand-stack", "tall", "Talep skoru bileşenleri") }}
+        {"label": "Tatil", "data": ho, "color": "series-3"}]}, "demand-stack", "tall", "Talep skoru bileşenleri", true) }}
   </div>
 </div>
 
@@ -28,7 +28,7 @@
     <div class="actions"><div class="seq-legend">Düşük<span style="background:var(--seq-1)"></span><span style="background:var(--seq-2)"></span><span style="background:var(--seq-3)"></span><span style="background:var(--seq-4)"></span><span style="background:var(--seq-5)"></span><span style="background:var(--seq-6)"></span>Yüksek</div></div></div>
   <div class="panel-body"><div class="heat-cal">
     {% for (y, m), ds in hmonths.items() %}
-    <div class="heat-month"><h4>{{ ds[0]|dt('month') }}</h4>
+    <div class="heat-month"><h3>{{ ds[0]|dt('month') }}</h3>
       <div class="heat-grid">
         {% for w in ['Pt','Sa','Ça','Pe','Cu','Ct','Pz'] %}<span class="dw">{{ w }}</span>{% endfor %}
         {% for _ in range(ds[0].weekday()) %}<span class="c blank"></span>{% endfor %}

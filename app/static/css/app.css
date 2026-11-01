@@ -611,15 +611,22 @@ svg.spark { width: 100%; height: 36px; display: block; overflow: visible; }
 
 /* takvim ısı haritası (talep) */
 .heat-cal { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 18px; }
-.heat-month h4 { font-size: .9rem; margin-bottom: 8px; font-family: var(--font-display); }
+.heat-month h4, .heat-month h3 { font-size: .9rem; margin-bottom: 8px; font-family: var(--font-display); }
 .heat-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
-.heat-grid .dw { font-size: .66rem; color: var(--muted); text-align: center; }
-.heat-grid .c { aspect-ratio: 1; border-radius: 5px; background: var(--surface-3); display: grid; place-items: center; font-size: .68rem; color: var(--ink-2); position: relative; }
+.heat-grid .dw { font-size: .72rem; color: var(--muted); text-align: center; }
+.heat-grid .c { aspect-ratio: 1; border-radius: 5px; background: var(--surface-3); display: grid; place-items: center; font-size: .74rem; color: var(--ink); position: relative; font-variant-numeric: tabular-nums; }
 .heat-grid .c.today { outline: 2px solid var(--bougain); outline-offset: 1px; }
-.heat-grid .c.past { opacity: .55; }
+/* geçmiş günler: ısı rengi yerine düz kabuk tonu (opaklık metni de soldurup kontrastı bozuyordu) */
+.heat-grid .c.past { background: var(--surface-3) !important; color: var(--muted) !important; }
 .heat-grid .c.blank { background: transparent; }
-.heat-grid .c.s1 { background: var(--seq-1); } .heat-grid .c.s2 { background: var(--seq-2); } .heat-grid .c.s3 { background: var(--seq-3); color: #fff; }
-.heat-grid .c.s4 { background: var(--seq-4); color: #fff; } .heat-grid .c.s5 { background: var(--seq-5); color: #fff; } .heat-grid .c.s6 { background: var(--seq-6); color: #fff; }
+/* ısı hücresi metni: her tonda AA kontrastı için açık/koyu metin ayrı seçilir */
+:root { --seq-ink-lo: var(--ink); --seq-ink-hi: #ffffff; --seq-4: #2f74c9; }
+:root[data-theme="dark"] { --seq-ink-lo: #f2f6fa; --seq-ink-hi: #0b1622; --seq-4: #3987e5; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --seq-ink-lo: #f2f6fa; --seq-ink-hi: #0b1622; --seq-4: #3987e5; } }
+.heat-grid .c.s1 { background: var(--seq-1); color: var(--seq-ink-lo); } .heat-grid .c.s2 { background: var(--seq-2); color: var(--seq-ink-lo); }
+.heat-grid .c.s3 { background: var(--seq-3); color: var(--seq-ink-lo); }
+.heat-grid .c.s4 { background: var(--seq-4); color: var(--seq-ink-hi); } .heat-grid .c.s5 { background: var(--seq-5); color: var(--seq-ink-hi); }
+.heat-grid .c.s6 { background: var(--seq-6); color: var(--seq-ink-hi); }
 .heat-grid .c.ev::after { content: ""; position: absolute; top: 3px; right: 3px; width: 5px; height: 5px; border-radius: 50%; background: var(--bougain); }
 .seq-legend { display: flex; align-items: center; gap: 4px; font-size: .74rem; color: var(--muted); }
 .seq-legend span { width: 16px; height: 10px; border-radius: 3px; }
@@ -778,3 +785,4 @@ td.band-cell { min-width: 150px; }
 .radar-legend { justify-content: center; margin: 12px 0 0; }
 .radar-pt text { font-size: 3.1px; }
 .radar-pt circle.outlier { stroke: var(--ink-2); stroke-dasharray: .9 .6; stroke-width: .6; }
+h2.h3 { font-size: 1rem; line-height: 1.35; }

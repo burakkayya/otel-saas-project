@@ -116,9 +116,22 @@
 </div>
 {%- endmacro %}
 
-{% macro chart(kind, data, id, size="", label="Grafik") -%}
+{% macro chart(kind, data, id, size="", label="Grafik", table=False, first_col="Tarih") -%}
 <div class="chart-box {{ size }}"><canvas data-chart="{{ kind }}" data-source="{{ id }}" role="img" aria-label="{{ label }}"></canvas></div>
 <script type="application/json" id="{{ id }}">{{ data|json }}</script>
+{% if table and data.series %}{# Kritik grafiklerin erişilebilir tablo karşılığı #}
+<details class="table-view"><summary>Tablo olarak göster</summary>
+  <div class="table-wrap" style="max-height:320px"><table class="data">
+    <thead><tr><th>{{ first_col }}</th>{% for s in data.series %}<th class="num">{{ s.label }}</th>{% endfor %}</tr></thead>
+    <tbody>{% for i in range(data.labels|length) %}{% set lb = data.labels[i] %}
+      <tr><td class="nowrap">{{ lb|dt('day') if (lb is string and lb|length == 10 and lb[4] == '-') else lb }}</td>
+      {% for s in data.series %}{% set v = s.data[i] if i < s.data|length else none %}
+        <td class="num">{{ '—' if v is none else (v|eur if data.unit == 'eur' else (v|pct(1) if data.unit == 'pct' else v|num(1 if data.unit == '' else 0))) }}</td>
+      {% endfor %}</tr>
+    {% endfor %}</tbody>
+  </table></div>
+</details>
+{% endif %}
 {%- endmacro %}
 
 {% macro pager(pg, base) -%}

@@ -8,14 +8,14 @@
   {{ ui.stat("Fiyat gözlemi", snap_count|num, "Tüm oda tipleri", "grid") }}
   {{ ui.stat("Üretilen öneri", sugg_count|num, "Abonelik süresince", "tag") }}
   {{ ui.stat("Oda tipi", h.room_types|length, "OTA'dan eşlenen", "bed") }}
-  {{ ui.stat("Abonelik", h.active_subscription.plan.name if h.active_subscription else "Yok", (h.active_subscription.status if h.active_subscription else "Rakip/kontrol oteli"), "card") }}
+  {{ ui.stat("Abonelik", h.active_subscription.plan.name if h.active_subscription else "Yok", ({"trial": "Deneme", "active": "Aktif", "past_due": "Ödeme gecikti", "canceled": "İptal"}.get(h.active_subscription.status, h.active_subscription.status) if h.active_subscription else "Rakip/kontrol oteli"), "card") }}
 </div>
 <div class="panel" style="margin-top:18px"><div class="panel-head"><div><h2>Fiyat geçmişi ve ileriye dönük fiyatlar</h2><p>Son 60 gün ve önümüzdeki 60 gün, konaklama tarihine göre son gözlenen fiyat</p></div></div>
   <div class="panel-body">
     {% set labels = (series.get('standard') or series.get('deluxe') or [])|map(attribute=0)|list %}
-    {% set sers = [] %}{% for cat, pts in series.items() %}{% set _ = sers.append({"label": CATEGORY_LABELS[cat], "data": pts|map(attribute=1)|list, "color": "series-1" if loop.first else "series-2"}) %}{% endfor %}
+    {% set sers = [] %}{% for cat, pts in series.items() %}{% set _ = sers.append({"label": CATEGORY_LABELS[cat], "data": pts|map(attribute=1)|list, "color": {"standard": "series-1", "deluxe": "series-2", "suite": "series-3", "family": "series-4"}.get(cat, "series-1")}) %}{% endfor %}
     <div class="legend">{% for s in sers %}<span><i style="background:var(--{{ s.color }})"></i>{{ s.label }}</span>{% endfor %}</div>
-    {% if labels %}{{ ui.chart("line", {"labels": labels, "unit": "eur", "series": sers}, "hd-line", "", "Fiyat geçmişi") }}{% else %}<p class="muted">Fiyat verisi yok.</p>{% endif %}
+    {% if labels %}{{ ui.chart("line", {"labels": labels, "unit": "eur", "series": sers}, "hd-line", "", "Fiyat geçmişi", true) }}{% else %}<p class="muted">Fiyat verisi yok.</p>{% endif %}
   </div></div>
 <div class="grid g-3" style="margin-top:18px">
   <div class="panel"><div class="panel-head"><div><h2>Profil</h2></div></div><div class="panel-body">

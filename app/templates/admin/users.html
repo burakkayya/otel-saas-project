@@ -13,8 +13,8 @@
           <td class="small">{{ u.last_login_at|ago if u.last_login_at else '—' }}</td><td>{{ ui.status_badge('active' if u.is_active else 'canceled') }}</td>
           <td class="num"><div class="row" style="gap:4px;flex-wrap:nowrap">
             <form method="post" action="/admin/kullanicilar/{{ u.id }}/parola" class="inline" data-confirm="{{ u.email }} için yeni geçici parola oluşturulsun mu?">{{ ui.csrf() }}<button class="btn sm" type="submit">Parola sıfırla</button></form>
-            <form method="post" action="/admin/kullanicilar/{{ u.id }}/durum" class="inline">{{ ui.csrf() }}<button class="btn sm {{ 'danger' if u.is_active }}" type="submit">{{ 'Devre dışı bırak' if u.is_active else 'Etkinleştir' }}</button></form></div></td></tr>
-      {% endfor %}</tbody></table></div></div>
+            {% if u.id != user.id %}<form method="post" action="/admin/kullanicilar/{{ u.id }}/durum" class="inline" data-confirm="{{ u.email }} {{ 'devre dışı bırakılsın mı? Kullanıcı bir daha giriş yapamaz.' if u.is_active else 'yeniden etkinleştirilsin mi?' }}">{{ ui.csrf() }}<button class="btn sm {{ 'danger' if u.is_active }}" type="submit">{{ 'Devre dışı bırak' if u.is_active else 'Etkinleştir' }}</button></form>{% else %}<span class="small muted">Siz</span>{% endif %}</div></td></tr>
+      {% else %}<tr><td colspan="6">{{ ui.empty("Kullanıcı bulunamadı", "Aramayı değiştirin ya da sağdaki formla yeni kullanıcı ekleyin.") }}</td></tr>{% endfor %}</tbody></table></div></div>
   </div>
   <div class="panel"><div class="panel-head"><div><h2>Kullanıcı ekle</h2></div></div>
     <div class="panel-body"><form class="form" method="post" action="/admin/kullanicilar">{{ ui.csrf() }}

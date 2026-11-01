@@ -11,7 +11,7 @@
     <div class="legend"><span><i style="background:var(--series-1)"></i>Talep skoru</span><span><i class="dash" style="background:var(--series-3);color:var(--series-3)"></i>Uçuş arama endeksi</span></div>
     {{ ui.chart("line", {"labels": ds|map('string')|list, "unit": "score", "zero": true, "hardMax": 100, "series": [
       {"label": "Talep skoru", "data": dscore, "color": "series-1", "fill": true},
-      {"label": "Uçuş arama", "data": dflight, "color": "series-3", "dash": true}]}, "adm-demand", "", "Talep skoru") }}
+      {"label": "Uçuş arama", "data": dflight, "color": "series-3", "dash": true}]}, "adm-demand", "", "Talep skoru", true) }}
   </div></div>
 <div class="grid g-main-side" style="margin-top:18px">
   <div class="panel"><div class="panel-head"><div><h2>Etkinlikler</h2><p>PredictHQ'dan veya elle eklenen</p></div></div>
