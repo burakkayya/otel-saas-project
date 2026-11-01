@@ -2,8 +2,8 @@
 {% block title %}Abonelikler{% endblock %}
 {% block page_title %}Abonelikler{% endblock %}
 {% block content %}
-<div class="row" style="margin-bottom:16px"><div class="seg">
-  {% for k, v in [('', 'Tümü'), ('trial', 'Deneme'), ('active', 'Aktif'), ('past_due', 'Ödeme gecikti'), ('canceled', 'İptal')] %}<a class="{{ 'on' if durum == k }}" href="?durum={{ k }}">{{ v }}</a>{% endfor %}
+<div class="row" style="margin-bottom:16px"><div class="seg" role="group">
+  {% for k, v in [('', 'Tümü'), ('trial', 'Deneme'), ('active', 'Aktif'), ('past_due', 'Ödeme gecikti'), ('canceled', 'İptal')] %}<a class="{{ 'on' if durum == k }}"{% if durum == k %} aria-current="true"{% endif %} href="?durum={{ k }}">{{ v }}</a>{% endfor %}
 </div></div>
 <div class="panel"><div class="panel-body flush"><div class="table-wrap"><table class="data">
   <thead><tr><th>Otel</th><th>Başlangıç</th><th>Yenileme</th><th class="num">Ücret</th><th>Durum</th><th>Paket ve durum değiştir</th></tr></thead>

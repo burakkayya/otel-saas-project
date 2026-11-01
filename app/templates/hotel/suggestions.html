@@ -10,17 +10,17 @@
 {% set q = "&gun=" ~ gun ~ ("&sadece=onemli" if sadece else "") ~ "&gorunum=" ~ gorunum %}
 <div class="row between" style="margin-bottom:16px">
   <div class="row">
-    <div class="seg" role="tablist" aria-label="Oda kategorisi">
-      {% for c in cats %}<a class="{{ 'on' if c == cat }}" href="?kategori={{ c }}{{ q }}">{{ CATEGORY_LABELS[c] }}</a>{% endfor %}
+    <div class="seg" role="group" aria-label="Oda kategorisi">
+      {% for c in cats %}<a class="{{ 'on' if c == cat }}"{% if c == cat %} aria-current="true"{% endif %} href="?kategori={{ c }}{{ q }}">{{ CATEGORY_LABELS[c] }}</a>{% endfor %}
     </div>
-    <div class="seg" aria-label="Dönem">
-      {% for g in [14, 30, 60] %}<a class="{{ 'on' if g == gun }}" href="?kategori={{ cat }}&gun={{ g }}{{ '&sadece=onemli' if sadece }}&gorunum={{ gorunum }}">{{ g }} gün</a>{% endfor %}
+    <div class="seg" role="group" aria-label="Dönem">
+      {% for g in [14, 30, 60] %}<a class="{{ 'on' if g == gun }}"{% if g == gun %} aria-current="true"{% endif %} href="?kategori={{ cat }}&gun={{ g }}{{ '&sadece=onemli' if sadece }}&gorunum={{ gorunum }}">{{ g }} gün</a>{% endfor %}
     </div>
     <a class="btn sm {{ 'primary' if sadece }}" href="?kategori={{ cat }}&gun={{ gun }}&gorunum={{ gorunum }}{{ '' if sadece else '&sadece=onemli' }}">{{ ui.icon('alert') }}Yalnızca %8+ sapanlar</a>
   </div>
-  <div class="seg" aria-label="Görünüm">
-    <a class="{{ 'on' if gorunum == 'liste' }}" href="?kategori={{ cat }}&gun={{ gun }}{{ '&sadece=onemli' if sadece }}&gorunum=liste">Liste</a>
-    <a class="{{ 'on' if gorunum == 'takvim' }}" href="?kategori={{ cat }}&gun={{ gun }}{{ '&sadece=onemli' if sadece }}&gorunum=takvim">Takvim</a>
+  <div class="seg" role="group" aria-label="Görünüm">
+    <a class="{{ 'on' if gorunum == 'liste' }}"{% if gorunum == 'liste' %} aria-current="true"{% endif %} href="?kategori={{ cat }}&gun={{ gun }}{{ '&sadece=onemli' if sadece }}&gorunum=liste">Liste</a>
+    <a class="{{ 'on' if gorunum == 'takvim' }}"{% if gorunum == 'takvim' %} aria-current="true"{% endif %} href="?kategori={{ cat }}&gun={{ gun }}{{ '&sadece=onemli' if sadece }}&gorunum=takvim">Takvim</a>
   </div>
 </div>
 

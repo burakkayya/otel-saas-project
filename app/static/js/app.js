@@ -66,12 +66,14 @@
       fill();
     }
 
-    // Bildirim kutuları: kapatma düğmesi ve uygulama içinde 7 sn sonra kendiliğinden kapanma
+    // Bildirim kutuları: kapatma düğmesi; yalnızca başarı/bilgi mesajları 7 sn sonra kendiliğinden kapanır.
+    // Hata ve uyarılar kullanıcı kapatana kadar kalır (WCAG 2.2.1).
     document.querySelectorAll("[data-toast]").forEach(function (t) {
       function hide() { t.classList.add("hide"); setTimeout(function () { t.remove(); }, 260); }
       var btn = t.querySelector("[data-toast-close]");
       if (btn) btn.addEventListener("click", hide);
-      if (t.closest(".main")) setTimeout(hide, 7000);
+      var calm = t.matches(".alert.success, .alert.info");
+      if (calm && t.closest(".main")) setTimeout(hide, 7000);
     });
 
     // Paneldeki öneri fiyatı için tek seferlik sayaç animasyonu

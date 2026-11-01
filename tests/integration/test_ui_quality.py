@@ -119,3 +119,32 @@ def test_forbidden_page_offers_way_back_for_signed_in_user(hotel_browser):
 def test_not_found_page_for_visitor_links_home(client):
     html = client.get("/olmayan-sayfa").text
     assert 'href="/"' in html and "javascript:" not in html
+
+
+def _start_registration(client, hotel_name, district, email):
+    from tests.conftest import csrf_from
+
+    token = csrf_from(client, "/kayit")
+    r = client.post("/kayit", data={"csrf_token": token, "hotel_name": hotel_name, "province": "Muğla", "district": district,
+                                    "address": "", "star_rating": "", "full_name": "Deneme Yetkili", "email": email,
+                                    "plan_code": "profesyonel", "kvkk": "1"}, follow_redirects=False)
+    assert r.status_code == 303
+    return client.get("/kayit/eslestir").text
+
+
+def test_register_match_does_not_preselect_weak_candidate(client):
+    """Zayıf ya da başka ilçedeki aday önceden seçilmez; kullanıcı bilinçli seçim yapar."""
+    html = _start_registration(client, "Deneme Bodrum Butik Otel", "Bodrum", "zayif-aday@test.local")
+    assert re.search(r'name="hotel_choice" value="\d+"[^>]*checked', html) is None
+    assert re.search(r'name="hotel_choice"[^>]*required', html)
+
+
+def test_register_kvkk_wording_is_acknowledgement(client):
+    html = client.get("/kayit").text
+    assert "bilgilendirildim" in html and "kabul ediyorum" not in html
+
+
+def test_error_toasts_are_not_auto_dismissed():
+    """Hata ve uyarı bildirimleri kullanıcı kapatana kadar ekranda kalır (WCAG 2.2.1)."""
+    js = Path("app/static/js/app.js").read_text(encoding="utf-8")
+    assert "alert.success" in js or "data-toast-auto" in js

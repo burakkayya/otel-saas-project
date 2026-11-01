@@ -3,7 +3,7 @@
 {% block page_title %}Talep ve etkinlikler{% endblock %}
 {% block crumbs %}<div class="crumbs">Son güncelleme: {{ last|dt('datetime') if last else '—' }}</div>{% endblock %}
 {% block content %}
-<div class="row" style="margin-bottom:16px"><div class="seg">{% for p in provinces %}<a class="{{ 'on' if p == il }}" href="?il={{ p }}">{{ p }}</a>{% endfor %}</div></div>
+<div class="row" style="margin-bottom:16px"><div class="seg" role="group">{% for p in provinces %}<a class="{{ 'on' if p == il }}"{% if p == il %} aria-current="true"{% endif %} href="?il={{ p }}">{{ p }}</a>{% endfor %}</div></div>
 {% set ds = dm.keys()|sort|list %}{% set dscore = [] %}{% set dflight = [] %}
 {% for d in ds %}{% set _ = dscore.append(dm[d].demand_score|float) %}{% set _ = dflight.append(dm[d].flight_score|float) %}{% endfor %}
 <div class="panel"><div class="panel-head"><div><h2>{{ il }} talep skoru</h2><p>Son 30 gün ve önümüzdeki 90 gün</p></div></div>

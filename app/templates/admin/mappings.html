@@ -9,8 +9,8 @@
   {{ ui.stat("LLM", stats.get('llm', 0)|num, "Yalnızca belirsiz adlar", "cpu") }}
   {{ ui.stat("Elle", stats.get('manual', 0)|num, "Otel veya ekip", "user") }}
 </div>
-<div class="row" style="margin-bottom:16px"><div class="seg">
-  {% for k, v in [('inceleme', 'İnceleme kuyruğu'), ('tum', 'Tümü'), ('rule', 'Kural'), ('llm', 'LLM'), ('manual', 'Elle')] + CATEGORY_LABELS.items()|list %}<a class="{{ 'on' if filtre == k }}" href="?filtre={{ k }}">{{ v }}{% if k in cats %} ({{ cats[k] }}){% endif %}</a>{% endfor %}
+<div class="row" style="margin-bottom:16px"><div class="seg" role="group">
+  {% for k, v in [('inceleme', 'İnceleme kuyruğu'), ('tum', 'Tümü'), ('rule', 'Kural'), ('llm', 'LLM'), ('manual', 'Elle')] + CATEGORY_LABELS.items()|list %}<a class="{{ 'on' if filtre == k }}"{% if filtre == k %} aria-current="true"{% endif %} href="?filtre={{ k }}">{{ v }}{% if k in cats %} ({{ cats[k] }}){% endif %}</a>{% endfor %}
 </div></div>
 <div class="panel">
   <form method="post" action="/admin/oda-eslemeleri/toplu-onay" id="bulk">{{ ui.csrf() }}</form>

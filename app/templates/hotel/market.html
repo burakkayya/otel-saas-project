@@ -6,10 +6,10 @@
 {% block content %}
 <div class="row between" style="margin-bottom:16px">
   <div class="row">
-    <div class="seg">{% for c in cats %}<a class="{{ 'on' if c == cat }}" href="?kategori={{ c }}&gun={{ gun }}&veri={{ veri }}">{{ CATEGORY_LABELS[c] }}</a>{% endfor %}</div>
-    <div class="seg">{% for g in [7, 14, 30] %}<a class="{{ 'on' if g == gun }}" href="?kategori={{ cat }}&gun={{ g }}&veri={{ veri }}">{{ g }} gün</a>{% endfor %}</div>
+    <div class="seg" role="group">{% for c in cats %}<a class="{{ 'on' if c == cat }}"{% if c == cat %} aria-current="true"{% endif %} href="?kategori={{ c }}&gun={{ gun }}&veri={{ veri }}">{{ CATEGORY_LABELS[c] }}</a>{% endfor %}</div>
+    <div class="seg" role="group">{% for g in [7, 14, 30] %}<a class="{{ 'on' if g == gun }}"{% if g == gun %} aria-current="true"{% endif %} href="?kategori={{ cat }}&gun={{ g }}&veri={{ veri }}">{{ g }} gün</a>{% endfor %}</div>
   </div>
-  <div class="seg"><a class="{{ 'on' if veri == 'fiyat' }}" href="?kategori={{ cat }}&gun={{ gun }}&veri=fiyat">Fiyat</a><a class="{{ 'on' if veri == 'oda' }}" href="?kategori={{ cat }}&gun={{ gun }}&veri=oda">Kalan oda</a></div>
+  <div class="seg" role="group"><a class="{{ 'on' if veri == 'fiyat' }}"{% if veri == 'fiyat' %} aria-current="true"{% endif %} href="?kategori={{ cat }}&gun={{ gun }}&veri=fiyat">Fiyat</a><a class="{{ 'on' if veri == 'oda' }}"{% if veri == 'oda' %} aria-current="true"{% endif %} href="?kategori={{ cat }}&gun={{ gun }}&veri=oda">Kalan oda</a></div>
 </div>
 
 <div class="panel">
