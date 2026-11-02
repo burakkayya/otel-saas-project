@@ -314,7 +314,7 @@ details.table-view[open] summary { margin-bottom: 8px; }
 .cal .day { min-height: 74px; border-radius: 8px; padding: 6px 7px; background: var(--surface-2); border: 1px solid var(--line-2);
   display: flex; flex-direction: column; font-size: .78rem; color: var(--ink); }
 .cal .day:hover { border-color: var(--brand); text-decoration: none; }
-.cal .day .d { font-weight: 600; color: var(--ink-2); }
+.cal .day .d { font-weight: 600; color: var(--ink); }
 .cal .day .p { font-family: var(--font-display); font-size: 1rem; font-weight: 650; margin-top: auto; }
 .cal .day .c { font-size: .72rem; }
 .cal .blank { background: transparent; border: 0; }

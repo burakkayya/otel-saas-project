@@ -25,12 +25,16 @@ def _viewer(request: Request):
         return None
     from app.models import User
 
-    with SessionLocal() as db:
-        user = db.get(User, uid)
-        if user is None or not user.is_active:
-            return None
-        db.expunge(user)
-        return user
+    try:
+        with SessionLocal() as db:
+            user = db.get(User, uid)
+            if user is None or not user.is_active:
+                return None
+            db.expunge(user)
+            return user
+    except Exception:  # noqa: BLE001 - hata sayfası veritabanına ulaşılamasa da çizilmeli
+        log.warning("Hata sayfası için oturum kullanıcısı okunamadı", exc_info=True)
+        return None
 
 
 def _error(request: Request, status_code: int, title: str, message: str):
@@ -93,8 +97,20 @@ def create_app() -> FastAPI:
     async def _forbidden(request: Request, exc: Forbidden):
         if request.url.path.startswith("/api/"):
             return JSONResponse({"detail": "Yetkisiz"}, status_code=403)
-        return _error(request, 403, "Bu sayfaya erişim yetkiniz yok",
-                      "Bu ekran yalnızca yönetici hesaplarına açık. Kendi panelinizden devam edebilirsiniz.")
+        viewer = _viewer(request)
+        if viewer is not None and viewer.role == "admin":
+            return render(request, "errors/error.html", status_code=403, code=403, user=viewer,
+                          title="Bu ekran otel hesapları içindir",
+                          message="Bir otelin panelini görmek için Yönetim → Oteller'den bir otel seçin ve "
+                                  "'Otel paneline bak' ile yönetici görünümüne geçin.",
+                          action_url="/admin/oteller", action_label="Otel seçin")
+        if viewer is not None and not viewer.hotel_id:
+            return render(request, "errors/error.html", status_code=403, code=403, user=viewer,
+                          title="Hesabınız bir otele bağlı değil",
+                          message="Panelin açılması için hesabınızın bir otele bağlanması gerekiyor. Lütfen yöneticinizle iletişime geçin.")
+        return render(request, "errors/error.html", status_code=403, code=403, user=viewer,
+                      title="Bu sayfaya erişim yetkiniz yok",
+                      message="Bu ekran yalnızca yönetici hesaplarına açık. Kendi panelinizden devam edebilirsiniz.")
 
     @app.exception_handler(CsrfError)
     async def _csrf(request: Request, exc: CsrfError):

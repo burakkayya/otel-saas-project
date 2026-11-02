@@ -22,8 +22,9 @@
     {% set same = form.district and (c.hotel.district or '')|lower == form.district|lower %}
     <label><input type="radio" name="hotel_choice" value="{{ c.hotel.id }}" required {{ 'checked' if ns.pre == c.hotel.id }}>
       <div><strong>{{ c.hotel.name }}</strong><div class="small {{ 'ink-2' if same else 'muted' }}">{{ c.hotel.district }}, {{ c.hotel.province }}{% if c.hotel.star_rating %}, {{ c.hotel.star_rating }} yıldız{% endif %}{% if form.district and not same %} · <b>farklı ilçe</b>{% endif %}</div></div>
-      {% set pct = [100, (c.score * 100)|round|int]|min %}
-      <span class="score badge {{ 'good' if c.score >= 0.85 else 'info' if c.score >= 0.5 else '' }}">%{{ pct }} benzerlik</span></label>
+      {% set name_score = c.score - (0.25 if same else 0) %}{# ilçe bonusu hariç, yalnızca ad benzerliği #}
+      {% set pct = [100, [0, (name_score * 100)|round|int]|max]|min %}
+      <span class="score badge {{ 'good' if name_score >= 0.9 else 'info' if name_score >= 0.6 else '' }}">%{{ pct }} ad benzerliği</span></label>
     {% endfor %}
     <label><input type="radio" name="hotel_choice" value="new" required {{ 'checked' if not candidates }}>
       <div><strong>Listede yok, yeni kayıt oluştur</strong><div class="small muted">Konumunuzu adresinizden bulur, önerileri rakip dağılımına göre üretiriz.</div></div></label>

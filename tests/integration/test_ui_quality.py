@@ -116,6 +116,31 @@ def test_forbidden_page_offers_way_back_for_signed_in_user(hotel_browser):
     assert "javascript:history.back()" not in html
 
 
+def test_forbidden_page_for_admin_on_hotel_panel(admin_browser):
+    """Yönetici, otel seçmeden /panel açarsa 'yalnızca yönetici' değil, otel seçmesi gerektiğini görür."""
+    r = admin_browser.get("/panel")
+    assert r.status_code == 403
+    assert "otel seçin" in r.text and "yalnızca yönetici" not in r.text
+    assert 'href="/admin/oteller"' in r.text
+
+
+def test_error_page_survives_database_outage(hotel_browser, monkeypatch):
+    """Veritabanına ulaşılamasa da markalı hata sayfası çizilir (oturum kullanıcısı bilinmeden)."""
+    import app.main as main
+
+    def boom():
+        raise RuntimeError("veritabanı kapalı")
+
+    monkeypatch.setattr(main, "SessionLocal", boom)
+    r = hotel_browser.get("/admin")
+    assert r.status_code == 403 and "OtelRadar" in r.text
+
+
+def test_register_match_badge_uses_name_similarity(client):
+    html = _start_registration(client, "Deneme Bodrum Butik Otel", "Bodrum", "rozet-aday@test.local")
+    assert "%100 benzerlik" not in html
+
+
 def test_not_found_page_for_visitor_links_home(client):
     html = client.get("/olmayan-sayfa").text
     assert 'href="/"' in html and "javascript:" not in html

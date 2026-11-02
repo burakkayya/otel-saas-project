@@ -78,7 +78,7 @@ def rationale_drivers(r: dict | None, limit: int = 3) -> list[dict]:
     if pi is not None and abs(float(pi) - 1) >= 0.05:
         pct = round(float(pi) * 100)
         out.append((abs(float(pi) - 1) * 100, {"dir": "down" if pi < 1 else "up",
-                    "text": f"Fiyat konumunuz: geçmişte rakip medyanının %{pct}'i düzeyinde"}))
+                    "text": f"Fiyat konumunuz: geçmişte rakip medyanının %{pct} düzeyinde"}))
     mc = r.get("comp_median_change_7d_pct")
     if mc is not None and abs(float(mc)) >= 1:
         out.append((abs(float(mc)), {"dir": "up" if mc > 0 else "down",
