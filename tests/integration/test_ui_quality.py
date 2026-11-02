@@ -167,6 +167,28 @@ def test_plan_features_match_limits(db):
         assert "compset" not in text, plan.code
 
 
+def test_old_default_plan_features_are_migrated(db):
+    """Önceki sürümün değiştirilmemiş varsayılan maddeleri güncel metne taşınır; yöneticinin özel metnine dokunulmaz."""
+    from sqlalchemy import select
+
+    from app.models import Plan
+    from app.seed import _OLD_DEFAULT_FEATURES, PLANS, ensure_base
+
+    resort = db.execute(select(Plan).where(Plan.code == "resort")).scalar_one()
+    pro = db.execute(select(Plan).where(Plan.code == "profesyonel")).scalar_one()
+    resort.features = list(_OLD_DEFAULT_FEATURES["resort"])
+    pro.features = ["Özel madde"]
+    db.commit()
+    ensure_base(db)
+    db.commit()
+    db.refresh(resort)
+    db.refresh(pro)
+    assert resort.features == next(p["features"] for p in PLANS if p["code"] == "resort")
+    assert pro.features == ["Özel madde"]
+    pro.features = next(p["features"] for p in PLANS if p["code"] == "profesyonel")
+    db.commit()
+
+
 def test_signed_number_filter():
     from app.web import fmt_signed
 

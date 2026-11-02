@@ -68,7 +68,7 @@
           <td class="num cell-strong cell-key" data-label="Öneri">{{ r.suggested|eur }}</td>
           <td class="band-cell cell-wide" data-label="Bant">{{ ui.range_bar(r.floor, r.ceiling, r.suggested, r.own, r.median, true) }}<div class="small muted num" style="text-align:left">{{ r.floor|eur }} – {{ r.ceiling|eur }}</div></td>
           <td class="num" data-label="Fark">{{ ui.change_badge(r.change) }}</td>
-          <td class="cell-wide" data-label="Gerekçe"><div class="rationale clamp" title="{{ r.text }}">{{ r.text }}</div></td>
+          <td class="cell-wide" data-label="Gerekçe">{% set dr = rationale_drivers(r.rationale) %}<div class="rationale clamp" title="{{ r.text }}">{{ dr|map(attribute="text")|join(" · ") if dr else r.text }}</div></td>
           <td class="num cell-actions">
             <div class="row" style="gap:4px;flex-wrap:nowrap">
             {% if r.action == 'applied' %}<span class="badge good">{{ ui.icon('check') }}Uygulandı</span>

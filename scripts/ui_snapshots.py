@@ -124,6 +124,8 @@ def main() -> int:
     ap.add_argument("--widths", default="1440,390")
     ap.add_argument("--themes", default="light,dark")
     ap.add_argument("--only", help="yalnızca adı bu düzenli ifadeye uyan ekranlar")
+    ap.add_argument("--system-theme", action="store_true",
+                    help="tema tercihini saklamadan yalnızca işletim sistemi temasıyla (prefers-color-scheme) ölç")
     a = ap.parse_args()
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -143,7 +145,8 @@ def main() -> int:
                     ctx = browser.new_context(viewport={"width": width, "height": 900 if width > 600 else 844},
                                               color_scheme=theme, device_scale_factor=1, locale="tr-TR",
                                               reduced_motion="reduce")
-                    ctx.add_init_script(f"try{{localStorage.setItem('or-theme','{theme}')}}catch(e){{}}")
+                    if not a.system_theme:
+                        ctx.add_init_script(f"try{{localStorage.setItem('or-theme','{theme}')}}catch(e){{}}")
                     page = ctx.new_page()
                     cur: dict[str, list[str]] = {"errors": []}
                     page.on("console", lambda m: m.type == "error" and cur["errors"].append(m.text))
@@ -179,6 +182,8 @@ def main() -> int:
                         page.screenshot(path=str(out / fname), full_page=True, type="jpeg", quality=62)
                         if html_out and theme == themes[0] and width == widths[0]:
                             (html_out / f"{group}-{name}.html").write_text(page.content(), encoding="utf-8")
+                        # Bilinçli 403/404 sayfalarında belgenin kendi durum kodu hata değildir
+                        errors = [e for e in errors if f"status of {status}" not in e]
                         report.append({"group": group, "name": name, "path": page.url.replace(a.base, ""), "status": status,
                                        "width": width, "theme": theme, "errors": errors, **res, "shot": fname})
                         if creds and path == "@impersonate":

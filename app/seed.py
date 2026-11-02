@@ -77,11 +77,23 @@ SUBSCRIBER_PICKS = [
 ]
 
 
+# Önceki sürümün varsayılan paket maddeleri: değiştirilmemişlerse güncel (sınırlarla tutarlı) metne taşınır.
+_OLD_DEFAULT_FEATURES = {
+    "baslangic": ["5 rakiplik compset", "2 oda kategorisi", "30 günlük öneri ufku", "Günlük e-posta özeti"],
+    "profesyonel": ["8 rakiplik compset", "4 oda kategorisi", "60 günlük öneri ufku", "Talep sinyalleri", "Backtest raporu"],
+    "resort": ["12 rakiplik compset", "Sınırsız oda kategorisi", "90 günlük öneri ufku", "Kontrol grubu etki ölçümü",
+               "Öncelikli destek"],
+}
+
+
 def ensure_base(db: Session) -> None:
     """Her ortamda gerekli temel kayıtlar."""
     for p in PLANS:
-        if db.execute(select(Plan).where(Plan.code == p["code"])).scalar_one_or_none() is None:
+        existing = db.execute(select(Plan).where(Plan.code == p["code"])).scalar_one_or_none()
+        if existing is None:
             db.add(Plan(**p))
+        elif list(existing.features or []) == _OLD_DEFAULT_FEATURES.get(p["code"]):
+            existing.features = p["features"]
     if db.execute(select(User).where(User.email == settings.admin_email)).scalar_one_or_none() is None:
         db.add(User(email=settings.admin_email, password_hash=hash_password(settings.admin_password),
                     full_name="Sistem Yöneticisi", role="admin"))

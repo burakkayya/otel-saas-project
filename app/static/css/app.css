@@ -69,7 +69,7 @@
     color-scheme: dark;
     --bg: #0d1720; --surface: #142230; --surface-2: #182836; --surface-3: #1d2f3e;
     --ink: #e7eef4; --ink-2: #b2c1ce; --muted: #9aabb9; --line: #263a4a; --line-2: #213342;
-    --brand: #4b8fdc; --brand-hover: #6aa4e6; --brand-soft: #1a3048; --brand-fill: #2f6fbd; --brand-fill-hover: #3a7dcc; --focus: #6aa4e6;
+    --brand: #5a9ae2; --brand-hover: #74ace9; --brand-soft: #1a3048; --brand-fill: #2f6fbd; --brand-fill-hover: #3a7dcc; --focus: #6aa4e6;
     --harbour: #10283a; --harbour-2: #173550; --harbour-ink: #c3d3e0;
     --bougain: #e98bab; --bougain-soft: #3a1d29; --on-bougain: #0b1622;
     --good: #3cb862; --good-soft: #15301f; --warn: #e2a33a; --warn-soft: #33280f;
@@ -84,7 +84,7 @@
   color-scheme: dark;
   --bg: #0d1720; --surface: #142230; --surface-2: #182836; --surface-3: #1d2f3e;
   --ink: #e7eef4; --ink-2: #b2c1ce; --muted: #9aabb9; --line: #263a4a; --line-2: #213342;
-  --brand: #4b8fdc; --brand-hover: #6aa4e6; --brand-soft: #1a3048; --brand-fill: #2f6fbd; --brand-fill-hover: #3a7dcc; --focus: #6aa4e6;
+  --brand: #5a9ae2; --brand-hover: #74ace9; --brand-soft: #1a3048; --brand-fill: #2f6fbd; --brand-fill-hover: #3a7dcc; --focus: #6aa4e6;
   --harbour: #10283a; --harbour-2: #173550; --harbour-ink: #c3d3e0;
   --bougain: #e98bab; --bougain-soft: #3a1d29; --on-bougain: #0b1622;
   --good: #3cb862; --good-soft: #15301f; --warn: #e2a33a; --warn-soft: #33280f;
@@ -786,3 +786,13 @@ td.band-cell { min-width: 150px; }
 .radar-pt text { font-size: 3.1px; }
 .radar-pt circle.outlier { stroke: var(--ink-2); stroke-dasharray: .9 .6; stroke-width: .6; }
 h2.h3 { font-size: 1rem; line-height: 1.35; }
+
+.skip-link { position: absolute; left: 12px; top: -48px; z-index: 100; background: var(--surface); color: var(--ink); padding: 8px 14px;
+  border-radius: 8px; box-shadow: 0 6px 20px rgba(15, 34, 51, .2); font-weight: 600; }
+.skip-link:focus { top: 12px; text-decoration: none; }
+
+/* uyarı kutularındaki bağlantılar kutunun metin rengini alır (koyu temada AA) */
+.alert a { color: inherit; text-decoration: underline; text-underline-offset: 2px; font-weight: 600; }
+.radar-list .n { background: var(--brand-fill); }
+.radar-pt circle { fill: var(--brand-fill); }
+@media (max-width: 900px) { .topbar { position: static; } }
