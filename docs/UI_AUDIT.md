@@ -136,7 +136,7 @@ Tarih: 2 Kasım 2026 · Dal: `feat/impeccable-ui` · Kapsam: 45 ekran (herkese a
 | Kontrast ihlali, sistem koyu teması (90, saklı tercih yok) | ölçülmemişti | **0** |
 | Etiketsiz form alanı | 56 | **0** |
 | Demo uyarısı olmayan ekran | 11 | **0** |
-| Testler (birim + entegrasyon / E2E) | 178 / 7 | **284 / 9** |
+| Testler (birim + entegrasyon / E2E) | 178 / 7 | **287 / 9** |
 
 Ham ölçümler: `docs/screenshots/before/report.json`, `docs/screenshots/after/report.json`. Görüntüler aynı adla iki
 klasörde (`<grup>-<ekran>-<1440|390>-<light|dark>.jpg`).

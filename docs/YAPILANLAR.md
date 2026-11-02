@@ -205,5 +205,5 @@ Mevcut kimlik korundu: kireç beyazı, liman laciverti, Ege mavisi, begonvil, Br
 - `scripts/ui_snapshots.py` 45 ekranı açık/koyu tema ve 1440/390 px'te gezdi. Görüntüler `docs/screenshots/before` ve `after` altında.
 - Sonra: 180 görünümde 0 konsol hatası, 0 yatay taşma, 0 kontrast ihlali, 0 etiketsiz alan. Saklı tercih olmadan
   sistem koyu temasında (90 görünüm) da 0.
-- Testler: **284 birim/entegrasyon** (178 mevcut + 106 yeni, `tests/integration/test_ui_quality.py`) ve **9 E2E**
+- Testler: **287 birim/entegrasyon** (178 mevcut + 109 yeni, `tests/integration/test_ui_quality.py`) ve **9 E2E**
   (7 mevcut + mobil menü klavyesi, 390 px sığma). `ruff` temiz.
