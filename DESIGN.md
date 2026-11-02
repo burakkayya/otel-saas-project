@@ -2,25 +2,25 @@
 name: OtelRadar
 description: Halka açık veriyle her sabah gerekçeli oda fiyatı önerisi; sakin, Ege kıyısı bir panel.
 colors:
-  limewash: "#f3f6f8"
+  limewash: "#f4f3ee"
   surface: "#ffffff"
-  surface-2: "#f8fafb"
-  surface-3: "#eef2f5"
+  surface-2: "#faf9f5"
+  surface-3: "#eeece5"
   ink: "#0f2233"
   ink-2: "#44566a"
-  muted: "#758596"
-  line: "#dce3e9"
-  line-2: "#e8edf1"
+  muted: "#586878"
+  line: "#dfdcd2"
+  line-2: "#ebe8e0"
   aegean: "#1f5fa8"
   aegean-hover: "#174d8a"
   aegean-soft: "#e6eef8"
   harbour: "#0f2b3d"
   harbour-2: "#163a51"
   harbour-ink: "#cfdde8"
-  bougainvillea: "#c2386a"
+  bougainvillea: "#a8285a"
   bougainvillea-soft: "#fbe9f0"
-  good: "#1a7f37"
-  warn: "#9a6200"
+  good: "#17732f"
+  warn: "#8a5800"
   bad: "#c53030"
   series-1: "#2a78d6"
   series-2: "#eb6834"
@@ -121,6 +121,8 @@ components:
 > Bu belge `/impeccable document` (tarama modu) ile `app/static/css/app.css`, `app/templates/partials/ui.html` ve
 > `app/static/js/charts.js` dosyalarından çıkarıldı (2 Kasım 2026). Ön madde (frontmatter) normatiftir; düzyazı nasıl
 > uygulanacağını anlatır. Koyu tema karşılıkları `app.css` içindeki `[data-theme="dark"]` bloğundadır.
+> **Güncelleme (Impeccable turu, 2 Kasım 2026):** zemin sıcak kireç badanasına çekildi, `--muted` AA'ya getirildi,
+> `--brand-fill`, `--focus`, `--on-bougain`, `--cal-up/--cal-down` belirteçleri eklendi; ayrıntı `docs/UI_AUDIT.md`.
 
 ## Overview
 
@@ -161,10 +163,10 @@ Sakin ve tuzlu bir palet: nötrler hafif soğuk-gri, tek doygun aksiyon rengi, f
   talep, takvimde bugün ve etkinlik noktası, okunmamış sayacı, yönetici görünümü şeridi.
 
 ### Neutral
-- **Kireç Beyazı** (limewash): sayfa zemini.
+- **Kireç Beyazı** (limewash): sayfa zemini; hafif sıcak, badanalı duvar tonu. Lacivert menü ve Ege mavisiyle Ege kıyısı karşıtlığını kurar.
 - **Beyaz Yüzey** (surface) ve **Kabuk** tonları (surface-2, surface-3): panel, tablo başlığı, iz (track) zeminleri.
-- **Mürekkep** (ink, ink-2, muted): başlık/gövde, ikincil metin, yardımcı metin. muted yalnızca büyük metin veya
-  süsleme için güvenlidir; küçük yardımcı metin AA için en az ink-2 / muted düzeltmesiyle kullanılmalı.
+- **Mürekkep** (ink, ink-2, muted): başlık/gövde, ikincil metin, yardımcı metin. Üçü de beyaz ve kireç zeminde AA
+  (muted ≥4,6:1); koyu temada muted #9aabb9.
 - **Çizgi** (line, line-2): panel kenarı ve tablo satır ayırıcıları.
 
 ### Data
@@ -173,8 +175,13 @@ Sakin ve tuzlu bir palet: nötrler hafif soğuk-gri, tek doygun aksiyon rengi, f
   pazar ızgarasında rakip fiyat farkı içindir.
 - **Durum** (good, warn, bad, info + -soft zeminleri): rozet ve uyarılarda her zaman ikon ve metinle birlikte.
 
+### Odak ve dolgu
+- **Odak** (`--focus`): açık temada Ege mavisi, koyu temada #6aa4e6; lacivert yüzeylerde (#8fd0ff) açık halka.
+- **Birincil dolgu** (`--brand-fill`): düğme zemini; koyu temada bağlantı renginden koyu (#2f6fbd) ki beyaz metin AA kalsın.
+
 ### Named Rules
-**The Begonvil Rule.** Begonvil yalnızca fırsatı işaret eder; hata, uyarı veya süsleme için kullanılmaz. Bir ekranda
+**The Begonvil Rule.** Begonvil yalnızca fırsatı işaret eder (fiyat artırma fırsatı, çok yüksek talep, bugün); hata,
+uyarı, düşüş, yönetici şeridi veya süsleme için kullanılmaz. Önerilen fiyat düşüşü nötr rozet + aşağı okla gösterilir. Bir ekranda
 birkaç noktadan fazla begonvil varsa anlamını yitirmiştir.
 
 **The Color-Never-Alone Rule.** Durum rengi tek başına anlam taşımaz; her rozet ve hücre ikon veya metinle birlikte gelir.

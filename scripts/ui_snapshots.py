@@ -149,8 +149,8 @@ def main() -> int:
                         ctx.add_init_script(f"try{{localStorage.setItem('or-theme','{theme}')}}catch(e){{}}")
                     page = ctx.new_page()
                     cur: dict[str, list[str]] = {"errors": []}
-                    page.on("console", lambda m: m.type == "error" and cur["errors"].append(m.text))
-                    page.on("pageerror", lambda x: cur["errors"].append(str(x)))
+                    page.on("console", lambda m, cur=cur: m.type == "error" and cur["errors"].append(m.text))
+                    page.on("pageerror", lambda x, cur=cur: cur["errors"].append(str(x)))
                     if creds:
                         login(page, a.base, creds)
                     for name, path in pages:

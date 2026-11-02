@@ -130,3 +130,80 @@ verisine erişim engeli, güvenlik başlıkları, denetim kaydı, parola sıfır
   isteğe bağlı `adminer`. `scripts/start.sh` yerel PostgreSQL'e karşı denendi.
 - `.vscode/`: hata ayıklama yapılandırmaları, görevler (Docker, testler, demo veri, lint), önerilen eklentiler.
 - `ruff` ile lint temiz.
+
+## 10. Impeccable iyileştirme turu (2 Kasım 2026)
+
+Dal `feat/impeccable-ui`. Süreç:
+- `/impeccable init` → `PRODUCT.md`
+- `/impeccable document` → `DESIGN.md` + `.impeccable/design.json`
+- 45 ekran için çift ajanlı critique + audit → `docs/UI_AUDIT.md`
+- plan → `docs/superpowers/plans/2026-11-02-impeccable-ui.md`
+
+Mevcut kimlik korundu: kireç beyazı, liman laciverti, Ege mavisi, begonvil, Bricolage + Instrument Sans, rakip radarı.
+
+**Tasarım sistemi (colorize, harden):**
+- Zemin sıcak kireç badanasına çekildi.
+- `--muted` WCAG AA'ya getirildi (3,78 → ≥4,6:1).
+- Koyu temada birincil düğme dolgusu, begonvil üstü metin ve bilgi rengi düzeltildi; liman laciverti yüzeyler zeminden ayrışıyor.
+- Yeni belirteçler: `--focus`, `--brand-fill`, `--on-bougain`, `--cal-up/--cal-down`.
+- Görünür odak halkası (lacivert yüzeylerde açık renk). `::selection`, `caret-color` ve `accent-color` temaya bağlandı.
+
+**Renk anlamları:**
+- Önerilen fiyat düşüşü alarm kırmızısıyla değil, nötr rozet ve okla gösteriliyor.
+- Begonvil yalnızca fiyat artırma fırsatı için kullanılıyor.
+- Öneri takvimi begonvil ↔ gri-mavi ölçeğe geçti; ısı hücrelerinin metni her tonda AA.
+
+**Dürüstlük (doküman 6):**
+- Demo veri uyarısı artık **her ekranda**: tanıtım, giriş, kayıt ve hata sayfaları dahil.
+- Tanıtımda demo modda "72 örnek (kurgusal) tesis" yazıyor.
+- Backtest'te kalan oda düşüşü artık "satış" diye adlandırılmıyor.
+- Etki kartı "anlamlı fark var/yok" ile başlıyor. Yönetimde ±2 SH aralığı, dönem ve nötr tonlu anlamlılık gösteriliyor.
+- Paket maddeleri sınırlarla tutarlı ("Sınırsız" yerine 8 oda kategorisi). E-posta maddeleri "yakında" olarak işaretli.
+  Eski varsayılan maddeler açılışta otomatik taşınıyor.
+
+**Ana iş: "bu gecenin fiyatı ne olmalı ve neden":**
+- Panel kahraman alanında 7 cümlecikli paragrafın yerini "Neden bu fiyat?" başlığı altında en etkili 3 etken aldı
+  (`rationale_drivers`, sade Türkçe).
+- Güven rozeti fiyatın yanında. Öneri listesinde de aynı sade etkenler var.
+
+**Formlar ve erişilebilirlik:**
+- 56 etiketsiz yönetim alanı etiketlendi.
+- `type` niteliği olmayan inputlar artık stil alıyor.
+- Hata ve uyarı bildirimleri kendiliğinden kapanmıyor.
+- Kayıt eşleştirmede zayıf veya başka ilçedeki aday önceden seçilmiyor.
+- KVKK onay metni "bilgilendirildim" oldu. Segment sekmelerinde `aria-current` var.
+- Mobil menüde `aria-expanded`, Esc ile kapanma ve odak yönetimi var. "İçeriğe geç" bağlantısı eklendi.
+- Atlanan başlık seviyeleri düzeltildi.
+
+**Duyarlı düzen (adapt):**
+- Herkese açık sayfalardaki 111 px mobil taşma giderildi.
+- Öneri listesi, "Bu hafta" ve oda tipleri 560 px altında etiketli kartlara dönüşüyor.
+- Yatay kayan tablolarda kenar ipucu var.
+- Giriş ekranının mobil üst bilgisi düzenlendi.
+- Mobilde üst çubuk yapışkan değil, bildirimler üstte.
+- Rakip tablosunun aksiyonları artık kesilmiyor.
+
+**Grafikler ve hareket (animate, quieter):**
+- Chart.js `prefers-reduced-motion` tercihine uyuyor.
+- Orkestralı sayfa animasyonu ve kahraman kart şeridi kaldırıldı. Radar tek tur tarıyor.
+- 6 kritik grafiğe "Tablo olarak göster" eklendi (`ui.chart(..., table=True)`).
+- Otel ayrıntısında kategori renkleri sabit sırada.
+- Grafik ipuçlarında da gerçek eksi işareti (−) kullanılıyor.
+- Radar lejantı eklendi. Uzak rakipler ölçeği bozmuyor.
+
+**Yönetim (harden, onboard):**
+- Abonelik, fatura, kullanıcı ve toplu eşleme işlemleri sonucu açıklayan onay istiyor. Yönetici kendini devre dışı bırakamıyor.
+- Veri hattında tek birincil aksiyon var; iş adları Türkçe.
+- Boş durumlar sonraki adımı öneriyor. Fiyatlar virgüllü ondalıkla düzenleniyor.
+
+**Performans ve altyapı (optimize):**
+- Yazı tipleri önden yükleniyor, Chart.js `defer` ile geliyor.
+- Docker'da web sağlık denetimi tohumlama süresini (240 sn) bekliyor. Worker'daki anlamsız HTTP denetimi kapatıldı;
+  ilk `docker compose up --build` bu makinede doğrulandı (ACIK_KONULAR 4.2).
+
+**Doğrulama:**
+- `scripts/ui_snapshots.py` 45 ekranı açık/koyu tema ve 1440/390 px'te gezdi. Görüntüler `docs/screenshots/before` ve `after` altında.
+- Sonra: 180 görünümde 0 konsol hatası, 0 yatay taşma, 0 kontrast ihlali, 0 etiketsiz alan. Saklı tercih olmadan
+  sistem koyu temasında (90 görünüm) da 0.
+- Testler: **284 birim/entegrasyon** (178 mevcut + 106 yeni, `tests/integration/test_ui_quality.py`) ve **9 E2E**
+  (7 mevcut + mobil menü klavyesi, 390 px sığma). `ruff` temiz.
