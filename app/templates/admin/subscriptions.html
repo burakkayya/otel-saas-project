@@ -2,15 +2,15 @@
 {% block title %}Abonelikler{% endblock %}
 {% block page_title %}Abonelikler{% endblock %}
 {% block content %}
-<div class="row" style="margin-bottom:16px"><div class="seg">
-  {% for k, v in [('', 'Tümü'), ('trial', 'Deneme'), ('active', 'Aktif'), ('past_due', 'Ödeme gecikti'), ('canceled', 'İptal')] %}<a class="{{ 'on' if durum == k }}" href="?durum={{ k }}">{{ v }}</a>{% endfor %}
+<div class="row" style="margin-bottom:16px"><div class="seg" role="group">
+  {% for k, v in [('', 'Tümü'), ('trial', 'Deneme'), ('active', 'Aktif'), ('past_due', 'Ödeme gecikti'), ('canceled', 'İptal')] %}<a class="{{ 'on' if durum == k }}"{% if durum == k %} aria-current="true"{% endif %} href="?durum={{ k }}">{{ v }}</a>{% endfor %}
 </div></div>
 <div class="panel"><div class="panel-body flush"><div class="table-wrap"><table class="data">
   <thead><tr><th>Otel</th><th>Başlangıç</th><th>Yenileme</th><th class="num">Ücret</th><th>Durum</th><th>Paket ve durum değiştir</th></tr></thead>
   <tbody>{% for s in subs %}
     <tr><td><a href="/admin/oteller/{{ s.hotel.id }}">{{ s.hotel.name }}</a><div class="small muted">{{ s.hotel.province }}</div></td><td>{{ s.started_at|dt }}</td><td>{{ s.renews_at|dt }}</td>
       <td class="num">{{ s.plan.monthly_price_eur|eur }}</td><td>{{ ui.status_badge(s.status) }}</td>
-      <td><form method="post" action="/admin/aboneler/{{ s.id }}" class="row" style="gap:6px;flex-wrap:nowrap">{{ ui.csrf() }}
+      <td><form method="post" action="/admin/aboneler/{{ s.id }}" class="row" style="gap:6px;flex-wrap:nowrap" data-confirm="{{ s.hotel.name }} aboneliği güncellensin mi? Durum 'İptal' olursa otel abone sayılmaz ve yeniden kontrol grubu havuzuna döner.">{{ ui.csrf() }}
         <select name="plan_id" class="input-sm" aria-label="Paket">{% for p in plans %}<option value="{{ p.id }}" {{ 'selected' if p.id == s.plan_id }}>{{ p.name }}</option>{% endfor %}</select>
         <select name="status" class="input-sm" aria-label="Durum">{% for k, v in [('trial','Deneme'),('active','Aktif'),('past_due','Ödeme gecikti'),('canceled','İptal')] %}<option value="{{ k }}" {{ 'selected' if k == s.status }}>{{ v }}</option>{% endfor %}</select>
         <button class="btn sm" type="submit">Kaydet</button></form></td></tr>

@@ -73,7 +73,7 @@ def suggestion_rows(db: Session, hotel: Hotel, start: date, end: date, category:
                     "floor": float(s.price_floor or 0), "ceiling": float(s.price_ceiling or 0),
                     "own": own_price, "own_available": o.available if o else None,
                     "change": change, "median": r.get("comp_median"), "demand": float(ds.demand_score) if ds else r.get("demand_score"),
-                    "demand_level": r.get("demand_level"), "text": r.get("text"), "confidence": r.get("confidence"),
+                    "demand_level": r.get("demand_level"), "text": r.get("text"), "confidence": r.get("confidence"), "rationale": r,
                     "action": s.user_action, "created_at": s.created_at, "season": r.get("season_label"),
                 })
             d += timedelta(days=1)
@@ -241,10 +241,16 @@ def radar_layout(hotel: Hotel, competitors: list, prices: dict | None = None) ->
                     "score": float(c.similarity_score) if c.similarity_score is not None else None,
                     "price": (prices or {}).get(h.id)})
     max_d = max([p["dist"] for p in pts] + [1.0])
-    ring_km = [r for r in (1, 2, 5, 10, 20, 50, 100) if r <= max_d * 1.05][-3:] or [round(max_d, 1)]
-    scale_max = max(max_d, ring_km[-1]) * 1.08
+    # Tek bir çok uzak rakip (izole otelde genişleyen yarıçap) ölçeği bozmasın: medyanın 4 katından uzaktakiler
+    # radar kenarına "uzak" işaretiyle yerleşir, gerçek mesafeleri ipucu ve listede kalır.
+    dists = sorted(p["dist"] for p in pts)
+    cap = max(4 * dists[len(dists) // 2], 5.0) if len(dists) >= 3 else max_d
+    view_d = min(max_d, cap)
+    ring_km = [r for r in (1, 2, 5, 10, 20, 50, 100) if r <= view_d * 1.05][-3:] or [round(view_d, 1)]
+    scale_max = max(view_d, ring_km[-1]) * 1.08
     for p in pts:
-        r = math.sqrt(p["dist"] / scale_max) * 46  # merkezden yüzde (viewBox 100)
+        p["outlier"] = p["dist"] > cap
+        r = 46.0 if p["outlier"] else math.sqrt(p["dist"] / scale_max) * 46  # merkezden yüzde (viewBox 100)
         p["x"] = round(50 + r * math.sin(p["bearing"]), 2)
         p["y"] = round(50 - r * math.cos(p["bearing"]), 2)
     rings = [{"km": km, "r": round(math.sqrt(km / scale_max) * 46, 2)} for km in ring_km]

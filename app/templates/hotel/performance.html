@@ -18,7 +18,7 @@
     <div class="panel-head"><div><h2>Haftalık uyum oranı</h2><p>OTA'da gözlenen fiyatınızın tolerans bandına girme oranı</p></div></div>
     <div class="panel-body">
       {% if uptake.weekly %}
-      {{ ui.chart("bar", {"labels": uptake.weekly|map(attribute='week')|list, "unit": "pct", "hardMax": 100, "series": [{"label": "Uyum oranı", "data": uptake.weekly|map(attribute='rate')|list, "color": "series-1"}]}, "uptake-bar", "", "Haftalık uyum oranı") }}
+      {{ ui.chart("bar", {"labels": uptake.weekly|map(attribute='week')|list, "unit": "pct", "hardMax": 100, "series": [{"label": "Uyum oranı", "data": uptake.weekly|map(attribute='rate')|list, "color": "series-1"}]}, "uptake-bar", "", "Haftalık uyum oranı", true, "Hafta") }}
       {% else %}{{ ui.empty("Henüz uyum verisi yok", "Önerilerden sonra OTA'daki fiyatınız gözlendikçe burada görünür.") }}{% endif %}
     </div>
   </div>
@@ -29,7 +29,7 @@
         <div class="legend"><span><i style="background:var(--series-1)"></i>Oteliniz</span><span><i class="dash" style="background:var(--series-3);color:var(--series-3)"></i>Kontrol grubu ortalaması</span></div>
         {{ ui.chart("line", {"labels": roi.details.series|map(attribute='week')|list, "unit": "eur", "series": [
           {"label": "Oteliniz (gelir/oda vekili)", "data": roi.details.series|map(attribute='subscriber')|list, "color": "series-1", "points": true},
-          {"label": "Kontrol grubu", "data": roi.details.series|map(attribute='control')|list, "color": "series-3", "dash": true}]}, "did-line", "short", "Gelir/oda vekili") }}
+          {"label": "Kontrol grubu", "data": roi.details.series|map(attribute='control')|list, "color": "series-3", "dash": true}]}, "did-line", "short", "Gelir/oda vekili", true, "Hafta") }}
         <table class="data" style="margin-top:12px"><thead><tr><th>Ölçüt</th><th class="num">Sizdeki değişim</th><th class="num">Kontrol değişimi</th><th class="num">Tahmini fark</th></tr></thead><tbody>
           <tr><td>Ortalama fiyat (ADR vekili)</td><td class="num">{{ d.adr.subscriber_change|eur(1) }}</td><td class="num">{{ d.adr.control_change|eur(1) }}</td><td class="num cell-strong">{{ d.adr.did|eur(1) }}</td></tr>
           <tr><td>Doluluk vekili</td><td class="num">{{ (d.occ.subscriber_change * 100)|pct(1, true) }}</td><td class="num">{{ (d.occ.control_change * 100)|pct(1, true) }}</td><td class="num cell-strong">{{ (d.occ.did * 100)|pct(1, true) }}</td></tr>

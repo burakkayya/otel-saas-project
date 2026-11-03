@@ -7,14 +7,14 @@
   <div class="panel"><div class="panel-head"><div><h2>Yayındaki ayarlar</h2><p>Sürüm <code>{{ version }}</code>. Her öneri bu sürüm etiketiyle kaydedilir.</p></div></div>
     <div class="panel-body"><form class="form" method="post" action="/admin/model">{{ ui.csrf() }}
       <div class="three">
-        <div class="field"><label>Talep ağırlığı</label><input name="demand" value="{{ weights.demand }}"><div class="hint">Varsayılan {{ defaults.demand }}</div></div>
-        <div class="field"><label>Kalan oda ağırlığı</label><input name="inventory" value="{{ weights.inventory }}"><div class="hint">Varsayılan {{ defaults.inventory }}</div></div>
-        <div class="field"><label>Sezon ağırlığı</label><input name="season" value="{{ weights.season }}"><div class="hint">Varsayılan {{ defaults.season }}</div></div>
+        <div class="field"><label for="w-demand">Talep ağırlığı</label><input id="w-demand" name="demand" value="{{ weights.demand }}"><div class="hint">Varsayılan {{ defaults.demand }}</div></div>
+        <div class="field"><label for="w-inventory">Kalan oda ağırlığı</label><input id="w-inventory" name="inventory" value="{{ weights.inventory }}"><div class="hint">Varsayılan {{ defaults.inventory }}</div></div>
+        <div class="field"><label for="w-season">Sezon ağırlığı</label><input id="w-season" name="season" value="{{ weights.season }}"><div class="hint">Varsayılan {{ defaults.season }}</div></div>
       </div>
       <div class="three">
-        <div class="field"><label>En fazla artış</label><input name="max_up" value="{{ weights.max_up }}"></div>
-        <div class="field"><label>En fazla düşüş</label><input name="max_down" value="{{ weights.max_down }}"></div>
-        <div class="field"><label>Sürüm etiketi</label><input name="version" value="{{ version }}"></div>
+        <div class="field"><label for="w-max_up">En fazla artış</label><input id="w-max_up" name="max_up" value="{{ weights.max_up }}"></div>
+        <div class="field"><label for="w-max_down">En fazla düşüş</label><input id="w-max_down" name="max_down" value="{{ weights.max_down }}"></div>
+        <div class="field"><label for="w-version">Sürüm etiketi</label><input id="w-version" name="version" value="{{ version }}"></div>
       </div>
       <p class="small muted">Değişiklikten önce aşağıdaki deneme backtest ile etkisini görün. Kaydettiğinizde yeni öneriler bu ayarlarla üretilir.</p>
       <button class="btn primary" type="submit" data-confirm="Model ayarları yayına alınsın mı?">Kaydet ve yayına al</button></form></div></div>
@@ -22,9 +22,9 @@
     <div class="panel-body"><form class="form" method="get">
       <input type="hidden" name="deneme" value="1">
       <div class="three">
-        <div class="field"><label>Talep</label><input name="demand" value="{{ form.demand if form.demand is not none else weights.demand }}"></div>
-        <div class="field"><label>Kalan oda</label><input name="inventory" value="{{ form.inventory if form.inventory is not none else weights.inventory }}"></div>
-        <div class="field"><label>Sezon</label><input name="season" value="{{ form.season if form.season is not none else weights.season }}"></div>
+        <div class="field"><label for="t-demand">Talep</label><input id="t-demand" name="demand" value="{{ form.demand if form.demand is not none else weights.demand }}"></div>
+        <div class="field"><label for="t-inventory">Kalan oda</label><input id="t-inventory" name="inventory" value="{{ form.inventory if form.inventory is not none else weights.inventory }}"></div>
+        <div class="field"><label for="t-season">Sezon</label><input id="t-season" name="season" value="{{ form.season if form.season is not none else weights.season }}"></div>
       </div>
       <button class="btn" type="submit">{{ ui.icon('flask') }}Karşılaştır</button></form>
       {% if comparison %}

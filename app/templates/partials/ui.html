@@ -57,6 +57,10 @@
 </svg>
 {%- endmacro %}
 
+{% macro demo_banner(for_admin=False) -%}
+{% if is_demo %}<div class="demo-banner" role="note">{{ icon('info') }}<span><b>Demo veri modu:</b> otel adları, fiyatlar ve etkinlikler kurgusaldır.{% if for_admin %} Gerçek API anahtarları <code>.env</code> dosyasında tanımlanınca canlı veriye geçilir.{% endif %}</span></div>{% endif %}
+{%- endmacro %}
+
 {% macro csrf() -%}<input type="hidden" name="csrf_token" value="{{ csrf_token }}">{%- endmacro %}
 
 {% macro flashes(items) -%}
@@ -71,10 +75,10 @@
 
 {% macro change_badge(v, threshold=8) -%}
 {% if v is none %}<span class="muted">—</span>
-{% elif v >= threshold %}<span class="badge hot">{{ icon('up', 'ico') }}{{ v|pct(0, true) }}</span>
-{% elif v <= -threshold %}<span class="badge bad">{{ icon('down', 'ico') }}{{ v|pct(0, true) }}</span>
-{% elif v > 0 %}<span class="delta-up">{{ v|pct(1, true) }}</span>
-{% elif v < 0 %}<span class="delta-down">{{ v|pct(1, true) }}</span>
+{% elif v >= threshold %}<span class="badge hot" title="Fiyat artırma fırsatı">{{ icon('up', 'ico') }}{{ v|pct(0, true) }}</span>
+{% elif v <= -threshold %}<span class="badge down" title="Öneri mevcut fiyatın altında">{{ icon('down', 'ico') }}{{ v|pct(0, true) }}</span>
+{% elif v > 0 %}<span class="delta">{{ icon('up', 'ico') }}{{ v|pct(0, true) }}</span>
+{% elif v < 0 %}<span class="delta">{{ icon('down', 'ico') }}{{ v|pct(0, true) }}</span>
 {% else %}<span class="muted">%0</span>{% endif %}
 {%- endmacro %}
 
@@ -88,8 +92,8 @@
 {%- endmacro %}
 
 {% macro conf_badge(c) -%}
-{% if c == 'high' %}<span class="badge good">{{ icon('check') }}Yüksek güven</span>
-{% elif c == 'medium' %}<span class="badge info">{{ icon('info') }}Orta güven</span>
+{% if c == 'high' %}<span class="badge info">{{ icon('check') }}Yüksek güven</span>
+{% elif c == 'medium' %}<span class="badge">{{ icon('info') }}Orta güven</span>
 {% else %}<span class="badge warn">{{ icon('alert') }}Düşük güven</span>{% endif %}
 {%- endmacro %}
 
@@ -112,9 +116,22 @@
 </div>
 {%- endmacro %}
 
-{% macro chart(kind, data, id, size="", label="Grafik") -%}
+{% macro chart(kind, data, id, size="", label="Grafik", table=False, first_col="Tarih") -%}
 <div class="chart-box {{ size }}"><canvas data-chart="{{ kind }}" data-source="{{ id }}" role="img" aria-label="{{ label }}"></canvas></div>
 <script type="application/json" id="{{ id }}">{{ data|json }}</script>
+{% if table and data.series %}{# Kritik grafiklerin erişilebilir tablo karşılığı #}
+<details class="table-view"><summary>Tablo olarak göster</summary>
+  <div class="table-wrap" style="max-height:320px"><table class="data">
+    <thead><tr><th>{{ first_col }}</th>{% for s in data.series %}<th class="num">{{ s.label }}</th>{% endfor %}</tr></thead>
+    <tbody>{% for i in range(data.labels|length) %}{% set lb = data.labels[i] %}
+      <tr><td class="nowrap">{{ lb|dt('day') if (lb is string and lb|length == 10 and lb[4] == '-') else lb }}</td>
+      {% for s in data.series %}{% set v = s.data[i] if i < s.data|length else none %}
+        <td class="num">{{ '—' if v is none else (v|eur if data.unit == 'eur' else (v|pct(1) if data.unit == 'pct' else v|num(1 if data.unit == '' else 0))) }}</td>
+      {% endfor %}</tr>
+    {% endfor %}</tbody>
+  </table></div>
+</details>
+{% endif %}
 {%- endmacro %}
 
 {% macro pager(pg, base) -%}
@@ -215,14 +232,18 @@
     <g class="radar-sweep"><path d="M50 50 L50 2 A48 48 0 0 1 83.9 16.1 Z" fill="url(#rg-sweep)"/></g>
     {% for p in layout.points %}
       <g class="radar-pt" style="--d: {{ loop.index0 * 0.12 }}s">
-        <title>{{ p.rank }}. {{ p.hotel.name }}, {{ p.dist|num(1) }} km{% if p.price %}, {{ p.price|eur }}{% endif %}</title>
-        <circle cx="{{ p.x }}" cy="{{ p.y }}" r="{{ 2.6 + (p.score or 0.5) * 1.6 }}" class="{{ 'manual' if p.manual }}"/>
+        <title>{{ p.rank }}. {{ p.hotel.name }}, {{ p.dist|num(1) }} km{% if p.outlier %} (ölçek dışı, kenarda gösteriliyor){% endif %}{% if p.price %}, {{ p.price|eur }}{% endif %}</title>
+        <circle cx="{{ p.x }}" cy="{{ p.y }}" r="{{ 2.6 + (p.score or 0.5) * 1.6 }}" class="{{ 'manual' if p.manual }} {{ 'outlier' if p.outlier }}"/>
         <text x="{{ p.x }}" y="{{ p.y + 1.15 }}" text-anchor="middle">{{ p.rank }}</text>
       </g>
     {% endfor %}
     <g class="radar-self"><title>{{ hotel_name }} (siz)</title><rect x="47.2" y="47.2" width="5.6" height="5.6" rx="1" transform="rotate(45 50 50)"/></g>
   </svg>
 </div>
+{%- endmacro %}
+
+{% macro radar_legend() -%}
+<div class="legend small radar-legend"><span><i class="lg-own"></i>Oteliniz</span><span><i class="lg-sug"></i>Sistemin önerdiği rakip</span><span><i class="lg-sug" style="background:var(--series-4)"></i>Sizin eklediğiniz</span><span class="muted">Nokta büyüklüğü: benzerlik</span></div>
 {%- endmacro %}
 
 {% macro heat_color(change, max=50) -%}

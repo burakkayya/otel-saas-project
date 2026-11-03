@@ -13,14 +13,16 @@
 {% if t %}
 <section class="hero-rec" aria-label="Bugünün önerisi">
   <div>
-    <div class="label">Bu gece, {{ t.room_type.raw_name }}</div>
-    <div class="price"><span data-count="{{ t.suggested }}">{{ t.suggested|eur }}</span><small>önerilen</small></div>
-    {% if t.change is not none %}
-      <div style="margin-top:10px"><span class="delta-chip {{ 'up' if t.change >= 0 else 'down' }}">{{ ui.icon('up' if t.change >= 0 else 'down') }}{{ t.change|pct(0, true) }} mevcut fiyata göre</span></div>
-    {% endif %}
+    <h2 class="label">Bu gece, {{ t.room_type.raw_name }}</h2>
+    <div class="price">{{ t.suggested|eur }}<small>önerilen</small></div>
+    <div class="hero-chips">
+      {% if t.change is not none %}<span class="delta-chip {{ 'up' if t.change >= 0 else 'down' }}">{{ ui.icon('up' if t.change >= 0 else 'down') }}{{ t.change|pct(0, true) }} mevcut fiyata göre</span>{% endif %}
+      {% if t.confidence %}{{ ui.conf_badge(t.confidence) }}{% endif %}
+    </div>
   </div>
   <div>
-    <p class="why">{{ t.text }}</p>
+    <p class="why-lead">Neden bu fiyat?</p>
+    <ul class="drivers">{% for d in rationale_drivers(t.rationale) %}<li class="{{ d.dir }}">{{ ui.icon({'up': 'up', 'down': 'down'}.get(d.dir, 'activity')) }}<span>{{ d.text }}</span></li>{% endfor %}</ul>
     <div class="meta">
       <span>Mevcut fiyatınız <b>{{ t.own|eur }}</b></span>
       <span>Rakip medyanı <b>{{ t.median|eur }}</b></span>
@@ -55,8 +57,8 @@
   <div class="panel-head">
     <div><h2>Önümüzdeki 60 gün: öneri ve piyasa</h2><p>{{ CATEGORY_LABELS[data.category] }} kategorisi. Gölgeli alan rakiplerin orta %50'lik fiyat aralığı.</p></div>
     <div class="actions">
-      {% if k.under %}<span class="badge hot">{{ ui.icon('up') }}{{ k.under }} gün fiyatınız düşük</span>{% endif %}
-      {% if k.over %}<span class="badge bad">{{ ui.icon('down') }}{{ k.over }} gün fiyatınız yüksek</span>{% endif %}
+      {% if k.under %}<span class="badge hot" title="Önümüzdeki 30 günde öneri, fiyatınızın %8+ üstünde">{{ ui.icon('up') }}30 günde {{ k.under }} gün fiyatınız düşük</span>{% endif %}
+      {% if k.over %}<span class="badge down" title="Önümüzdeki 30 günde öneri, fiyatınızın %8+ altında">{{ ui.icon('down') }}30 günde {{ k.over }} gün fiyatınız yüksek</span>{% endif %}
     </div>
   </div>
   <div class="panel-body">
@@ -81,15 +83,15 @@
   <div class="panel">
     <div class="panel-head"><div><h2>Bu hafta</h2><p>Önümüzdeki 7 günün önerileri ve fiyat bantları</p></div><div class="actions"><a class="btn sm" href="/panel/oneriler">Tümü</a></div></div>
     <div class="panel-body" style="padding-bottom:6px">{{ ui.range_legend() }}</div>
-    <div class="panel-body flush"><div class="table-wrap"><table class="data">
-      <thead><tr><th>Tarih</th><th>Talep</th><th class="num">Mevcut</th><th class="num">Öneri</th><th>Bant</th><th class="num">Fark</th><th></th></tr></thead>
+    <div class="panel-body flush"><div class="table-wrap"><table class="data stack-sm">
+      <thead><tr><th>Tarih</th><th>Talep</th><th class="num">Mevcut</th><th class="num">Öneri</th><th>Bant</th><th class="num">Fark</th><th><span class="sr-only">Ayrıntı</span></th></tr></thead>
       <tbody>
       {% for r in data.next7 %}
-        <tr><td class="nowrap"><b>{{ r.date|dt("day") }}</b></td><td class="nowrap">{{ ui.demand_badge(r.demand) }}</td><td class="num">{{ r.own|eur }}</td>
-          <td class="num cell-strong">{{ r.suggested|eur }}</td>
-          <td class="band-cell">{{ ui.range_bar(r.floor, r.ceiling, r.suggested, r.own, r.median, true) }}</td>
-          <td class="num">{{ ui.change_badge(r.change) }}</td>
-          <td class="num"><a class="btn sm ghost" href="/panel/oneriler/{{ r.id }}" aria-label="Detay">{{ ui.icon('eye') }}</a></td></tr>
+        <tr><td class="nowrap cell-head"><b>{{ r.date|dt("day") }}</b></td><td class="nowrap" data-label="Talep">{{ ui.demand_badge(r.demand) }}</td><td class="num" data-label="Mevcut">{{ r.own|eur }}</td>
+          <td class="num cell-strong cell-key" data-label="Öneri">{{ r.suggested|eur }}</td>
+          <td class="band-cell cell-wide" data-label="Bant">{{ ui.range_bar(r.floor, r.ceiling, r.suggested, r.own, r.median, true) }}</td>
+          <td class="num" data-label="Fark">{{ ui.change_badge(r.change) }}</td>
+          <td class="num cell-actions"><a class="btn sm ghost" href="/panel/oneriler/{{ r.id }}" aria-label="Detay">{{ ui.icon('eye') }}</a></td></tr>
       {% else %}<tr><td colspan="7" class="muted">Öneri bulunamadı.</td></tr>{% endfor %}
       </tbody></table></div></div>
   </div>
@@ -101,14 +103,14 @@
   <div class="stack">
     <div class="panel">
       <div class="panel-head"><div><h2>Rakip radarı</h2><p>{{ radar.points|length }} rakip, en uzak {{ radar.max_km|num(1) }} km</p></div><div class="actions"><a class="btn sm ghost" href="/panel/rakipler">Yönet</a></div></div>
-      <div class="panel-body">{{ ui.radar(radar, hotel.name) }}</div>
+      <div class="panel-body">{{ ui.radar(radar, hotel.name) }}{{ ui.radar_legend() }}</div>
     </div>
     <div class="panel">
       <div class="panel-head"><div><h2>Tahmini etki</h2><p>Kontrol grubuna göre (fark-içinde-fark)</p></div>{% if roi %}{{ ui.conf_badge(roi.confidence) }}{% endif %}</div>
       <div class="panel-body">
         {% if roi and roi.details and roi.details.did %}
-          <div class="kpi-value" style="margin:0">{{ roi.details.did.revpar.did|eur(1) }}</div>
-          <p class="small ink-2" style="margin-top:6px">Gelir/oda vekilinde, benzer {{ roi.control_group_size }} otele göre tahmini fark. {% if not roi.details.significant %}İstatistiksel olarak anlamlı değil.{% endif %}</p>
+          <p class="impact-lead">{{ 'Anlamlı bir fark var' if roi.details.significant else 'Henüz anlamlı bir fark yok' }}</p>
+          <p class="small ink-2" style="margin:4px 0 0">Tahmini fark: <b class="num">{{ roi.details.did.revpar.did|eur(1) }}</b> / oda-gece (gelir/oda vekili), benzer {{ roi.control_group_size }} otele göre.{% if not roi.details.significant %} Bu fark istatistiksel olarak gürültüden ayırt edilemiyor.{% endif %}</p>
           <a class="small" href="/panel/performans">Yöntemi ve ayrıntıları gör</a>
         {% else %}<p class="small muted">Tahmin için abonelik sonrası en az 7 günlük veri gerekiyor.</p>{% endif %}
       </div>

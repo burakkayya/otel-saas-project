@@ -5,6 +5,7 @@
   "use strict";
   var instances = [];
 
+  var reduceMotion = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
   function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
   function alpha(hex, a) {
     var h = hex.replace("#", "");
@@ -19,10 +20,12 @@
 
   function fmt(v, unit) {
     if (v === null || v === undefined || isNaN(v)) return "—";
-    if (unit === "eur") return "€" + nf0.format(v);
-    if (unit === "pct") return "%" + nf1.format(v);
-    if (unit === "score") return nf0.format(v);
-    return nf1.format(v);
+    // Türkçe biçim: işaret başta ve gerçek eksi (U+2212) — sunucu süzgeçleriyle aynı (−€18, −%5)
+    var sign = v < 0 ? "−" : "", a = Math.abs(v);
+    if (unit === "eur") return sign + "€" + nf0.format(a);
+    if (unit === "pct") return sign + "%" + nf1.format(a);
+    if (unit === "score") return sign + nf0.format(a);
+    return sign + nf1.format(a);
   }
   function dateLabel(iso, withDay) {
     if (!iso || iso.length < 10 || iso[4] !== "-") return iso;
@@ -35,7 +38,7 @@
     opts = opts || {};
     var ink2 = css("--ink-2"), grid = css("--grid"), axis = css("--axis"), surface = css("--surface"), ink = css("--ink");
     return {
-      responsive: true, maintainAspectRatio: false, animation: { duration: 350 },
+      responsive: true, maintainAspectRatio: false, animation: reduceMotion && reduceMotion.matches ? false : { duration: 250 },
       interaction: { mode: opts.mode || "index", intersect: false },
       plugins: {
         legend: { display: false },

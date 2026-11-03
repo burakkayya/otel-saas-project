@@ -1,0 +1,6008 @@
+[
+ {
+  "group": "public",
+  "name": "landing",
+  "path": "/",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "PMS veya kanal yöneticisi bağlantısı yok",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "fine",
+    "tag": "P"
+   },
+   {
+    "text": "Her gün için taban, tavan, öneri ve mevc",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "+⁠%⁠9",
+    "ratio": 4.43,
+    "need": 4.5,
+    "cls": "badge hot",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Butik otel ve pansiyonlar",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "p-target",
+    "tag": "DIV"
+   },
+   {
+    "text": "Fiyatlara KDV dahil değildir. Paket fiya",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "muted small",
+    "tag": "P"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-landing-1440-light.jpg"
+ },
+ {
+  "group": "public",
+  "name": "pricing",
+  "path": "/fiyatlar",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Butik otel ve pansiyonlar",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "p-target",
+    "tag": "DIV"
+   },
+   {
+    "text": "/ ay",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "SMALL"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-pricing-1440-light.jpg"
+ },
+ {
+  "group": "public",
+  "name": "login",
+  "path": "/giris",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Panelinize giriş yapın.",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "sub",
+    "tag": "P"
+   },
+   {
+    "text": "Hesabınız yok mu?",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "muted",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Otel",
+    "ratio": 3.61,
+    "need": 4.5,
+    "cls": "",
+    "tag": "DT"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-login-1440-light.jpg"
+ },
+ {
+  "group": "public",
+  "name": "register",
+  "path": "/kayit",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Adım 1 / 2: otel ve yetkili bilgileri",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "sub",
+    "tag": "P"
+   },
+   {
+    "text": "Butik otel ve pansiyonlar",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-register-1440-light.jpg"
+ },
+ {
+  "group": "public",
+  "name": "forgot",
+  "path": "/sifremi-unuttum",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "E-posta adresinizi girin, sıfırlama tale",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "sub",
+    "tag": "P"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-forgot-1440-light.jpg"
+ },
+ {
+  "group": "public",
+  "name": "kvkk",
+  "path": "/yasal/kvkk",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "OtelRadar, Muğla ve Antalya pilot bölgel",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-kvkk-1440-light.jpg"
+ },
+ {
+  "group": "public",
+  "name": "privacy",
+  "path": "/yasal/gizlilik",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "OtelRadar, Muğla ve Antalya pilot bölgel",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-privacy-1440-light.jpg"
+ },
+ {
+  "group": "public",
+  "name": "terms",
+  "path": "/yasal/kullanim-kosullari",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "OtelRadar, Muğla ve Antalya pilot bölgel",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-terms-1440-light.jpg"
+ },
+ {
+  "group": "public",
+  "name": "404",
+  "path": "/olmayan-bir-sayfa",
+  "status": 404,
+  "width": 1440,
+  "theme": "light",
+  "errors": [
+   "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "OtelRadar, Muğla ve Antalya pilot bölgel",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-404-1440-light.jpg"
+ },
+ {
+  "group": "public",
+  "name": "register-match",
+  "path": "/kayit/eslestir",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Adım 2 / 2: “Deneme Bodrum Butik Otel” i",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "sub",
+    "tag": "P"
+   },
+   {
+    "text": "Marmaris, Muğla, 4 yıldız",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "DIV"
+   },
+   {
+    "text": "En az 8 karakter, harf ve rakam.",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "hint",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-register-match-1440-light.jpg"
+ },
+ {
+  "group": "public",
+  "name": "landing",
+  "path": "/",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 111,
+  "contrast": [
+   {
+    "text": "PMS veya kanal yöneticisi bağlantısı yok",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "fine",
+    "tag": "P"
+   },
+   {
+    "text": "Her gün için taban, tavan, öneri ve mevc",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "+⁠%⁠9",
+    "ratio": 4.43,
+    "need": 4.5,
+    "cls": "badge hot",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Butik otel ve pansiyonlar",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "p-target",
+    "tag": "DIV"
+   },
+   {
+    "text": "Fiyatlara KDV dahil değildir. Paket fiya",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "muted small",
+    "tag": "P"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-landing-390-light.jpg"
+ },
+ {
+  "group": "public",
+  "name": "pricing",
+  "path": "/fiyatlar",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 111,
+  "contrast": [
+   {
+    "text": "Butik otel ve pansiyonlar",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "p-target",
+    "tag": "DIV"
+   },
+   {
+    "text": "/ ay",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "SMALL"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-pricing-390-light.jpg"
+ },
+ {
+  "group": "public",
+  "name": "login",
+  "path": "/giris",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Panelinize giriş yapın.",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "sub",
+    "tag": "P"
+   },
+   {
+    "text": "Hesabınız yok mu?",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "muted",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Otel",
+    "ratio": 3.61,
+    "need": 4.5,
+    "cls": "",
+    "tag": "DT"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-login-390-light.jpg"
+ },
+ {
+  "group": "public",
+  "name": "register",
+  "path": "/kayit",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Adım 1 / 2: otel ve yetkili bilgileri",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "sub",
+    "tag": "P"
+   },
+   {
+    "text": "Butik otel ve pansiyonlar",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-register-390-light.jpg"
+ },
+ {
+  "group": "public",
+  "name": "forgot",
+  "path": "/sifremi-unuttum",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "E-posta adresinizi girin, sıfırlama tale",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "sub",
+    "tag": "P"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-forgot-390-light.jpg"
+ },
+ {
+  "group": "public",
+  "name": "kvkk",
+  "path": "/yasal/kvkk",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 111,
+  "contrast": [
+   {
+    "text": "OtelRadar, Muğla ve Antalya pilot bölgel",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-kvkk-390-light.jpg"
+ },
+ {
+  "group": "public",
+  "name": "privacy",
+  "path": "/yasal/gizlilik",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 111,
+  "contrast": [
+   {
+    "text": "OtelRadar, Muğla ve Antalya pilot bölgel",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-privacy-390-light.jpg"
+ },
+ {
+  "group": "public",
+  "name": "terms",
+  "path": "/yasal/kullanim-kosullari",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 111,
+  "contrast": [
+   {
+    "text": "OtelRadar, Muğla ve Antalya pilot bölgel",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-terms-390-light.jpg"
+ },
+ {
+  "group": "public",
+  "name": "404",
+  "path": "/olmayan-bir-sayfa",
+  "status": 404,
+  "width": 390,
+  "theme": "light",
+  "errors": [
+   "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "overflow": 111,
+  "contrast": [
+   {
+    "text": "OtelRadar, Muğla ve Antalya pilot bölgel",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-404-390-light.jpg"
+ },
+ {
+  "group": "public",
+  "name": "register-match",
+  "path": "/kayit/eslestir",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Adım 2 / 2: “Deneme Bodrum Butik Otel” i",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "sub",
+    "tag": "P"
+   },
+   {
+    "text": "Marmaris, Muğla, 4 yıldız",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "DIV"
+   },
+   {
+    "text": "En az 8 karakter, harf ve rakam.",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "hint",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-register-match-390-light.jpg"
+ },
+ {
+  "group": "public",
+  "name": "landing",
+  "path": "/",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "14 gün ücretsiz dene",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "A"
+   },
+   {
+    "text": "14 gün ücretsiz dene",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary lg",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-landing-1440-dark.jpg"
+ },
+ {
+  "group": "public",
+  "name": "pricing",
+  "path": "/fiyatlar",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "14 gün ücretsiz dene",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-pricing-1440-dark.jpg"
+ },
+ {
+  "group": "public",
+  "name": "login",
+  "path": "/giris",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Giriş yap",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary lg",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-login-1440-dark.jpg"
+ },
+ {
+  "group": "public",
+  "name": "register",
+  "path": "/kayit",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Devam et: otelimi bul",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary lg",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-register-1440-dark.jpg"
+ },
+ {
+  "group": "public",
+  "name": "forgot",
+  "path": "/sifremi-unuttum",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Sıfırlama talebi gönder",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary lg",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-forgot-1440-dark.jpg"
+ },
+ {
+  "group": "public",
+  "name": "kvkk",
+  "path": "/yasal/kvkk",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "14 gün ücretsiz dene",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-kvkk-1440-dark.jpg"
+ },
+ {
+  "group": "public",
+  "name": "privacy",
+  "path": "/yasal/gizlilik",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "14 gün ücretsiz dene",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-privacy-1440-dark.jpg"
+ },
+ {
+  "group": "public",
+  "name": "terms",
+  "path": "/yasal/kullanim-kosullari",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "14 gün ücretsiz dene",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-terms-1440-dark.jpg"
+ },
+ {
+  "group": "public",
+  "name": "404",
+  "path": "/olmayan-bir-sayfa",
+  "status": 404,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [
+   "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "14 gün ücretsiz dene",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-404-1440-dark.jpg"
+ },
+ {
+  "group": "public",
+  "name": "register-match",
+  "path": "/kayit/eslestir",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "%67 eşleşme",
+    "ratio": 4.01,
+    "need": 4.5,
+    "cls": "score badge info",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Hesabımı oluştur",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary lg",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-register-match-1440-dark.jpg"
+ },
+ {
+  "group": "public",
+  "name": "landing",
+  "path": "/",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 111,
+  "contrast": [
+   {
+    "text": "14 gün ücretsiz dene",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "A"
+   },
+   {
+    "text": "14 gün ücretsiz dene",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary lg",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-landing-390-dark.jpg"
+ },
+ {
+  "group": "public",
+  "name": "pricing",
+  "path": "/fiyatlar",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 111,
+  "contrast": [
+   {
+    "text": "14 gün ücretsiz dene",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-pricing-390-dark.jpg"
+ },
+ {
+  "group": "public",
+  "name": "login",
+  "path": "/giris",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Giriş yap",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary lg",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-login-390-dark.jpg"
+ },
+ {
+  "group": "public",
+  "name": "register",
+  "path": "/kayit",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Devam et: otelimi bul",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary lg",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-register-390-dark.jpg"
+ },
+ {
+  "group": "public",
+  "name": "forgot",
+  "path": "/sifremi-unuttum",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Sıfırlama talebi gönder",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary lg",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-forgot-390-dark.jpg"
+ },
+ {
+  "group": "public",
+  "name": "kvkk",
+  "path": "/yasal/kvkk",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 111,
+  "contrast": [
+   {
+    "text": "14 gün ücretsiz dene",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-kvkk-390-dark.jpg"
+ },
+ {
+  "group": "public",
+  "name": "privacy",
+  "path": "/yasal/gizlilik",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 111,
+  "contrast": [
+   {
+    "text": "14 gün ücretsiz dene",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-privacy-390-dark.jpg"
+ },
+ {
+  "group": "public",
+  "name": "terms",
+  "path": "/yasal/kullanim-kosullari",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 111,
+  "contrast": [
+   {
+    "text": "14 gün ücretsiz dene",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-terms-390-dark.jpg"
+ },
+ {
+  "group": "public",
+  "name": "404",
+  "path": "/olmayan-bir-sayfa",
+  "status": 404,
+  "width": 390,
+  "theme": "dark",
+  "errors": [
+   "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "overflow": 111,
+  "contrast": [
+   {
+    "text": "14 gün ücretsiz dene",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-404-390-dark.jpg"
+ },
+ {
+  "group": "public",
+  "name": "register-match",
+  "path": "/kayit/eslestir",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "%67 eşleşme",
+    "ratio": 4.01,
+    "need": 4.5,
+    "cls": "score badge info",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Hesabımı oluştur",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary lg",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "public-register-match-390-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "panel",
+  "path": "/panel",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "2 Kasım 2026. Öneriler Standart Oda ve d",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Mevcut ortalamanıza göre −⁠%⁠11,6",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "kpi-foot",
+    "tag": "DIV"
+   },
+   {
+    "text": "Standard kategorisi. Gölgeli alan rakipl",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "1 gün fiyatınız düşük",
+    "ratio": 4.43,
+    "need": 4.5,
+    "cls": "badge hot",
+    "tag": "SPAN"
+   },
+   {
+    "text": "4 dk önce",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "when",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-panel-1440-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "welcome",
+  "path": "/panel/hos-geldiniz",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "İlk önerileriniz hazır. Başlamadan önce ",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-welcome-1440-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "suggestions",
+  "path": "/panel/oneriler",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Her oda tipi ve konaklama tarihi için ön",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Uyum toleransınız ±%5. Fiyatı kendi sist",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "Standart Oda",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "DIV"
+   },
+   {
+    "text": "€56 – €124",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted num",
+    "tag": "DIV"
+   },
+   {
+    "text": "+⁠%⁠9",
+    "ratio": 4.43,
+    "need": 4.5,
+    "cls": "badge hot",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-suggestions-1440-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "suggestions-cal",
+  "path": "/panel/oneriler?gorunum=takvim",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Her oda tipi ve konaklama tarihi için ön",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "−%15 +%15",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "cal-legend",
+    "tag": "DIV"
+   },
+   {
+    "text": "Pzt",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "dow",
+    "tag": "DIV"
+   },
+   {
+    "text": "2",
+    "ratio": 1,
+    "need": 4.5,
+    "cls": "d",
+    "tag": "SPAN"
+   },
+   {
+    "text": "€78",
+    "ratio": 1,
+    "need": 4.5,
+    "cls": "p",
+    "tag": "SPAN"
+   },
+   {
+    "text": "−⁠%⁠20",
+    "ratio": 1,
+    "need": 4.5,
+    "cls": "c",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-suggestions-cal-1440-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "suggestion-detail",
+  "path": "/panel/oneriler/1282",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "/ ayrıntı",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Rakip medyanından önerilen fiyata adım a",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "Strateji: Dengeli. Toplam ayarlama −⁠%⁠4",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "P"
+   },
+   {
+    "text": "Yüksek güven",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   },
+   {
+    "text": "(−1 ile +1 arası)",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "muted small",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-suggestion-detail-1440-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "market",
+  "path": "/panel/pazar",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Rakiplerinizin OTA'da bugün gözlenen fiy",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Hücre rengi rakibin fiyatınıza göre fark",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "Sizden ucuz Sizden pahalı",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "cal-legend",
+    "tag": "DIV"
+   },
+   {
+    "text": "(siz)",
+    "ratio": 3.23,
+    "need": 4.5,
+    "cls": "muted small",
+    "tag": "SPAN"
+   },
+   {
+    "text": "+⁠%⁠17",
+    "ratio": 3.23,
+    "need": 4.5,
+    "cls": "chg",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-market-1440-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "market-rooms",
+  "path": "/panel/pazar?veri=oda",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Rakiplerinizin OTA'da bugün gözlenen fiy",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Kalan oda azalması satış kanıtı değildir",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "(siz)",
+    "ratio": 3.23,
+    "need": 4.5,
+    "cls": "muted small",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-market-rooms-1440-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "competitors",
+  "path": "/panel/rakipler",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Öneriler yalnızca bu otellerin fiyatları",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Oteliniz merkezde. Rakipler gerçek yönle",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "1",
+    "ratio": 4.42,
+    "need": 4.5,
+    "cls": "n ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "2,8 km, 4 yıldız, benzerlik 74",
+    "ratio": 3.61,
+    "need": 4.5,
+    "cls": "meta",
+    "tag": "DIV"
+   },
+   {
+    "text": "Fiyatlar: önümüzdeki 14 günün Standard o",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "P"
+   },
+   {
+    "text": "(siz)",
+    "ratio": 3.23,
+    "need": 4.5,
+    "cls": "muted small",
+    "tag": "SPAN"
+   },
+   {
+    "text": "1",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "muted",
+    "tag": "TD"
+   },
+   {
+    "text": "Onaylı",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-competitors-1440-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "demand",
+  "path": "/panel/talep",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Muğla için talep skoru: uçuş arama trend",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Çubuk yüksekliği toplam skoru, renkler b",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "Düşük Yüksek",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "seq-legend",
+    "tag": "DIV"
+   },
+   {
+    "text": "Pt",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "dw",
+    "tag": "SPAN"
+   },
+   {
+    "text": "26",
+    "ratio": 2.05,
+    "need": 4.5,
+    "cls": "c s2  past ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "30",
+    "ratio": 2.32,
+    "need": 4.5,
+    "cls": "c s1  past ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "2",
+    "ratio": 4.22,
+    "need": 4.5,
+    "cls": "c s2 today  ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "3",
+    "ratio": 4.22,
+    "need": 4.5,
+    "cls": "c s2   ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "12",
+    "ratio": 4.22,
+    "need": 4.5,
+    "cls": "c s2   ev",
+    "tag": "SPAN"
+   },
+   {
+    "text": "1",
+    "ratio": 2.5,
+    "need": 4.5,
+    "cls": "c s3   ev",
+    "tag": "SPAN"
+   },
+   {
+    "text": "1 Oca Cum",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "when",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Dini bayram tarihleri yaklaşık olarak iş",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "P"
+   },
+   {
+    "text": "Gözlem sayısı",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "muted",
+    "tag": "TD"
+   },
+   {
+    "text": "27",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "num muted",
+    "tag": "TD"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-demand-1440-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "room-types",
+  "path": "/panel/oda-tipleri",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "OTA'daki oda adlarınız standart kategori",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Yanlış eşlenen bir oda varsa kategorisin",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-room-types-1440-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "performance",
+  "path": "/panel/performans",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Sistemin ne kadar kullanıldığı ve tahmin",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "uyum",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Fiyatınızın önerinin ±%5 bandında olduğu",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "kpi-foot",
+    "tag": "DIV"
+   },
+   {
+    "text": "Bant içinde",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-performance-1440-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "backtest",
+  "path": "/panel/backtest",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Geçmiş tarihler için, yalnızca o gün bil",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Gerçekleşen piyasa fiyatına uzaklık",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "foot",
+    "tag": "DIV"
+   },
+   {
+    "text": "Standart Oda, 18 Eyl 2026 – 1 Kas 2026. ",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-backtest-1440-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "reports",
+  "path": "/panel/raporlar",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Verilerinizi Excel'de açılabilen CSV dos",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-reports-1440-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "notifications",
+  "path": "/panel/bildirimler",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "5 dk önce",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "when",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-notifications-1440-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "settings",
+  "path": "/panel/ayarlar",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Öneriler bu sınırların dışına hiçbir zam",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Talep ve kalan oda sinyallerine ne kadar",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "Ayarlamalar %40 daha küçük; rakip medyan",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "DIV"
+   },
+   {
+    "text": "Yüksek sezonda bu marj otomatik artar.",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "hint",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-settings-1440-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "subscription",
+  "path": "/panel/abonelik",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Mevcut paket",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "muted small",
+    "tag": "DIV"
+   },
+   {
+    "text": "Aktif",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Aylık ücret",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "DT"
+   },
+   {
+    "text": "Butik otel ve pansiyonlar",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "p-target",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-subscription-1440-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "account",
+  "path": "/panel/hesap",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "otel@otelradar.local",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "Değiştirmek istemiyorsanız boş bırakın.",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "hint",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-account-1440-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "403",
+  "path": "/admin",
+  "status": 403,
+  "width": 1440,
+  "theme": "light",
+  "errors": [
+   "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  ],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "OtelRadar, Muğla ve Antalya pilot bölgel",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-403-1440-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "panel",
+  "path": "/panel",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "2 Kasım 2026. Öneriler Standart Oda ve d",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Mevcut ortalamanıza göre −⁠%⁠11,6",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "kpi-foot",
+    "tag": "DIV"
+   },
+   {
+    "text": "Standard kategorisi. Gölgeli alan rakipl",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "1 gün fiyatınız düşük",
+    "ratio": 4.43,
+    "need": 4.5,
+    "cls": "badge hot",
+    "tag": "SPAN"
+   },
+   {
+    "text": "5 dk önce",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "when",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-panel-390-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "welcome",
+  "path": "/panel/hos-geldiniz",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "İlk önerileriniz hazır. Başlamadan önce ",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-welcome-390-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "suggestions",
+  "path": "/panel/oneriler",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Her oda tipi ve konaklama tarihi için ön",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Uyum toleransınız ±%5. Fiyatı kendi sist",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "Standart Oda",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "DIV"
+   },
+   {
+    "text": "€56 – €124",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted num",
+    "tag": "DIV"
+   },
+   {
+    "text": "+⁠%⁠9",
+    "ratio": 4.43,
+    "need": 4.5,
+    "cls": "badge hot",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-suggestions-390-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "suggestions-cal",
+  "path": "/panel/oneriler?gorunum=takvim",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Her oda tipi ve konaklama tarihi için ön",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "−%15 +%15",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "cal-legend",
+    "tag": "DIV"
+   },
+   {
+    "text": "Pzt",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "dow",
+    "tag": "DIV"
+   },
+   {
+    "text": "2",
+    "ratio": 1,
+    "need": 4.5,
+    "cls": "d",
+    "tag": "SPAN"
+   },
+   {
+    "text": "€78",
+    "ratio": 1,
+    "need": 4.5,
+    "cls": "p",
+    "tag": "SPAN"
+   },
+   {
+    "text": "−⁠%⁠20",
+    "ratio": 1,
+    "need": 4.5,
+    "cls": "c",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-suggestions-cal-390-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "suggestion-detail",
+  "path": "/panel/oneriler/1282",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "/ ayrıntı",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Rakip medyanından önerilen fiyata adım a",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "Strateji: Dengeli. Toplam ayarlama −⁠%⁠4",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "P"
+   },
+   {
+    "text": "Yüksek güven",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   },
+   {
+    "text": "(−1 ile +1 arası)",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "muted small",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-suggestion-detail-390-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "market",
+  "path": "/panel/pazar",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Rakiplerinizin OTA'da bugün gözlenen fiy",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Hücre rengi rakibin fiyatınıza göre fark",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "Sizden ucuz Sizden pahalı",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "cal-legend",
+    "tag": "DIV"
+   },
+   {
+    "text": "(siz)",
+    "ratio": 3.23,
+    "need": 4.5,
+    "cls": "muted small",
+    "tag": "SPAN"
+   },
+   {
+    "text": "+⁠%⁠17",
+    "ratio": 3.23,
+    "need": 4.5,
+    "cls": "chg",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-market-390-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "market-rooms",
+  "path": "/panel/pazar?veri=oda",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Rakiplerinizin OTA'da bugün gözlenen fiy",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Kalan oda azalması satış kanıtı değildir",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "(siz)",
+    "ratio": 3.23,
+    "need": 4.5,
+    "cls": "muted small",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-market-rooms-390-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "competitors",
+  "path": "/panel/rakipler",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Öneriler yalnızca bu otellerin fiyatları",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Oteliniz merkezde. Rakipler gerçek yönle",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "1",
+    "ratio": 4.42,
+    "need": 4.5,
+    "cls": "n ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "2,8 km, 4 yıldız, benzerlik 74",
+    "ratio": 3.61,
+    "need": 4.5,
+    "cls": "meta",
+    "tag": "DIV"
+   },
+   {
+    "text": "Fiyatlar: önümüzdeki 14 günün Standard o",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "P"
+   },
+   {
+    "text": "(siz)",
+    "ratio": 3.23,
+    "need": 4.5,
+    "cls": "muted small",
+    "tag": "SPAN"
+   },
+   {
+    "text": "1",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "muted",
+    "tag": "TD"
+   },
+   {
+    "text": "Onaylı",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-competitors-390-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "demand",
+  "path": "/panel/talep",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Muğla için talep skoru: uçuş arama trend",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Çubuk yüksekliği toplam skoru, renkler b",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "Düşük Yüksek",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "seq-legend",
+    "tag": "DIV"
+   },
+   {
+    "text": "Pt",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "dw",
+    "tag": "SPAN"
+   },
+   {
+    "text": "26",
+    "ratio": 2.05,
+    "need": 4.5,
+    "cls": "c s2  past ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "30",
+    "ratio": 2.32,
+    "need": 4.5,
+    "cls": "c s1  past ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "2",
+    "ratio": 4.22,
+    "need": 4.5,
+    "cls": "c s2 today  ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "3",
+    "ratio": 4.22,
+    "need": 4.5,
+    "cls": "c s2   ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "12",
+    "ratio": 4.22,
+    "need": 4.5,
+    "cls": "c s2   ev",
+    "tag": "SPAN"
+   },
+   {
+    "text": "1",
+    "ratio": 2.5,
+    "need": 4.5,
+    "cls": "c s3   ev",
+    "tag": "SPAN"
+   },
+   {
+    "text": "1 Oca Cum",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "when",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Dini bayram tarihleri yaklaşık olarak iş",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "P"
+   },
+   {
+    "text": "Gözlem sayısı",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "muted",
+    "tag": "TD"
+   },
+   {
+    "text": "27",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "num muted",
+    "tag": "TD"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-demand-390-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "room-types",
+  "path": "/panel/oda-tipleri",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "OTA'daki oda adlarınız standart kategori",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Yanlış eşlenen bir oda varsa kategorisin",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-room-types-390-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "performance",
+  "path": "/panel/performans",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Sistemin ne kadar kullanıldığı ve tahmin",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "uyum",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Fiyatınızın önerinin ±%5 bandında olduğu",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "kpi-foot",
+    "tag": "DIV"
+   },
+   {
+    "text": "Bant içinde",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-performance-390-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "backtest",
+  "path": "/panel/backtest",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Geçmiş tarihler için, yalnızca o gün bil",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Gerçekleşen piyasa fiyatına uzaklık",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "foot",
+    "tag": "DIV"
+   },
+   {
+    "text": "Standart Oda, 18 Eyl 2026 – 1 Kas 2026. ",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-backtest-390-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "reports",
+  "path": "/panel/raporlar",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Verilerinizi Excel'de açılabilen CSV dos",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-reports-390-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "notifications",
+  "path": "/panel/bildirimler",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "5 dk önce",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "when",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-notifications-390-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "settings",
+  "path": "/panel/ayarlar",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Öneriler bu sınırların dışına hiçbir zam",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Talep ve kalan oda sinyallerine ne kadar",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "Ayarlamalar %40 daha küçük; rakip medyan",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "DIV"
+   },
+   {
+    "text": "Yüksek sezonda bu marj otomatik artar.",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "hint",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-settings-390-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "subscription",
+  "path": "/panel/abonelik",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Mevcut paket",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "muted small",
+    "tag": "DIV"
+   },
+   {
+    "text": "Aktif",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Aylık ücret",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "DT"
+   },
+   {
+    "text": "Butik otel ve pansiyonlar",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "p-target",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-subscription-390-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "account",
+  "path": "/panel/hesap",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "otel@otelradar.local",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "Değiştirmek istemiyorsanız boş bırakın.",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "hint",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-account-390-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "403",
+  "path": "/admin",
+  "status": 403,
+  "width": 390,
+  "theme": "light",
+  "errors": [
+   "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  ],
+  "overflow": 111,
+  "contrast": [
+   {
+    "text": "OtelRadar, Muğla ve Antalya pilot bölgel",
+    "ratio": 3.49,
+    "need": 4.5,
+    "cls": "",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-403-390-light.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "panel",
+  "path": "/panel",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Tüm öneriler",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-panel-1440-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "welcome",
+  "path": "/panel/hos-geldiniz",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Panele geç",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary lg",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-welcome-1440-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "suggestions",
+  "path": "/panel/oneriler",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-suggestions-1440-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "suggestions-cal",
+  "path": "/panel/oneriler?gorunum=takvim",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-suggestions-cal-1440-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "suggestion-detail",
+  "path": "/panel/oneriler/1282",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Ödeme istekliliği üst sınırı yalnızca ra",
+    "ratio": 4.01,
+    "need": 4.5,
+    "cls": "",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-suggestion-detail-1440-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "market",
+  "path": "/panel/pazar",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "(siz)",
+    "ratio": 4.47,
+    "need": 4.5,
+    "cls": "muted small",
+    "tag": "SPAN"
+   },
+   {
+    "text": "+⁠%⁠17",
+    "ratio": 4.47,
+    "need": 4.5,
+    "cls": "chg",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-market-1440-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "market-rooms",
+  "path": "/panel/pazar?veri=oda",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "(siz)",
+    "ratio": 4.47,
+    "need": 4.5,
+    "cls": "muted small",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-market-rooms-1440-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "competitors",
+  "path": "/panel/rakipler",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Arama yarıçapı 5 km",
+    "ratio": 4.01,
+    "need": 4.5,
+    "cls": "badge info",
+    "tag": "SPAN"
+   },
+   {
+    "text": "1",
+    "ratio": 3.64,
+    "need": 4.5,
+    "cls": "n ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "(siz)",
+    "ratio": 4.47,
+    "need": 4.5,
+    "cls": "muted small",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Rakip setine ekle",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-competitors-1440-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "demand",
+  "path": "/panel/talep",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "26",
+    "ratio": 2.09,
+    "need": 4.5,
+    "cls": "c s2  past ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "30",
+    "ratio": 2.38,
+    "need": 4.5,
+    "cls": "c s1  past ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "2",
+    "ratio": 3.6,
+    "need": 4.5,
+    "cls": "c s2 today  ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "3",
+    "ratio": 3.6,
+    "need": 4.5,
+    "cls": "c s2   ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "4",
+    "ratio": 4.4,
+    "need": 4.5,
+    "cls": "c s1   ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "12",
+    "ratio": 3.6,
+    "need": 4.5,
+    "cls": "c s2   ev",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Etki 50",
+    "ratio": 4.01,
+    "need": 4.5,
+    "cls": "badge info",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-demand-1440-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "room-types",
+  "path": "/panel/oda-tipleri",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-room-types-1440-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "performance",
+  "path": "/panel/performans",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-performance-1440-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "backtest",
+  "path": "/panel/backtest",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-backtest-1440-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "reports",
+  "path": "/panel/raporlar",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-reports-1440-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "notifications",
+  "path": "/panel/bildirimler",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-notifications-1440-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "settings",
+  "path": "/panel/ayarlar",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Ayarları kaydet",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary lg",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-settings-1440-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "subscription",
+  "path": "/panel/abonelik",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Açık",
+    "ratio": 4.01,
+    "need": 4.5,
+    "cls": "badge info",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-subscription-1440-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "account",
+  "path": "/panel/hesap",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Kaydet",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "BUTTON"
+   },
+   {
+    "text": "aydınlatma metnine",
+    "ratio": 4.49,
+    "need": 4.5,
+    "cls": "",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-account-1440-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "403",
+  "path": "/admin",
+  "status": 403,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [
+   "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  ],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "14 gün ücretsiz dene",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-403-1440-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "panel",
+  "path": "/panel",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Tüm öneriler",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-panel-390-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "welcome",
+  "path": "/panel/hos-geldiniz",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Panele geç",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary lg",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-welcome-390-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "suggestions",
+  "path": "/panel/oneriler",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-suggestions-390-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "suggestions-cal",
+  "path": "/panel/oneriler?gorunum=takvim",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-suggestions-cal-390-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "suggestion-detail",
+  "path": "/panel/oneriler/1282",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Ödeme istekliliği üst sınırı yalnızca ra",
+    "ratio": 4.01,
+    "need": 4.5,
+    "cls": "",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-suggestion-detail-390-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "market",
+  "path": "/panel/pazar",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "(siz)",
+    "ratio": 4.47,
+    "need": 4.5,
+    "cls": "muted small",
+    "tag": "SPAN"
+   },
+   {
+    "text": "+⁠%⁠17",
+    "ratio": 4.47,
+    "need": 4.5,
+    "cls": "chg",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-market-390-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "market-rooms",
+  "path": "/panel/pazar?veri=oda",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "(siz)",
+    "ratio": 4.47,
+    "need": 4.5,
+    "cls": "muted small",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-market-rooms-390-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "competitors",
+  "path": "/panel/rakipler",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Arama yarıçapı 5 km",
+    "ratio": 4.01,
+    "need": 4.5,
+    "cls": "badge info",
+    "tag": "SPAN"
+   },
+   {
+    "text": "1",
+    "ratio": 3.64,
+    "need": 4.5,
+    "cls": "n ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "(siz)",
+    "ratio": 4.47,
+    "need": 4.5,
+    "cls": "muted small",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Rakip setine ekle",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-competitors-390-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "demand",
+  "path": "/panel/talep",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "26",
+    "ratio": 2.09,
+    "need": 4.5,
+    "cls": "c s2  past ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "30",
+    "ratio": 2.38,
+    "need": 4.5,
+    "cls": "c s1  past ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "2",
+    "ratio": 3.6,
+    "need": 4.5,
+    "cls": "c s2 today  ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "3",
+    "ratio": 3.6,
+    "need": 4.5,
+    "cls": "c s2   ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "4",
+    "ratio": 4.4,
+    "need": 4.5,
+    "cls": "c s1   ",
+    "tag": "SPAN"
+   },
+   {
+    "text": "12",
+    "ratio": 3.6,
+    "need": 4.5,
+    "cls": "c s2   ev",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Etki 50",
+    "ratio": 4.01,
+    "need": 4.5,
+    "cls": "badge info",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-demand-390-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "room-types",
+  "path": "/panel/oda-tipleri",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-room-types-390-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "performance",
+  "path": "/panel/performans",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-performance-390-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "backtest",
+  "path": "/panel/backtest",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-backtest-390-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "reports",
+  "path": "/panel/raporlar",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-reports-390-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "notifications",
+  "path": "/panel/bildirimler",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-notifications-390-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "settings",
+  "path": "/panel/ayarlar",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Ayarları kaydet",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary lg",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-settings-390-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "subscription",
+  "path": "/panel/abonelik",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Açık",
+    "ratio": 4.01,
+    "need": 4.5,
+    "cls": "badge info",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-subscription-390-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "account",
+  "path": "/panel/hesap",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Kaydet",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "BUTTON"
+   },
+   {
+    "text": "aydınlatma metnine",
+    "ratio": 4.49,
+    "need": 4.5,
+    "cls": "",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-account-390-dark.jpg"
+ },
+ {
+  "group": "hotel",
+  "name": "403",
+  "path": "/admin",
+  "status": 403,
+  "width": 390,
+  "theme": "dark",
+  "errors": [
+   "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  ],
+  "overflow": 111,
+  "contrast": [
+   {
+    "text": "14 gün ücretsiz dene",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "hotel-403-390-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "admin",
+  "path": "/admin",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Son fiyat taraması: 2 Kas 2026 09:00 (az",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Yıllık €18.384",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "kpi-foot",
+    "tag": "DIV"
+   },
+   {
+    "text": "20 Eki 2026",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Bodrum, Muğla",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "DIV"
+   },
+   {
+    "text": "7 dk önce, 186.730 kayıt",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "when",
+    "tag": "DIV"
+   },
+   {
+    "text": "Başarılı",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-admin-1440-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "hotels",
+  "path": "/admin/oteller",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Pilot bölgelerde izlenen tüm tesisler. A",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "demo-ant-kaş-02",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "DIV"
+   },
+   {
+    "text": "Abone",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   },
+   {
+    "text": "72 kayıt, sayfa 1/3",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "muted",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-hotels-1440-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "hotel-detail",
+  "path": "/admin/oteller/71",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "/ Kaş, Antalya",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Tüm oda tipleri",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "foot",
+    "tag": "DIV"
+   },
+   {
+    "text": "Son 60 gün ve önümüzdeki 60 gün, konakla",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "1",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "muted",
+    "tag": "SPAN"
+   },
+   {
+    "text": "2,7 km, puan 93",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "when",
+    "tag": "DIV"
+   },
+   {
+    "text": "Onaylı",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input type=\"number\" min=\"1\" max=\"5\" name=\"star_rating\" value=\"4\">",
+   "<input type=\"number\" min=\"1\" name=\"room_count\" value=\"33\">",
+   "<select name=\"hotel_type\"><option value=\"pension\">Pansiyon</option><option value=\"boutique",
+   "<input name=\"district\" value=\"Kaş\">"
+  ],
+  "shot": "admin-hotel-detail-1440-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "subscriptions",
+  "path": "/admin/aboneler",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Muğla",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "DIV"
+   },
+   {
+    "text": "Aktif",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-subscriptions-1440-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "plans",
+  "path": "/admin/paketler",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Paket fiyatlarını hesabıyla birlikte bel",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "2 aktif abonelik, kod",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input name=\"name\" value=\"Başlangıç\" required=\"\">",
+   "<input name=\"price\" value=\"49.0\" required=\"\">",
+   "<input name=\"target\" value=\"Butik otel ve pansiyonlar\">",
+   "<input type=\"number\" name=\"max_competitors\" value=\"5\">",
+   "<input type=\"number\" name=\"max_room_types\" value=\"2\">",
+   "<input type=\"number\" name=\"horizon_days\" value=\"30\">",
+   "<textarea name=\"features\">5 rakiplik compset\n2 oda kategorisi\n30 günlük öneri ufku\nGünlük ",
+   "<input name=\"name\" value=\"Profesyonel\" required=\"\">",
+   "<input name=\"price\" value=\"129.0\" required=\"\">",
+   "<input name=\"target\" value=\"Orta ölçekli oteller\">",
+   "<input type=\"number\" name=\"max_competitors\" value=\"8\">",
+   "<input type=\"number\" name=\"max_room_types\" value=\"4\">",
+   "<input type=\"number\" name=\"horizon_days\" value=\"60\">",
+   "<textarea name=\"features\">8 rakiplik compset\n4 oda kategorisi\n60 günlük öneri ufku\nTalep s",
+   "<input name=\"name\" value=\"Resort &amp; Zincir\" required=\"\">",
+   "<input name=\"price\" value=\"349.0\" required=\"\">",
+   "<input name=\"target\" value=\"Zincir ve resort oteller\">",
+   "<input type=\"number\" name=\"max_competitors\" value=\"12\">",
+   "<input type=\"number\" name=\"max_room_types\" value=\"8\">",
+   "<input type=\"number\" name=\"horizon_days\" value=\"90\">",
+   "<textarea name=\"features\">12 rakiplik compset\nSınırsız oda kategorisi\n90 günlük öneri ufku",
+   "<input name=\"code\" required=\"\" placeholder=\"kurumsal\">",
+   "<input name=\"name\" required=\"\">",
+   "<input name=\"price\" required=\"\">",
+   "<input name=\"target\">",
+   "<input type=\"number\" name=\"max_competitors\" value=\"5\">",
+   "<input type=\"number\" name=\"max_room_types\" value=\"4\">",
+   "<input type=\"number\" name=\"horizon_days\" value=\"60\">",
+   "<textarea name=\"features\"></textarea>"
+  ],
+  "shot": "admin-plans-1440-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "invoices",
+  "path": "/admin/faturalar",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Ödeme altyapısı henüz bağlı değil; durum",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Ödendi durumundaki faturalar",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "foot",
+    "tag": "DIV"
+   },
+   {
+    "text": "Ödendi",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-invoices-1440-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "users",
+  "path": "/admin/kullanicilar",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "admin@otelradar.local",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "DIV"
+   },
+   {
+    "text": "Aktif",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input type=\"search\" name=\"q\" value=\"\" placeholder=\"E-posta veya ad\" class=\"input-sm\" styl",
+   "<input name=\"full_name\" required=\"\">",
+   "<input type=\"email\" name=\"email\" required=\"\">",
+   "<select name=\"role\"><option value=\"hotel\">Otel</option><option value=\"admin\">Yönetici</opt",
+   "<select name=\"hotel_id\"><option value=\"\">—</option><option value=\"17\">Akdeniz Fethiye Pans",
+   "<input type=\"password\" name=\"password\" required=\"\" minlength=\"8\" autocomplete=\"new-passwor"
+  ],
+  "shot": "admin-users-1440-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "pipeline",
+  "path": "/admin/veri-hatti",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Zamanlayıcı: kapalı; işler worker servis",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Plan: Her gün 05:30",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Son 60 çalışma",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "Başarılı",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-pipeline-1440-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "costs",
+  "path": "/admin/api-maliyet",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Abonelik fiyatı, abone başına API maliye",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "10 abone senaryosu",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "foot",
+    "tag": "DIV"
+   },
+   {
+    "text": "Senaryoyu değiştirip paket marjlarını gö",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "⁠%⁠82",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input type=\"number\" name=\"abone\" min=\"1\" value=\"10\">",
+   "<input type=\"number\" name=\"rakip\" min=\"1\" max=\"20\" value=\"5\">",
+   "<input type=\"number\" name=\"ufuk\" min=\"7\" value=\"60\">",
+   "<input type=\"number\" name=\"tarama\" min=\"1\" max=\"24\" value=\"1\">",
+   "<input type=\"number\" name=\"tarih_basina\" min=\"1\" value=\"1\">",
+   "<input type=\"number\" name=\"ortak\" min=\"0\" max=\"90\" value=\"30\">"
+  ],
+  "shot": "admin-costs-1440-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "mappings",
+  "path": "/admin/oda-eslemeleri",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Güveni %75'in altındaki eşlemeler incele",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Düşük güvenli eşleme",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "foot",
+    "tag": "DIV"
+   },
+   {
+    "text": "49 kayıt, sayfa 1/2",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "muted",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-mappings-1440-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "model",
+  "path": "/admin/model",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Kural tabanlı model: rakip medyanı × kon",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Sürüm . Her öneri bu sürüm etiketiyle ka",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "Varsayılan 0.05",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "hint",
+    "tag": "DIV"
+   },
+   {
+    "text": "Değişiklikten önce aşağıdaki deneme back",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "P"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input name=\"demand\" value=\"0.05\">",
+   "<input name=\"inventory\" value=\"0.06\">",
+   "<input name=\"season\" value=\"0.04\">",
+   "<input name=\"max_up\" value=\"0.3\">",
+   "<input name=\"max_down\" value=\"0.25\">",
+   "<input name=\"version\" value=\"v1.0-rules\">",
+   "<input name=\"demand\" value=\"0.05\">",
+   "<input name=\"inventory\" value=\"0.06\">",
+   "<input name=\"season\" value=\"0.04\">"
+  ],
+  "shot": "admin-model-1440-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "impact",
+  "path": "/admin/etki",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Fark-içinde-fark (DiD). Bölge başına en ",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Abone olmayan, izlenen tesisler",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "foot",
+    "tag": "DIV"
+   },
+   {
+    "text": "Anlamlı",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-impact-1440-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "admin-demand",
+  "path": "/admin/talep",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Son güncelleme: 2 Kas 2026 01:30",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Son 30 gün ve önümüzdeki 90 gün",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "Fethiye",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input name=\"name\" required=\"\">",
+   "<input type=\"date\" name=\"start_date\" required=\"\">",
+   "<input type=\"date\" name=\"end_date\" required=\"\">",
+   "<select name=\"category\"><option>festivals</option><option>concerts</option><option>confere",
+   "<input type=\"number\" name=\"impact\" min=\"0\" max=\"100\" value=\"50\">",
+   "<input name=\"district\">"
+  ],
+  "shot": "admin-admin-demand-1440-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "compliance",
+  "path": "/admin/uyumluluk",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Doküman bölüm 11. Bir maddeyi tamamlandı",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Canlıya geçmeden önce tümü tamamlanmalı.",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "muted small",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş"
+  ],
+  "shot": "admin-compliance-1440-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "audit",
+  "path": "/admin/denetim",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "127.0.0.1",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "TD"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-audit-1440-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "system",
+  "path": "/admin/sistem",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Veri modu",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "DT"
+   },
+   {
+    "text": "Kontrol grubu ölçümü için gerekli; maliy",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input type=\"number\" name=\"horizon_days\" min=\"7\" max=\"180\" value=\"60\">"
+  ],
+  "shot": "admin-system-1440-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "impersonate",
+  "path": "/panel",
+  "status": 200,
+  "width": 1440,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Yönetici görünümü: panelini görüntülüyor",
+    "ratio": 4.43,
+    "need": 4.5,
+    "cls": "",
+    "tag": "SPAN"
+   },
+   {
+    "text": "2 Kasım 2026. Öneriler Double Room Garde",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Mevcut ortalamanıza göre −⁠%⁠2,3",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "kpi-foot",
+    "tag": "DIV"
+   },
+   {
+    "text": "Standard kategorisi. Gölgeli alan rakipl",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "6 dk önce",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "when",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-impersonate-1440-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "admin",
+  "path": "/admin",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Son fiyat taraması: 2 Kas 2026 09:00 (az",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Yıllık €18.384",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "kpi-foot",
+    "tag": "DIV"
+   },
+   {
+    "text": "20 Eki 2026",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Bodrum, Muğla",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "DIV"
+   },
+   {
+    "text": "8 dk önce, 186.730 kayıt",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "when",
+    "tag": "DIV"
+   },
+   {
+    "text": "Başarılı",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-admin-390-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "hotels",
+  "path": "/admin/oteller",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Pilot bölgelerde izlenen tüm tesisler. A",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "demo-ant-kaş-02",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "DIV"
+   },
+   {
+    "text": "Abone",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   },
+   {
+    "text": "72 kayıt, sayfa 1/3",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "muted",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-hotels-390-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "hotel-detail",
+  "path": "/admin/oteller/71",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "/ Kaş, Antalya",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Tüm oda tipleri",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "foot",
+    "tag": "DIV"
+   },
+   {
+    "text": "Son 60 gün ve önümüzdeki 60 gün, konakla",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "1",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "muted",
+    "tag": "SPAN"
+   },
+   {
+    "text": "2,7 km, puan 93",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "when",
+    "tag": "DIV"
+   },
+   {
+    "text": "Onaylı",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input type=\"number\" min=\"1\" max=\"5\" name=\"star_rating\" value=\"4\">",
+   "<input type=\"number\" min=\"1\" name=\"room_count\" value=\"33\">",
+   "<select name=\"hotel_type\"><option value=\"pension\">Pansiyon</option><option value=\"boutique",
+   "<input name=\"district\" value=\"Kaş\">"
+  ],
+  "shot": "admin-hotel-detail-390-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "subscriptions",
+  "path": "/admin/aboneler",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Muğla",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "DIV"
+   },
+   {
+    "text": "Aktif",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-subscriptions-390-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "plans",
+  "path": "/admin/paketler",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Paket fiyatlarını hesabıyla birlikte bel",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "2 aktif abonelik, kod",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input name=\"name\" value=\"Başlangıç\" required=\"\">",
+   "<input name=\"price\" value=\"49.0\" required=\"\">",
+   "<input name=\"target\" value=\"Butik otel ve pansiyonlar\">",
+   "<input type=\"number\" name=\"max_competitors\" value=\"5\">",
+   "<input type=\"number\" name=\"max_room_types\" value=\"2\">",
+   "<input type=\"number\" name=\"horizon_days\" value=\"30\">",
+   "<textarea name=\"features\">5 rakiplik compset\n2 oda kategorisi\n30 günlük öneri ufku\nGünlük ",
+   "<input name=\"name\" value=\"Profesyonel\" required=\"\">",
+   "<input name=\"price\" value=\"129.0\" required=\"\">",
+   "<input name=\"target\" value=\"Orta ölçekli oteller\">",
+   "<input type=\"number\" name=\"max_competitors\" value=\"8\">",
+   "<input type=\"number\" name=\"max_room_types\" value=\"4\">",
+   "<input type=\"number\" name=\"horizon_days\" value=\"60\">",
+   "<textarea name=\"features\">8 rakiplik compset\n4 oda kategorisi\n60 günlük öneri ufku\nTalep s",
+   "<input name=\"name\" value=\"Resort &amp; Zincir\" required=\"\">",
+   "<input name=\"price\" value=\"349.0\" required=\"\">",
+   "<input name=\"target\" value=\"Zincir ve resort oteller\">",
+   "<input type=\"number\" name=\"max_competitors\" value=\"12\">",
+   "<input type=\"number\" name=\"max_room_types\" value=\"8\">",
+   "<input type=\"number\" name=\"horizon_days\" value=\"90\">",
+   "<textarea name=\"features\">12 rakiplik compset\nSınırsız oda kategorisi\n90 günlük öneri ufku",
+   "<input name=\"code\" required=\"\" placeholder=\"kurumsal\">",
+   "<input name=\"name\" required=\"\">",
+   "<input name=\"price\" required=\"\">",
+   "<input name=\"target\">",
+   "<input type=\"number\" name=\"max_competitors\" value=\"5\">",
+   "<input type=\"number\" name=\"max_room_types\" value=\"4\">",
+   "<input type=\"number\" name=\"horizon_days\" value=\"60\">",
+   "<textarea name=\"features\"></textarea>"
+  ],
+  "shot": "admin-plans-390-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "invoices",
+  "path": "/admin/faturalar",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Ödeme altyapısı henüz bağlı değil; durum",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Ödendi durumundaki faturalar",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "foot",
+    "tag": "DIV"
+   },
+   {
+    "text": "Ödendi",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-invoices-390-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "users",
+  "path": "/admin/kullanicilar",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "admin@otelradar.local",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "DIV"
+   },
+   {
+    "text": "Aktif",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input type=\"search\" name=\"q\" value=\"\" placeholder=\"E-posta veya ad\" class=\"input-sm\" styl",
+   "<input name=\"full_name\" required=\"\">",
+   "<input type=\"email\" name=\"email\" required=\"\">",
+   "<select name=\"role\"><option value=\"hotel\">Otel</option><option value=\"admin\">Yönetici</opt",
+   "<select name=\"hotel_id\"><option value=\"\">—</option><option value=\"17\">Akdeniz Fethiye Pans",
+   "<input type=\"password\" name=\"password\" required=\"\" minlength=\"8\" autocomplete=\"new-passwor"
+  ],
+  "shot": "admin-users-390-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "pipeline",
+  "path": "/admin/veri-hatti",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Zamanlayıcı: kapalı; işler worker servis",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Plan: Her gün 05:30",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Son 60 çalışma",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "Başarılı",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-pipeline-390-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "costs",
+  "path": "/admin/api-maliyet",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Abonelik fiyatı, abone başına API maliye",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "10 abone senaryosu",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "foot",
+    "tag": "DIV"
+   },
+   {
+    "text": "Senaryoyu değiştirip paket marjlarını gö",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "⁠%⁠82",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input type=\"number\" name=\"abone\" min=\"1\" value=\"10\">",
+   "<input type=\"number\" name=\"rakip\" min=\"1\" max=\"20\" value=\"5\">",
+   "<input type=\"number\" name=\"ufuk\" min=\"7\" value=\"60\">",
+   "<input type=\"number\" name=\"tarama\" min=\"1\" max=\"24\" value=\"1\">",
+   "<input type=\"number\" name=\"tarih_basina\" min=\"1\" value=\"1\">",
+   "<input type=\"number\" name=\"ortak\" min=\"0\" max=\"90\" value=\"30\">"
+  ],
+  "shot": "admin-costs-390-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "mappings",
+  "path": "/admin/oda-eslemeleri",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Güveni %75'in altındaki eşlemeler incele",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Düşük güvenli eşleme",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "foot",
+    "tag": "DIV"
+   },
+   {
+    "text": "49 kayıt, sayfa 1/2",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "muted",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-mappings-390-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "model",
+  "path": "/admin/model",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Kural tabanlı model: rakip medyanı × kon",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Sürüm . Her öneri bu sürüm etiketiyle ka",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "Varsayılan 0.05",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "hint",
+    "tag": "DIV"
+   },
+   {
+    "text": "Değişiklikten önce aşağıdaki deneme back",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "P"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input name=\"demand\" value=\"0.05\">",
+   "<input name=\"inventory\" value=\"0.06\">",
+   "<input name=\"season\" value=\"0.04\">",
+   "<input name=\"max_up\" value=\"0.3\">",
+   "<input name=\"max_down\" value=\"0.25\">",
+   "<input name=\"version\" value=\"v1.0-rules\">",
+   "<input name=\"demand\" value=\"0.05\">",
+   "<input name=\"inventory\" value=\"0.06\">",
+   "<input name=\"season\" value=\"0.04\">"
+  ],
+  "shot": "admin-model-390-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "impact",
+  "path": "/admin/etki",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Fark-içinde-fark (DiD). Bölge başına en ",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Abone olmayan, izlenen tesisler",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "foot",
+    "tag": "DIV"
+   },
+   {
+    "text": "Anlamlı",
+    "ratio": 4.46,
+    "need": 4.5,
+    "cls": "badge good",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-impact-390-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "admin-demand",
+  "path": "/admin/talep",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Son güncelleme: 2 Kas 2026 01:30",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Son 30 gün ve önümüzdeki 90 gün",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "Fethiye",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input name=\"name\" required=\"\">",
+   "<input type=\"date\" name=\"start_date\" required=\"\">",
+   "<input type=\"date\" name=\"end_date\" required=\"\">",
+   "<select name=\"category\"><option>festivals</option><option>concerts</option><option>confere",
+   "<input type=\"number\" name=\"impact\" min=\"0\" max=\"100\" value=\"50\">",
+   "<input name=\"district\">"
+  ],
+  "shot": "admin-admin-demand-390-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "compliance",
+  "path": "/admin/uyumluluk",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Doküman bölüm 11. Bir maddeyi tamamlandı",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Canlıya geçmeden önce tümü tamamlanmalı.",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "muted small",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş"
+  ],
+  "shot": "admin-compliance-390-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "audit",
+  "path": "/admin/denetim",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "127.0.0.1",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "TD"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-audit-390-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "system",
+  "path": "/admin/sistem",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Veri modu",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "DT"
+   },
+   {
+    "text": "Kontrol grubu ölçümü için gerekli; maliy",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "small muted",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input type=\"number\" name=\"horizon_days\" min=\"7\" max=\"180\" value=\"60\">"
+  ],
+  "shot": "admin-system-390-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "impersonate",
+  "path": "/panel",
+  "status": 200,
+  "width": 390,
+  "theme": "light",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Yönetici görünümü: panelini görüntülüyor",
+    "ratio": 4.43,
+    "need": 4.5,
+    "cls": "",
+    "tag": "SPAN"
+   },
+   {
+    "text": "2 Kasım 2026. Öneriler Double Room Garde",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "crumbs",
+    "tag": "DIV"
+   },
+   {
+    "text": "Mevcut ortalamanıza göre −⁠%⁠2,3",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "kpi-foot",
+    "tag": "DIV"
+   },
+   {
+    "text": "Standard kategorisi. Gölgeli alan rakipl",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "",
+    "tag": "P"
+   },
+   {
+    "text": "6 dk önce",
+    "ratio": 3.78,
+    "need": 4.5,
+    "cls": "when",
+    "tag": "DIV"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-impersonate-390-light.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "admin",
+  "path": "/admin",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Kuyruğa git",
+    "ratio": 4.31,
+    "need": 4.5,
+    "cls": "",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-admin-1440-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "hotels",
+  "path": "/admin/oteller",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-hotels-1440-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "hotel-detail",
+  "path": "/admin/oteller/71",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Otel paneline bak",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input type=\"number\" min=\"1\" max=\"5\" name=\"star_rating\" value=\"4\">",
+   "<input type=\"number\" min=\"1\" name=\"room_count\" value=\"33\">",
+   "<select name=\"hotel_type\"><option value=\"pension\">Pansiyon</option><option value=\"boutique",
+   "<input name=\"district\" value=\"Kaş\">"
+  ],
+  "shot": "admin-hotel-detail-1440-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "subscriptions",
+  "path": "/admin/aboneler",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-subscriptions-1440-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "plans",
+  "path": "/admin/paketler",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Kaydet",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input name=\"name\" value=\"Başlangıç\" required=\"\">",
+   "<input name=\"price\" value=\"49.0\" required=\"\">",
+   "<input name=\"target\" value=\"Butik otel ve pansiyonlar\">",
+   "<input type=\"number\" name=\"max_competitors\" value=\"5\">",
+   "<input type=\"number\" name=\"max_room_types\" value=\"2\">",
+   "<input type=\"number\" name=\"horizon_days\" value=\"30\">",
+   "<textarea name=\"features\">5 rakiplik compset\n2 oda kategorisi\n30 günlük öneri ufku\nGünlük ",
+   "<input name=\"name\" value=\"Profesyonel\" required=\"\">",
+   "<input name=\"price\" value=\"129.0\" required=\"\">",
+   "<input name=\"target\" value=\"Orta ölçekli oteller\">",
+   "<input type=\"number\" name=\"max_competitors\" value=\"8\">",
+   "<input type=\"number\" name=\"max_room_types\" value=\"4\">",
+   "<input type=\"number\" name=\"horizon_days\" value=\"60\">",
+   "<textarea name=\"features\">8 rakiplik compset\n4 oda kategorisi\n60 günlük öneri ufku\nTalep s",
+   "<input name=\"name\" value=\"Resort &amp; Zincir\" required=\"\">",
+   "<input name=\"price\" value=\"349.0\" required=\"\">",
+   "<input name=\"target\" value=\"Zincir ve resort oteller\">",
+   "<input type=\"number\" name=\"max_competitors\" value=\"12\">",
+   "<input type=\"number\" name=\"max_room_types\" value=\"8\">",
+   "<input type=\"number\" name=\"horizon_days\" value=\"90\">",
+   "<textarea name=\"features\">12 rakiplik compset\nSınırsız oda kategorisi\n90 günlük öneri ufku",
+   "<input name=\"code\" required=\"\" placeholder=\"kurumsal\">",
+   "<input name=\"name\" required=\"\">",
+   "<input name=\"price\" required=\"\">",
+   "<input name=\"target\">",
+   "<input type=\"number\" name=\"max_competitors\" value=\"5\">",
+   "<input type=\"number\" name=\"max_room_types\" value=\"4\">",
+   "<input type=\"number\" name=\"horizon_days\" value=\"60\">",
+   "<textarea name=\"features\"></textarea>"
+  ],
+  "shot": "admin-plans-1440-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "invoices",
+  "path": "/admin/faturalar",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Açık",
+    "ratio": 4.01,
+    "need": 4.5,
+    "cls": "badge info",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-invoices-1440-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "users",
+  "path": "/admin/kullanicilar",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Ekle",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input type=\"search\" name=\"q\" value=\"\" placeholder=\"E-posta veya ad\" class=\"input-sm\" styl",
+   "<input name=\"full_name\" required=\"\">",
+   "<input type=\"email\" name=\"email\" required=\"\">",
+   "<select name=\"role\"><option value=\"hotel\">Otel</option><option value=\"admin\">Yönetici</opt",
+   "<select name=\"hotel_id\"><option value=\"\">—</option><option value=\"17\">Akdeniz Fethiye Pans",
+   "<input type=\"password\" name=\"password\" required=\"\" minlength=\"8\" autocomplete=\"new-passwor"
+  ],
+  "shot": "admin-users-1440-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "pipeline",
+  "path": "/admin/veri-hatti",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Şimdi çalıştır",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn sm primary",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-pipeline-1440-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "costs",
+  "path": "/admin/api-maliyet",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Hesapla",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input type=\"number\" name=\"abone\" min=\"1\" value=\"10\">",
+   "<input type=\"number\" name=\"rakip\" min=\"1\" max=\"20\" value=\"5\">",
+   "<input type=\"number\" name=\"ufuk\" min=\"7\" value=\"60\">",
+   "<input type=\"number\" name=\"tarama\" min=\"1\" max=\"24\" value=\"1\">",
+   "<input type=\"number\" name=\"tarih_basina\" min=\"1\" value=\"1\">",
+   "<input type=\"number\" name=\"ortak\" min=\"0\" max=\"90\" value=\"30\">"
+  ],
+  "shot": "admin-costs-1440-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "mappings",
+  "path": "/admin/oda-eslemeleri",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-mappings-1440-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "model",
+  "path": "/admin/model",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Kaydet ve yayına al",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input name=\"demand\" value=\"0.05\">",
+   "<input name=\"inventory\" value=\"0.06\">",
+   "<input name=\"season\" value=\"0.04\">",
+   "<input name=\"max_up\" value=\"0.3\">",
+   "<input name=\"max_down\" value=\"0.25\">",
+   "<input name=\"version\" value=\"v1.0-rules\">",
+   "<input name=\"demand\" value=\"0.05\">",
+   "<input name=\"inventory\" value=\"0.06\">",
+   "<input name=\"season\" value=\"0.04\">"
+  ],
+  "shot": "admin-model-1440-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "impact",
+  "path": "/admin/etki",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Orta güven",
+    "ratio": 4.01,
+    "need": 4.5,
+    "cls": "badge info",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-impact-1440-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "admin-demand",
+  "path": "/admin/talep",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Ekle",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input name=\"name\" required=\"\">",
+   "<input type=\"date\" name=\"start_date\" required=\"\">",
+   "<input type=\"date\" name=\"end_date\" required=\"\">",
+   "<select name=\"category\"><option>festivals</option><option>concerts</option><option>confere",
+   "<input type=\"number\" name=\"impact\" min=\"0\" max=\"100\" value=\"50\">",
+   "<input name=\"district\">"
+  ],
+  "shot": "admin-admin-demand-1440-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "compliance",
+  "path": "/admin/uyumluluk",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [],
+  "unnamed": [],
+  "unlabeled": [
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş"
+  ],
+  "shot": "admin-compliance-1440-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "audit",
+  "path": "/admin/denetim",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-audit-1440-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "system",
+  "path": "/admin/sistem",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Kaydet",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input type=\"number\" name=\"horizon_days\" min=\"7\" max=\"180\" value=\"60\">"
+  ],
+  "shot": "admin-system-1440-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "impersonate",
+  "path": "/panel",
+  "status": 200,
+  "width": 1440,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Tüm öneriler",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-impersonate-1440-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "admin",
+  "path": "/admin",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Kuyruğa git",
+    "ratio": 4.31,
+    "need": 4.5,
+    "cls": "",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-admin-390-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "hotels",
+  "path": "/admin/oteller",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-hotels-390-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "hotel-detail",
+  "path": "/admin/oteller/71",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Otel paneline bak",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input type=\"number\" min=\"1\" max=\"5\" name=\"star_rating\" value=\"4\">",
+   "<input type=\"number\" min=\"1\" name=\"room_count\" value=\"33\">",
+   "<select name=\"hotel_type\"><option value=\"pension\">Pansiyon</option><option value=\"boutique",
+   "<input name=\"district\" value=\"Kaş\">"
+  ],
+  "shot": "admin-hotel-detail-390-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "subscriptions",
+  "path": "/admin/aboneler",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-subscriptions-390-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "plans",
+  "path": "/admin/paketler",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Kaydet",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input name=\"name\" value=\"Başlangıç\" required=\"\">",
+   "<input name=\"price\" value=\"49.0\" required=\"\">",
+   "<input name=\"target\" value=\"Butik otel ve pansiyonlar\">",
+   "<input type=\"number\" name=\"max_competitors\" value=\"5\">",
+   "<input type=\"number\" name=\"max_room_types\" value=\"2\">",
+   "<input type=\"number\" name=\"horizon_days\" value=\"30\">",
+   "<textarea name=\"features\">5 rakiplik compset\n2 oda kategorisi\n30 günlük öneri ufku\nGünlük ",
+   "<input name=\"name\" value=\"Profesyonel\" required=\"\">",
+   "<input name=\"price\" value=\"129.0\" required=\"\">",
+   "<input name=\"target\" value=\"Orta ölçekli oteller\">",
+   "<input type=\"number\" name=\"max_competitors\" value=\"8\">",
+   "<input type=\"number\" name=\"max_room_types\" value=\"4\">",
+   "<input type=\"number\" name=\"horizon_days\" value=\"60\">",
+   "<textarea name=\"features\">8 rakiplik compset\n4 oda kategorisi\n60 günlük öneri ufku\nTalep s",
+   "<input name=\"name\" value=\"Resort &amp; Zincir\" required=\"\">",
+   "<input name=\"price\" value=\"349.0\" required=\"\">",
+   "<input name=\"target\" value=\"Zincir ve resort oteller\">",
+   "<input type=\"number\" name=\"max_competitors\" value=\"12\">",
+   "<input type=\"number\" name=\"max_room_types\" value=\"8\">",
+   "<input type=\"number\" name=\"horizon_days\" value=\"90\">",
+   "<textarea name=\"features\">12 rakiplik compset\nSınırsız oda kategorisi\n90 günlük öneri ufku",
+   "<input name=\"code\" required=\"\" placeholder=\"kurumsal\">",
+   "<input name=\"name\" required=\"\">",
+   "<input name=\"price\" required=\"\">",
+   "<input name=\"target\">",
+   "<input type=\"number\" name=\"max_competitors\" value=\"5\">",
+   "<input type=\"number\" name=\"max_room_types\" value=\"4\">",
+   "<input type=\"number\" name=\"horizon_days\" value=\"60\">",
+   "<textarea name=\"features\"></textarea>"
+  ],
+  "shot": "admin-plans-390-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "invoices",
+  "path": "/admin/faturalar",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Açık",
+    "ratio": 4.01,
+    "need": 4.5,
+    "cls": "badge info",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-invoices-390-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "users",
+  "path": "/admin/kullanicilar",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Ekle",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input type=\"search\" name=\"q\" value=\"\" placeholder=\"E-posta veya ad\" class=\"input-sm\" styl",
+   "<input name=\"full_name\" required=\"\">",
+   "<input type=\"email\" name=\"email\" required=\"\">",
+   "<select name=\"role\"><option value=\"hotel\">Otel</option><option value=\"admin\">Yönetici</opt",
+   "<select name=\"hotel_id\"><option value=\"\">—</option><option value=\"17\">Akdeniz Fethiye Pans",
+   "<input type=\"password\" name=\"password\" required=\"\" minlength=\"8\" autocomplete=\"new-passwor"
+  ],
+  "shot": "admin-users-390-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "pipeline",
+  "path": "/admin/veri-hatti",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Şimdi çalıştır",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn sm primary",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-pipeline-390-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "costs",
+  "path": "/admin/api-maliyet",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Hesapla",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input type=\"number\" name=\"abone\" min=\"1\" value=\"10\">",
+   "<input type=\"number\" name=\"rakip\" min=\"1\" max=\"20\" value=\"5\">",
+   "<input type=\"number\" name=\"ufuk\" min=\"7\" value=\"60\">",
+   "<input type=\"number\" name=\"tarama\" min=\"1\" max=\"24\" value=\"1\">",
+   "<input type=\"number\" name=\"tarih_basina\" min=\"1\" value=\"1\">",
+   "<input type=\"number\" name=\"ortak\" min=\"0\" max=\"90\" value=\"30\">"
+  ],
+  "shot": "admin-costs-390-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "mappings",
+  "path": "/admin/oda-eslemeleri",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-mappings-390-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "model",
+  "path": "/admin/model",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Kaydet ve yayına al",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input name=\"demand\" value=\"0.05\">",
+   "<input name=\"inventory\" value=\"0.06\">",
+   "<input name=\"season\" value=\"0.04\">",
+   "<input name=\"max_up\" value=\"0.3\">",
+   "<input name=\"max_down\" value=\"0.25\">",
+   "<input name=\"version\" value=\"v1.0-rules\">",
+   "<input name=\"demand\" value=\"0.05\">",
+   "<input name=\"inventory\" value=\"0.06\">",
+   "<input name=\"season\" value=\"0.04\">"
+  ],
+  "shot": "admin-model-390-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "impact",
+  "path": "/admin/etki",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Orta güven",
+    "ratio": 4.01,
+    "need": 4.5,
+    "cls": "badge info",
+    "tag": "SPAN"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-impact-390-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "admin-demand",
+  "path": "/admin/talep",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Ekle",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input name=\"name\" required=\"\">",
+   "<input type=\"date\" name=\"start_date\" required=\"\">",
+   "<input type=\"date\" name=\"end_date\" required=\"\">",
+   "<select name=\"category\"><option>festivals</option><option>concerts</option><option>confere",
+   "<input type=\"number\" name=\"impact\" min=\"0\" max=\"100\" value=\"50\">",
+   "<input name=\"district\">"
+  ],
+  "shot": "admin-admin-demand-390-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "compliance",
+  "path": "/admin/uyumluluk",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [],
+  "unnamed": [],
+  "unlabeled": [
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş",
+   "<input name=\"evidence_note\" value=\"\" placeholder=\"Kanıt: belge adı, e-posta tarihi, sözleş"
+  ],
+  "shot": "admin-compliance-390-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "audit",
+  "path": "/admin/denetim",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-audit-390-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "system",
+  "path": "/admin/sistem",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "Kaydet",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "BUTTON"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [
+   "<input type=\"number\" name=\"horizon_days\" min=\"7\" max=\"180\" value=\"60\">"
+  ],
+  "shot": "admin-system-390-dark.jpg"
+ },
+ {
+  "group": "admin",
+  "name": "impersonate",
+  "path": "/panel",
+  "status": 200,
+  "width": 390,
+  "theme": "dark",
+  "errors": [],
+  "overflow": 0,
+  "contrast": [
+   {
+    "text": "1",
+    "ratio": 3.33,
+    "need": 4.5,
+    "cls": "count",
+    "tag": "SPAN"
+   },
+   {
+    "text": "Tüm öneriler",
+    "ratio": 3.35,
+    "need": 4.5,
+    "cls": "btn primary",
+    "tag": "A"
+   }
+  ],
+  "unnamed": [],
+  "unlabeled": [],
+  "shot": "admin-impersonate-390-dark.jpg"
+ }
+]

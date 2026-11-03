@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-02T01:45:00+03:00",
+  "title": "Design System: OtelRadar",
+  "extensions": {
+    "colorMeta": {
+      "limewash": { "role": "neutral", "displayName": "Kireç Beyazı" },
+      "aegean": { "role": "primary", "displayName": "Ege Mavisi" },
+      "harbour": { "role": "secondary", "displayName": "Liman Laciverti" },
+      "bougainvillea": { "role": "tertiary", "displayName": "Begonvil" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Bu gecenin önerilen fiyatı; tanıtım başlığı." },
+      "figure": { "displayName": "Figure", "purpose": "KPI, plan ve takvim rakamları (tabular-nums)." }
+    },
+    "shadows": [
+      { "name": "whisper", "value": "0 1px 2px rgba(15,34,51,.05), 0 4px 16px rgba(15,34,51,.04)", "purpose": "Seçili segment sekmesi, tanıtım önizleme panelleri." },
+      { "name": "floating", "value": "0 12px 32px rgba(15,34,51,.18)", "purpose": "Bildirim kutuları." }
+    ],
+    "motion": [
+      { "name": "rise", "value": "rise .35s ease-out", "purpose": "Sayfa açılışında içeriğin tek seferlik girişi." },
+      { "name": "radar-sweep", "value": "sweep 6s linear infinite", "purpose": "Rakip radarı tarama ışını; reduced-motion'da durur." }
+    ],
+    "breakpoints": [
+      { "name": "wide", "value": "1180px" },
+      { "name": "drawer", "value": "900px" },
+      { "name": "phone", "value": "560px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button", "kind": "button", "refersTo": "button-primary",
+      "description": "Ekrandaki tek birincil aksiyon.",
+      "html": "<button class=\"ds-btn-primary\">Tüm öneriler</button>",
+      "css": ".ds-btn-primary{background:var(--brand,#1f5fa8);color:#fff;border:1px solid var(--brand,#1f5fa8);border-radius:8px;padding:8px 14px;font:600 .88rem/1.2 'Instrument Sans',system-ui,sans-serif;cursor:pointer;transition:background .15s}.ds-btn-primary:hover{background:var(--brand-hover,#174d8a)}.ds-btn-primary:focus-visible{outline:2px solid var(--brand,#1f5fa8);outline-offset:2px}"
+    },
+    {
+      "name": "Opportunity Badge", "kind": "chip", "refersTo": "badge-opportunity",
+      "description": "Begonvil: yalnızca fırsat vurgusu, her zaman ikon ve metinle.",
+      "html": "<span class=\"ds-badge-hot\">↑ +%12</span>",
+      "css": ".ds-badge-hot{display:inline-flex;gap:5px;align-items:center;font:600 .76rem/1.4 'Instrument Sans',system-ui,sans-serif;padding:2px 8px;border-radius:999px;background:var(--bougain-soft,#fbe9f0);color:var(--bougain,#a8285a)}"
+    },
+    {
+      "name": "Panel", "kind": "card", "refersTo": "panel",
+      "description": "Beyaz, gölgesiz, 16 px köşeli içerik kabı.",
+      "html": "<section class=\"ds-panel\"><h2>Bu hafta</h2><p>Önümüzdeki 7 günün önerileri</p></section>",
+      "css": ".ds-panel{background:var(--surface,#fff);border:1px solid var(--line,#dce3e9);border-radius:16px;padding:16px 20px 20px}.ds-panel h2{font:650 1.02rem/1.35 'Bricolage Grotesque',system-ui,sans-serif;margin:0}.ds-panel p{margin:2px 0 0;color:var(--muted,#5f6f80);font-size:.85rem}"
+    },
+    {
+      "name": "Sidebar Nav Item", "kind": "nav", "refersTo": "nav-item-active",
+      "description": "Liman laciverti menüde etkin öğe.",
+      "html": "<nav class=\"ds-nav\"><a class=\"on\" href=\"#\">Panel</a><a href=\"#\">Fiyat önerileri</a></nav>",
+      "css": ".ds-nav{background:#0f2b3d;padding:12px;border-radius:12px;display:grid;gap:2px}.ds-nav a{color:#cfdde8;padding:8px 10px;border-radius:8px;font:500 .92rem 'Instrument Sans',system-ui,sans-serif;text-decoration:none}.ds-nav a:hover{background:#163a51;color:#fff}.ds-nav a.on{background:#fff;color:#0f2b3d}.ds-nav a:focus-visible{outline:2px solid #5fb4ee;outline-offset:2px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Sabah İskelesi",
+    "keyCharacteristics": [
+      "Kireç beyazı zemin, beyaz paneller, ince çizgiler; gölge neredeyse yok.",
+      "Liman laciverti kenar menü ve kahraman öneri kartı; ekrandaki tek koyu kütleler.",
+      "Ege mavisi tek aksiyon rengi; begonvil yalnızca fırsat vurgusu.",
+      "İri, tablo rakamlı fiyatlar; Türkçe para/yüzde/tarih biçimi.",
+      "İmza öğe: rakip radarı."
+    ],
+    "rules": [
+      { "name": "The Begonvil Rule", "body": "Begonvil yalnızca fırsatı işaret eder; hata, uyarı veya süsleme için kullanılmaz.", "section": "colors" },
+      { "name": "The Color-Never-Alone Rule", "body": "Durum rengi tek başına anlam taşımaz; her rozet ve hücre ikon veya metinle birlikte gelir.", "section": "colors" },
+      { "name": "The Fixed Series Rule", "body": "Öneri series-1, mevcut fiyat series-2, rakip medyanı series-3; sıra hiçbir ekranda değişmez.", "section": "colors" },
+      { "name": "The Tabular Price Rule", "body": "Fiyat, yüzde ve sayı gösteren her hücre tabular-nums kullanır ve sağa hizalanır.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Paneller gölgesizdir; yükseklik yalnızca yüzen öğeler içindir.", "section": "elevation" }
+    ]
+  }
+}

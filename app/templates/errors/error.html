@@ -1,10 +1,15 @@
 {% extends "partials/public_layout.html" %}
 {% block title %}{{ title }}{% endblock %}
 {% block content %}
+{% set home = ('/admin' if user.role == 'admin' else '/panel') if user else '/' %}
 <div class="error-page"><div>
-  <div class="code">{{ code }}</div>
-  <h1 style="margin:10px 0 8px">{{ title }}</h1>
+  <p class="code" aria-hidden="true">{{ code }}</p>
+  <h1>{{ title }}</h1>
   <p class="ink-2">{{ message }}</p>
-  <div class="row" style="justify-content:center;margin-top:18px"><a class="btn primary" href="/">Ana sayfa</a><a class="btn" href="javascript:history.back()">Geri dön</a></div>
+  <div class="row error-actions">
+    {% if action_url %}<a class="btn primary" href="{{ action_url }}">{{ action_label }}</a><a class="btn" href="{{ home }}">Panele dön</a>
+    {% else %}<a class="btn primary" href="{{ home }}">{{ 'Panele dön' if user else 'Ana sayfaya dön' }}</a>{% endif %}
+    {% if not user %}<a class="btn" href="/giris">Giriş yap</a>{% endif %}
+  </div>
 </div></div>
 {% endblock %}

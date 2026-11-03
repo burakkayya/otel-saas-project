@@ -157,6 +157,35 @@ def test_mobile_menu(browser, server):
     ctx.close()
 
 
+def test_mobile_menu_keyboard(browser, server):
+    """Kapalı çekmece sekme sırasında değildir; düğme durumunu bildirir; Esc menüyü kapatıp odağı geri verir."""
+    ctx = browser.new_context(viewport={"width": 390, "height": 844})
+    p = Page(ctx.new_page(), server)
+    p.login("otel@otelradar.local", "Demo1234!")
+    btn = p.page.locator("[data-menu]")
+    assert btn.get_attribute("aria-expanded") == "false"
+    assert p.page.evaluate("getComputedStyle(document.querySelector('.sidebar')).visibility") == "hidden"
+    btn.click()
+    p.page.wait_for_timeout(300)
+    assert btn.get_attribute("aria-expanded") == "true"
+    assert p.page.evaluate("document.activeElement.closest('.sidebar') !== null")
+    p.page.keyboard.press("Escape")
+    p.page.wait_for_timeout(300)
+    assert btn.get_attribute("aria-expanded") == "false"
+    assert p.page.evaluate("document.activeElement.hasAttribute('data-menu')")
+    ctx.close()
+
+
+def test_public_pages_fit_phone_width(browser, server):
+    """Herkese açık sayfalarda 390 px'te yatay taşma olmaz."""
+    ctx = browser.new_context(viewport={"width": 390, "height": 844})
+    page = ctx.new_page()
+    for url in ("/", "/fiyatlar", "/yasal/kvkk", "/olmayan-sayfa"):
+        page.goto(server + url)
+        assert page.evaluate("document.documentElement.scrollWidth") <= 391, url
+    ctx.close()
+
+
 def test_registration_in_browser(page):
     page.go("/kayit")
     page.page.fill("#hotel_name", "Tarayıcı Test Oteli")

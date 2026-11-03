@@ -7,19 +7,19 @@
   {% for p in rows %}
   <div class="panel"><div class="panel-head"><div><h2>{{ p.name }}</h2><p>{{ counts.get(p.id, 0) }} aktif abonelik, kod <code>{{ p.code }}</code></p></div>{% if not p.is_active %}<span class="badge">Pasif</span>{% endif %}</div>
     <div class="panel-body"><form class="form" method="post" action="/admin/paketler/{{ p.id }}">{{ ui.csrf() }}
-      <div class="two"><div class="field"><label>Ad</label><input name="name" value="{{ p.name }}" required></div><div class="field"><label>Aylık ücret (€)</label><input name="price" value="{{ p.monthly_price_eur|float }}" required></div></div>
-      <div class="field"><label>Hedef kitle</label><input name="target" value="{{ p.target or '' }}"></div>
-      <div class="three"><div class="field"><label>Rakip</label><input type="number" name="max_competitors" value="{{ p.max_competitors }}"></div><div class="field"><label>Oda kat.</label><input type="number" name="max_room_types" value="{{ p.max_room_types }}"></div><div class="field"><label>Ufuk (gün)</label><input type="number" name="horizon_days" value="{{ p.horizon_days }}"></div></div>
-      <div class="field"><label>Özellikler (her satır bir madde)</label><textarea name="features">{{ (p.features or [])|join('\n') }}</textarea></div>
+      <div class="two"><div class="field"><label for="pl{{ p.id }}-name">Ad</label><input id="pl{{ p.id }}-name" name="name" value="{{ p.name }}" required></div><div class="field"><label for="pl{{ p.id }}-price">Aylık ücret (€)</label><input id="pl{{ p.id }}-price" name="price" value="{{ ('%.2f' % (p.monthly_price_eur|float)).replace('.', ',') }}" inputmode="decimal" required></div></div>
+      <div class="field"><label for="pl{{ p.id }}-target">Hedef kitle</label><input id="pl{{ p.id }}-target" name="target" value="{{ p.target or '' }}"></div>
+      <div class="three"><div class="field"><label for="pl{{ p.id }}-max_competitors">Rakip</label><input id="pl{{ p.id }}-max_competitors" type="number" name="max_competitors" value="{{ p.max_competitors }}"></div><div class="field"><label for="pl{{ p.id }}-max_room_types">Oda kat.</label><input id="pl{{ p.id }}-max_room_types" type="number" name="max_room_types" value="{{ p.max_room_types }}"></div><div class="field"><label for="pl{{ p.id }}-horizon_days">Ufuk (gün)</label><input id="pl{{ p.id }}-horizon_days" type="number" name="horizon_days" value="{{ p.horizon_days }}"></div></div>
+      <div class="field"><label for="pl{{ p.id }}-features">Özellikler (her satır bir madde)</label><textarea id="pl{{ p.id }}-features" name="features">{{ (p.features or [])|join('\n') }}</textarea></div>
       <div class="row between"><label class="check"><input type="checkbox" name="is_active" value="1" {{ 'checked' if p.is_active }}><span>Satışta</span></label><input type="hidden" name="sort_order" value="{{ p.sort_order }}"><button class="btn primary" type="submit">Kaydet</button></div>
     </form></div></div>
   {% endfor %}
   <div class="panel soft"><div class="panel-head"><div><h2>Yeni paket</h2></div></div>
     <div class="panel-body"><form class="form" method="post" action="/admin/paketler">{{ ui.csrf() }}
-      <div class="two"><div class="field"><label>Kod</label><input name="code" required placeholder="kurumsal"></div><div class="field"><label>Ad</label><input name="name" required></div></div>
-      <div class="two"><div class="field"><label>Aylık ücret (€)</label><input name="price" required></div><div class="field"><label>Hedef kitle</label><input name="target"></div></div>
-      <div class="three"><div class="field"><label>Rakip</label><input type="number" name="max_competitors" value="5"></div><div class="field"><label>Oda kat.</label><input type="number" name="max_room_types" value="4"></div><div class="field"><label>Ufuk</label><input type="number" name="horizon_days" value="60"></div></div>
-      <div class="field"><label>Özellikler</label><textarea name="features"></textarea></div>
+      <div class="two"><div class="field"><label for="pl-new-code">Kod</label><input id="pl-new-code" name="code" required placeholder="kurumsal"></div><div class="field"><label for="pl-new-name">Ad</label><input id="pl-new-name" name="name" required></div></div>
+      <div class="two"><div class="field"><label for="pl-new-price">Aylık ücret (€)</label><input id="pl-new-price" name="price" inputmode="decimal" placeholder="Örn. 89,00" required></div><div class="field"><label for="pl-new-target">Hedef kitle</label><input id="pl-new-target" name="target"></div></div>
+      <div class="three"><div class="field"><label for="pl-new-max_competitors">Rakip</label><input id="pl-new-max_competitors" type="number" name="max_competitors" value="5"></div><div class="field"><label for="pl-new-max_room_types">Oda kat.</label><input id="pl-new-max_room_types" type="number" name="max_room_types" value="4"></div><div class="field"><label for="pl-new-horizon_days">Ufuk</label><input id="pl-new-horizon_days" type="number" name="horizon_days" value="60"></div></div>
+      <div class="field"><label for="pl-new-features">Özellikler</label><textarea id="pl-new-features" name="features"></textarea></div>
       <button class="btn" type="submit">{{ ui.icon('plus') }}Paket oluştur</button></form></div></div>
 </div>
 {% endblock %}

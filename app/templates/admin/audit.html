@@ -7,6 +7,6 @@
   <thead><tr><th>Zaman</th><th>Kullanıcı</th><th>İşlem</th><th>Kayıt</th><th>Ayrıntı</th><th>IP</th></tr></thead>
   <tbody>{% for r in rows %}<tr><td class="small">{{ r.created_at|dt('datetime') }}</td><td class="small">{{ r.user.email if r.user else 'sistem' }}</td><td><code>{{ r.action }}</code></td>
     <td class="small">{{ r.entity or '' }} {{ r.entity_id or '' }}</td><td class="small ink-2">{{ r.details|json if r.details else '' }}</td><td class="small muted">{{ r.ip or '' }}</td></tr>
-  {% else %}<tr><td colspan="6" class="muted">Kayıt yok.</td></tr>{% endfor %}</tbody></table></div>
+  {% else %}<tr><td colspan="6">{{ ui.empty("Kayıt yok", "Bu filtreyle eşleşen denetim kaydı bulunamadı.") }}</td></tr>{% endfor %}</tbody></table></div>
   {{ ui.pager(pg, "?islem=" ~ islem) }}</div></div>
 {% endblock %}

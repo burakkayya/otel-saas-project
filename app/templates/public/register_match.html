@@ -9,17 +9,29 @@
 {{ ui.errors_box(errors) }}
 <form class="form" method="post" action="/kayit/tamamla" style="margin-top:16px">
   {{ ui.csrf() }}
-  <div class="choice">
+  {# Ön seçim yalnızca ad neredeyse aynıysa VE ilçe eşleşiyorsa yapılır; aksi hâlde kullanıcı bilinçli seçer. #}
+  {% set ns = namespace(pre=None) %}
+  {% if candidates and form.district %}
+    {% set c0 = candidates[0] %}
+    {% set same0 = (c0.hotel.district or '')|lower == form.district|lower %}
+    {% if same0 and (c0.score - 0.25) >= 0.9 %}{% set ns.pre = c0.hotel.id %}{% endif %}
+  {% endif %}
+  <fieldset class="choice">
+    <legend>Otel kaydınız</legend>
     {% for c in candidates %}
-    <label><input type="radio" name="hotel_choice" value="{{ c.hotel.id }}" {{ 'checked' if loop.first and c.score >= 0.5 }}>
-      <div><strong>{{ c.hotel.name }}</strong><div class="small muted">{{ c.hotel.district }}, {{ c.hotel.province }}{% if c.hotel.star_rating %}, {{ c.hotel.star_rating }} yıldız{% endif %}</div></div>
-      <span class="score badge {{ 'good' if c.score >= 0.7 else 'info' if c.score >= 0.5 else '' }}">%{{ (c.score * 100)|round|int if c.score <= 1 else 100 }} eşleşme</span></label>
+    {% set same = form.district and (c.hotel.district or '')|lower == form.district|lower %}
+    <label><input type="radio" name="hotel_choice" value="{{ c.hotel.id }}" required {{ 'checked' if ns.pre == c.hotel.id }}>
+      <div><strong>{{ c.hotel.name }}</strong><div class="small {{ 'ink-2' if same else 'muted' }}">{{ c.hotel.district }}, {{ c.hotel.province }}{% if c.hotel.star_rating %}, {{ c.hotel.star_rating }} yıldız{% endif %}{% if form.district and not same %} · <b>farklı ilçe</b>{% endif %}</div></div>
+      {% set name_score = c.score - (0.25 if same else 0) %}{# ilçe bonusu hariç, yalnızca ad benzerliği #}
+      {% set pct = [100, [0, (name_score * 100)|round|int]|max]|min %}
+      <span class="score badge {{ 'good' if name_score >= 0.9 else 'info' if name_score >= 0.6 else '' }}">%{{ pct }} ad benzerliği</span></label>
     {% endfor %}
-    <label><input type="radio" name="hotel_choice" value="new" {{ 'checked' if not candidates or candidates[0].score < 0.5 }}>
+    <label><input type="radio" name="hotel_choice" value="new" required {{ 'checked' if not candidates }}>
       <div><strong>Listede yok, yeni kayıt oluştur</strong><div class="small muted">Konumunuzu adresinizden bulur, önerileri rakip dağılımına göre üretiriz.</div></div></label>
-  </div>
+  </fieldset>
+  {% if candidates and not ns.pre %}<p class="small ink-2" style="margin:0">Kesin bir eşleşme bulamadık. Otelinizi listeden seçin ya da yeni kayıt oluşturun.</p>{% endif %}
   <div class="two">
-    <div class="field"><label for="password">Parola</label><input id="password" type="password" name="password" required minlength="8" autocomplete="new-password"><div class="hint">En az 8 karakter, harf ve rakam.</div></div>
+    <div class="field"><label for="password">Parola</label><input id="password" type="password" name="password" required minlength="8" autocomplete="new-password" aria-describedby="password-hint"><div class="hint" id="password-hint">En az 8 karakter; en az bir harf ve bir rakam.</div></div>
     <div class="field"><label for="password2">Parola (tekrar)</label><input id="password2" type="password" name="password2" required autocomplete="new-password"></div>
   </div>
   <div class="row"><a class="btn" href="/kayit">Geri dön</a><button class="btn primary lg" type="submit">Hesabımı oluştur</button></div>

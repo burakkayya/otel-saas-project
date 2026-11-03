@@ -44,13 +44,13 @@ log = logging.getLogger(__name__)
 PLANS = [
     dict(code="baslangic", name="Başlangıç", target="Butik otel ve pansiyonlar", monthly_price_eur=49, max_competitors=5,
          max_room_types=2, horizon_days=30, sort_order=1,
-         features=["5 rakiplik compset", "2 oda kategorisi", "30 günlük öneri ufku", "Günlük e-posta özeti"]),
+         features=["5 rakiplik rakip seti", "2 oda kategorisi", "30 günlük öneri ufku", "Günlük panel özeti (e-posta yakında)"]),
     dict(code="profesyonel", name="Profesyonel", target="Orta ölçekli oteller", monthly_price_eur=129, max_competitors=8,
          max_room_types=4, horizon_days=60, sort_order=2,
-         features=["8 rakiplik compset", "4 oda kategorisi", "60 günlük öneri ufku", "Talep sinyalleri", "Backtest raporu"]),
+         features=["8 rakiplik rakip seti", "4 oda kategorisi", "60 günlük öneri ufku", "Talep sinyalleri", "Backtest raporu"]),
     dict(code="resort", name="Resort & Zincir", target="Zincir ve resort oteller", monthly_price_eur=349, max_competitors=12,
          max_room_types=8, horizon_days=90, sort_order=3,
-         features=["12 rakiplik compset", "Sınırsız oda kategorisi", "90 günlük öneri ufku", "Kontrol grubu etki ölçümü",
+         features=["12 rakiplik rakip seti", "8 oda kategorisi", "90 günlük öneri ufku", "Kontrol grubu ile tahmini etki ölçümü",
                    "Öncelikli destek"]),
 ]
 
@@ -77,11 +77,23 @@ SUBSCRIBER_PICKS = [
 ]
 
 
+# Önceki sürümün varsayılan paket maddeleri: değiştirilmemişlerse güncel (sınırlarla tutarlı) metne taşınır.
+_OLD_DEFAULT_FEATURES = {
+    "baslangic": ["5 rakiplik compset", "2 oda kategorisi", "30 günlük öneri ufku", "Günlük e-posta özeti"],
+    "profesyonel": ["8 rakiplik compset", "4 oda kategorisi", "60 günlük öneri ufku", "Talep sinyalleri", "Backtest raporu"],
+    "resort": ["12 rakiplik compset", "Sınırsız oda kategorisi", "90 günlük öneri ufku", "Kontrol grubu etki ölçümü",
+               "Öncelikli destek"],
+}
+
+
 def ensure_base(db: Session) -> None:
     """Her ortamda gerekli temel kayıtlar."""
     for p in PLANS:
-        if db.execute(select(Plan).where(Plan.code == p["code"])).scalar_one_or_none() is None:
+        existing = db.execute(select(Plan).where(Plan.code == p["code"])).scalar_one_or_none()
+        if existing is None:
             db.add(Plan(**p))
+        elif list(existing.features or []) == _OLD_DEFAULT_FEATURES.get(p["code"]):
+            existing.features = p["features"]
     if db.execute(select(User).where(User.email == settings.admin_email)).scalar_one_or_none() is None:
         db.add(User(email=settings.admin_email, password_hash=hash_password(settings.admin_password),
                     full_name="Sistem Yöneticisi", role="admin"))

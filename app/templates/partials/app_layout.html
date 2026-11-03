@@ -25,7 +25,7 @@
   ] %}
 {% endif %}
 <div class="app">
-  <aside class="sidebar" aria-label="Ana menü">
+  <aside class="sidebar" id="ana-menu" aria-label="Ana menü">
     <a class="brand" href="{{ '/admin' if admin else '/panel' }}">{{ ui.brand_mark() }}{{ settings.app_name }}</a>
     {% if not admin and hotel %}
     <div class="hotel-chip">{{ ui.avatar(hotel.name) }}<div><strong>{{ hotel.name }}</strong><span>{{ hotel.district ~ ', ' if hotel.district }}{{ hotel.province }}{% if hotel.star_rating %}, {{ hotel.star_rating }} yıldız{% endif %}</span></div></div>
@@ -49,7 +49,7 @@
         <button class="theme-toggle" type="button" data-theme-toggle aria-label="Açık/koyu tema">{{ ui.icon('moon') }}</button>
       </div>
       <form method="post" action="/cikis" style="margin-top:10px">{{ ui.csrf() }}
-        <button class="btn sm ghost" style="color:var(--harbour-ink);padding-left:0" type="submit">{{ ui.icon('logout') }}Çıkış yap</button>
+        <button class="btn sm ghost sidebar-logout" type="submit">{{ ui.icon('logout') }}Çıkış yap</button>
       </form>
     </div>
   </aside>
@@ -58,11 +58,9 @@
     <div class="imp-banner">{{ ui.icon('eye') }}<span>Yönetici görünümü: <b>{{ hotel.name }}</b> panelini görüntülüyorsunuz.</span>
       <form method="post" action="/admin/panel-cik">{{ ui.csrf() }}<button class="btn sm" type="submit">Yönetime dön</button></form></div>
     {% endif %}
-    {% if is_demo %}
-    <div class="demo-banner">{{ ui.icon('info') }}<span>Demo veri modu: otel adları, fiyatlar ve etkinlikler kurgusaldır. Gerçek API anahtarları <code>.env</code> dosyasında tanımlanınca canlı veriye geçilir.</span></div>
-    {% endif %}
+    {{ ui.demo_banner(admin) }}
     <header class="topbar">
-      <button class="btn ghost menu-btn" type="button" data-menu aria-label="Menüyü aç">{{ ui.icon('menu') }}</button>
+      <button class="btn ghost menu-btn" type="button" data-menu aria-label="Menü" aria-controls="ana-menu" aria-expanded="false">{{ ui.icon('menu') }}</button>
       <div class="title">
         <h1>{% block page_title %}{% endblock %}</h1>
         {% block crumbs %}{% endblock %}
@@ -77,6 +75,6 @@
 </div>
 {% endblock %}
 {% block scripts %}
-<script src="/static/vendor/chart.umd.min.js"></script>
-<script src="/static/js/charts.js?v=2"></script>
+<script src="/static/vendor/chart.umd.min.js?v=4" defer></script>
+<script src="/static/js/charts.js?v=4" defer></script>
 {% endblock %}

@@ -53,6 +53,24 @@ Yapılanlar için: [`YAPILANLAR.md`](YAPILANLAR.md).
 | 4.6 | Arka plan işleri web sürecinde. | O | Yönetim panelinden tetiklenen işler web sürecinde arka planda çalışıyor; uzun işler için kuyruk (RQ/Celery) düşünülebilir. Zamanlanmış işler ayrı `worker` servisinde. |
 | 4.7 | Çoklu kullanıcı / otel zinciri. | O | Bir otele birden çok kullanıcı eklenebiliyor ama zincir (bir hesapta birden çok otel) yapısı yok. |
 | 4.8 | Yazı tipleri ve Chart.js yerel. | — | İnternet bağlantısı olmadan da arayüz tam çalışır (Google Fonts bağımlılığı kaldırıldı). |
+| 4.9 | Python sürümü. | O | Geliştirme makinesinde sistem Python'u 3.10; proje 3.12 istediği için `.venv` uv ile kurulan 3.12.16'dan oluşturuldu. Docker imajı 3.12. |
+
+**Güncelleme (2 Kasım 2026):** 4.2 kapandı. `docker compose up --build` bu makinede çalıştı. İlk açılışta web
+servisi tohumlama bitmeden "unhealthy" oluyor ve worker başlamıyordu. Sağlık denetimine `start_period` eklendi ve worker'ın
+denetimi kapatıldı.
+
+## 4b. Arayüz (Impeccable turundan kalanlar, ayrıntı: `docs/UI_AUDIT.md`)
+
+| # | Konu | Öncelik | Durum / ne yapılmalı |
+|---|---|---|---|
+| 4b.1 | Alan bazlı form hataları | Y | Hatalar özet kutusunda ve Türkçe. Yönlendiriciler hatayı alan adıyla döndürmediği için `aria-invalid` + alan altı mesaj yok. Ayarlar ve hesap formunda 422 hatasında girilen değer korunmuyor. Yönlendiricilerin `{alan: mesaj}` döndürmesi gerekiyor. |
+| 4b.2 | Veri hattı sayfası 4 sn'de bir tam yenileniyor | O | Odak ve kaydırma sıfırlanıyor. `fetch` ile durum yoklama + `aria-live` bölgesi önerilir. |
+| 4b.3 | Ham kodlar | O | Denetim kaydında işlem kodları (`impersonate_hotel`) ve yönetim talep ekranında etkinlik kategorileri (`festivals`) İngilizce/ham. Türkçe etiket haritası gerekiyor. |
+| 4b.4 | İlk kurulum adımları | O | Hoş geldiniz ekranında "rakip setini kontrol et" adımı rakip olduğu için tamam sayılıyor. Adım durumları gerçek kullanıcı işaretlerine bağlanmalı. |
+| 4b.5 | "Bu gece, tüm oda tipleri" şeridi | O | Kahraman alan yalnızca birincil oda tipini gösteriyor. Resort gelir yöneticisi için kategori başına özet önerilir. |
+| 4b.6 | Teknik terimler | O | MAPE, Backtest ve fark-içinde-fark açıklamalı ama menü ve başlıklarda duruyor. Butik otel sahibi için sade karşılık düşünülebilir. |
+| 4b.7 | Tablo semantiği | O | Tablolarda `<caption>`/`scope` yok; pazar ızgarasında satır başlıkları `td`. |
+| 4b.8 | Giriş ekranındaki demo hesap kutusu | O | Yönetici e-postasını herkese gösteriyor. Yalnızca demo modda göründüğü için kabul edildi; canlıya geçişte kaldırılmalı. |
 
 ## 5. Doküman yol haritasına göre durum
 

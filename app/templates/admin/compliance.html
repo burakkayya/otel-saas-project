@@ -14,7 +14,7 @@
     <div class="panel-body">
       <div class="row between"><label class="check" style="font-size:.98rem"><input type="checkbox" name="is_done" value="1" {{ 'checked' if it.is_done }}><span><b>{{ it.title }}</b></span></label>
         <span class="badge {{ 'bad' if it.risk == 'high' else 'warn' }}">{{ 'Yüksek risk' if it.risk == 'high' else 'Orta risk' }}</span></div>
-      <div class="row" style="margin-top:10px;flex-wrap:nowrap"><input name="evidence_note" value="{{ it.evidence_note or '' }}" placeholder="Kanıt: belge adı, e-posta tarihi, sözleşme bağlantısı…"><button class="btn" type="submit">Kaydet</button></div>
+      <div class="row" style="margin-top:10px;flex-wrap:nowrap"><input name="evidence_note" aria-label="{{ it.title }}: kanıt notu" value="{{ it.evidence_note or '' }}" placeholder="Kanıt: belge adı, e-posta tarihi, sözleşme bağlantısı…"><button class="btn" type="submit">Kaydet</button></div>
       {% if it.is_done %}<div class="small muted" style="margin-top:6px">Güncellendi: {{ it.updated_at|dt('datetime') }}</div>{% endif %}
     </div>
   </form>

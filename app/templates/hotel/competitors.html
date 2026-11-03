@@ -27,7 +27,7 @@
   </div>
 </div>
 
-<div class="grid g-main-side" style="margin-top:18px">
+<div class="stack" style="margin-top:18px">
   <div class="panel">
     <div class="panel-head"><div><h2>Rakipleri değerlendirin</h2><p>Benzerlik puanı mesafe, yıldız, oda tipi ve fiyat bandından hesaplanır. Geri bildiriminiz bir sonraki hesaplamada kullanılır.</p></div></div>
     <div class="panel-body flush"><div class="table-wrap"><table class="data">
@@ -41,7 +41,7 @@
           <td class="num">{{ c.distance_km|num(1) }} km</td>
           <td class="num">{{ h.star_rating or '—' }}</td>
           <td class="num">{{ avg.get(h.id)|eur }}</td>
-          <td style="min-width:150px">{% if c.similarity_score is not none %}
+          <td style="min-width:140px">{% if c.similarity_score is not none %}
             <div class="row" style="gap:8px;flex-wrap:nowrap"><div class="bar-track" style="flex:1"><div class="bar-fill" style="width:{{ (c.similarity_score|float * 100)|round }}%"></div></div><span class="num small">{{ (c.similarity_score|float * 100)|round|int }}</span></div>
             {% if c.components and c.components.distance is defined %}<div class="small muted" style="margin-top:4px">Mesafe {{ (c.components.distance * 100)|round|int }}, yıldız {{ (c.components.star * 100)|round|int }}, oda {{ (c.components.room_types * 100)|round|int }}, fiyat {{ (c.components.price_band * 100)|round|int }}</div>{% endif %}
             {% else %}<span class="badge">Elle eklendi</span>{% endif %}</td>
@@ -54,7 +54,7 @@
         {% else %}<tr><td colspan="8">{{ ui.empty("Rakip setiniz boş", "Yeniden hesapla ile sistemin önerdiği rakipleri ekleyin.") }}</td></tr>{% endfor %}
       </tbody></table></div></div>
   </div>
-  <div class="stack">
+  <div class="grid g-2">
     <div class="panel">
       <div class="panel-head"><div><h2>Rakip ekle</h2><p>Benzerliğe göre sıralı adaylar</p></div></div>
       <div class="panel-body">
@@ -71,7 +71,7 @@
     <div class="panel"><div class="panel-body">
       <div class="row" style="gap:16px;flex-wrap:nowrap">
         {{ ui.ring(accuracy.rate, "isabet", 88, "series-3") }}
-        <div><b>Compset isabeti</b>
+        <div><b>Rakip seti isabeti</b>
           <p class="small ink-2" style="margin:6px 0 0">Geri bildirim verdiğiniz {{ accuracy.rated }} rakipten {{ accuracy.confirmed }} tanesini onayladınız. Bu oran rakip önerme algoritmasını geliştirmek için kullanılır.</p></div>
       </div>
     </div></div>

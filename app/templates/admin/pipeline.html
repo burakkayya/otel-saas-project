@@ -4,25 +4,26 @@
 {% block crumbs %}<div class="crumbs">Zamanlayıcı: {{ 'açık (uygulama içi)' if scheduler_on else 'kapalı; işler worker servisiyle veya elle çalıştırılır' }}.</div>{% endblock %}
 {% block content %}
 {% set running = runs|selectattr('status', 'equalto', 'running')|list %}
+{% set job_label = {'seed_demo': 'Demo veri kurulumu'} %}{% for n, (lbl, _f) in jobs.items() %}{% set _ = job_label.update({n: lbl}) %}{% endfor %}
 {% if running %}<div class="alert info" style="margin-bottom:16px" data-refresh-while-running>{{ ui.icon('refresh') }}<span>{{ running|length }} iş çalışıyor; sayfa otomatik yenileniyor.</span></div>{% endif %}
 <div class="grid g-3">
   {% for name, (label, fn) in jobs.items() %}{% set l = last.get(name) %}
   <div class="panel"><div class="panel-body">
-    <div class="row between"><h3>{{ label }}</h3>{% if l %}{{ ui.status_badge(l.status) }}{% else %}<span class="badge">Hiç çalışmadı</span>{% endif %}</div>
+    <div class="row between"><h2 class="h3">{{ label }}</h2>{% if l %}{{ ui.status_badge(l.status) }}{% else %}<span class="badge">Hiç çalışmadı</span>{% endif %}</div>
     <p class="small ink-2" style="margin:8px 0 12px">{% if l %}Son çalışma {{ l.started_at|ago }}{% if l.finished_at %}, {{ ((l.finished_at - l.started_at).total_seconds())|num(1) }} sn{% endif %}. {{ (l.message or '')|truncate(120) }}{% else %}Henüz kayıt yok.{% endif %}</p>
     <div class="row between"><span class="small muted">Plan: {{ schedule.get(name, 'elle') }}</span>
-      <form method="post" action="/admin/veri-hatti/calistir" class="inline">{{ ui.csrf() }}<input type="hidden" name="job" value="{{ name }}"><button class="btn sm primary" type="submit">{{ ui.icon('play') }}Şimdi çalıştır</button></form></div>
+      <form method="post" action="/admin/veri-hatti/calistir" class="inline">{{ ui.csrf() }}<input type="hidden" name="job" value="{{ name }}"><button class="btn sm {{ 'primary' if name == 'daily_pipeline' }}" type="submit">{{ ui.icon('play') }}Şimdi çalıştır</button></form></div>
   </div></div>
   {% endfor %}
 </div>
 <div class="panel" style="margin-top:18px">
-  <div class="panel-head"><div><h2>Çalışma geçmişi</h2><p>Son 60 çalışma</p></div><div class="actions"><form method="get"><select name="is" class="input-sm" data-autosubmit aria-label="İş"><option value="">Tüm işler</option>{% for n in jobs %}<option value="{{ n }}" {{ 'selected' if filt == n }}>{{ n }}</option>{% endfor %}<option value="seed_demo" {{ 'selected' if filt == 'seed_demo' }}>seed_demo</option></select></form></div></div>
+  <div class="panel-head"><div><h2>Çalışma geçmişi</h2><p>Son 60 çalışma</p></div><div class="actions"><form method="get"><select name="is" class="input-sm" data-autosubmit aria-label="İş"><option value="">Tüm işler</option>{% for n in jobs %}<option value="{{ n }}" {{ 'selected' if filt == n }}>{{ job_label[n] }}</option>{% endfor %}<option value="seed_demo" {{ 'selected' if filt == 'seed_demo' }}>Demo veri kurulumu</option></select></form></div></div>
   <div class="panel-body flush"><div class="table-wrap"><table class="data">
     <thead><tr><th>İş</th><th>Tetikleyen</th><th>Başlangıç</th><th class="num">Süre</th><th class="num">Kayıt</th><th>Durum</th><th>Mesaj</th></tr></thead>
     <tbody>{% for r in runs %}
-      <tr><td>{{ r.job_name }}</td><td>{{ {'schedule':'Zamanlayıcı','manual':'Elle','seed':'Kurulum'}.get(r.trigger, r.trigger) }}</td><td>{{ r.started_at|dt('datetime') }}</td>
+      <tr><td>{{ job_label.get(r.job_name, r.job_name) }}</td><td>{{ {'schedule':'Zamanlayıcı','manual':'Elle','seed':'Kurulum'}.get(r.trigger, r.trigger) }}</td><td>{{ r.started_at|dt('datetime') }}</td>
         <td class="num">{{ ((r.finished_at - r.started_at).total_seconds())|num(1) ~ ' sn' if r.finished_at else '—' }}</td><td class="num">{{ r.records|num }}</td><td>{{ ui.status_badge(r.status) }}</td>
         <td class="small ink-2">{% if r.status == 'failed' %}<details><summary>{{ (r.message or '')|truncate(60) }}</summary><pre class="mono" style="white-space:pre-wrap;max-width:60ch">{{ r.message }}</pre></details>{% else %}{{ r.message }}{% endif %}</td></tr>
-    {% else %}<tr><td colspan="7" class="muted">Kayıt yok.</td></tr>{% endfor %}</tbody></table></div></div>
+    {% else %}<tr><td colspan="7">{{ ui.empty("Henüz çalışma yok", "Yukarıdan 'Günlük veri hattı' işini çalıştırarak ilk kaydı oluşturun.") }}</td></tr>{% endfor %}</tbody></table></div></div>
 </div>
 {% endblock %}

@@ -9,11 +9,11 @@
   {{ ui.stat("Başarısız", totals.get('failed', 0)|eur, "Tahsilat hatası", "alert") }}
   {{ ui.stat("Geçersiz", totals.get('void', 0)|eur, "İptal edilen faturalar", "x") }}
 </div>
-<div class="row" style="margin-bottom:16px"><div class="seg">{% for k, v in [('', 'Tümü'), ('open', 'Açık'), ('paid', 'Ödendi'), ('failed', 'Başarısız'), ('void', 'Geçersiz')] %}<a class="{{ 'on' if durum == k }}" href="?durum={{ k }}">{{ v }}</a>{% endfor %}</div></div>
+<div class="row" style="margin-bottom:16px"><div class="seg" role="group">{% for k, v in [('', 'Tümü'), ('open', 'Açık'), ('paid', 'Ödendi'), ('failed', 'Başarısız'), ('void', 'Geçersiz')] %}<a class="{{ 'on' if durum == k }}"{% if durum == k %} aria-current="true"{% endif %} href="?durum={{ k }}">{{ v }}</a>{% endfor %}</div></div>
 <div class="panel"><div class="panel-body flush"><div class="table-wrap"><table class="data">
   <thead><tr><th>No</th><th>Otel</th><th>Dönem</th><th class="num">Tutar</th><th>Durum</th><th>Güncelle</th></tr></thead>
   <tbody>{% for i in rows %}
     <tr><td>{{ i.number }}</td><td>{{ i.subscription.hotel.name }}</td><td>{{ i.period_start|dt }} – {{ i.period_end|dt }}</td><td class="num">{{ i.amount_eur|eur }}</td><td>{{ ui.status_badge(i.status) }}</td>
-      <td><form method="post" action="/admin/faturalar/{{ i.id }}" class="row" style="gap:6px;flex-wrap:nowrap">{{ ui.csrf() }}<select name="status" class="input-sm" aria-label="Durum">{% for k, v in [('open','Açık'),('paid','Ödendi'),('failed','Başarısız'),('void','Geçersiz')] %}<option value="{{ k }}" {{ 'selected' if k == i.status }}>{{ v }}</option>{% endfor %}</select><button class="btn sm" type="submit">Kaydet</button></form></td></tr>
+      <td><form method="post" action="/admin/faturalar/{{ i.id }}" class="row" style="gap:6px;flex-wrap:nowrap" data-confirm="{{ i.number }} numaralı faturanın durumu değiştirilsin mi? 'Geçersiz' seçimi faturayı muhasebeden düşürür.">{{ ui.csrf() }}<select name="status" class="input-sm" aria-label="Durum">{% for k, v in [('open','Açık'),('paid','Ödendi'),('failed','Başarısız'),('void','Geçersiz')] %}<option value="{{ k }}" {{ 'selected' if k == i.status }}>{{ v }}</option>{% endfor %}</select><button class="btn sm" type="submit">Kaydet</button></form></td></tr>
   {% else %}<tr><td colspan="6">{{ ui.empty("Fatura yok", "Abonelikler başladıkça faturalar burada görünür.") }}</td></tr>{% endfor %}</tbody></table></div></div></div>
 {% endblock %}
