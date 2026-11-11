@@ -244,6 +244,6 @@ Instrument Sans, rakip radarı); tanıtım yüzeyleri ve panelin ana anları gü
 - Fiyat bandı işaretleri yerine kayar; KPI eğilim çizgileri bir kez çizilir.
 
 **Doğrulama:**
-- 293 birim/entegrasyon (yeni: `tests/integration/test_pro_redesign.py`) ve 11 E2E testi yeşil; `ruff` temiz.
+- 297 birim/entegrasyon (yeni: `tests/integration/test_pro_redesign.py`) ve 11 E2E testi yeşil; `ruff` temiz.
 - 180 görünümde 0 konsol hatası, 0 taşma, 0 kontrast ihlali, 0 etiketsiz alan (`docs/screenshots/after`, güncel durum).
 - `scripts/record_tour.py` 45 ekranı gezip sınayarak tur videosu kaydediyor.
