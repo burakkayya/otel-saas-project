@@ -176,6 +176,10 @@ def main() -> int:
                             resp = page.goto(a.base + url)
                             page.wait_for_load_state("networkidle")
                             status = resp.status if resp else 0
+                        # tembel yüklenen görseller için sayfayı bir kez baştan sona kaydır
+                        page.evaluate("async () => { for (let y = 0; y < document.body.scrollHeight; y += 700) {"
+                                      " window.scrollTo(0, y); await new Promise(r => setTimeout(r, 40)); } window.scrollTo(0, 0); }")
+                        page.wait_for_load_state("networkidle")
                         page.wait_for_timeout(250)
                         res = page.evaluate(AUDIT_JS)
                         fname = f"{group}-{name}-{width}-{theme}.jpg"

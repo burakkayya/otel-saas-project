@@ -97,6 +97,12 @@
           fill: d.suggestedFill ? "origin" : false,
           backgroundColor: function (c) { return vgrad(c.chart, s1, .18, 0); } }
       ];
+      // Fırsat günleri: önerinin mevcut fiyatın %8+ üstünde olduğu geceler çizgi üzerinde begonvil noktayla işaretlenir
+      var opp = (d.suggested || []).map(function (v, i) { var own = d.own ? d.own[i] : null; return v != null && own ? (v / own - 1) >= 0.08 : false; });
+      var sugDs = ds[4], bg = css("--bougain") || s1;
+      sugDs.pointRadius = opp.map(function (b) { return b ? 4.5 : 0; });
+      sugDs.pointBackgroundColor = opp.map(function (b) { return b ? bg : s1; });
+      sugDs.pointBorderColor = css("--surface"); sugDs.pointBorderWidth = 2;
       if (d.floor && d.showBounds) {
         ds.push({ label: "Taban", data: d.floor, borderColor: alpha(s1, .45), borderWidth: 1, pointRadius: 0, borderDash: [2, 3] });
         ds.push({ label: "Tavan", data: d.ceiling, borderColor: alpha(s1, .45), borderWidth: 1, pointRadius: 0, borderDash: [2, 3] });
@@ -197,6 +203,19 @@
     afterDatasetsDraw: function (chart, args, opts) {
       var ctx = chart.ctx, area = chart.chartArea, x = chart.scales.x;
       if (!area || !x) return;
+      // Eşik çizgisi (ör. "yüksek talep" 55): değerin ne anlama geldiğini grafiğin üstünde söyler
+      if (opts && opts.threshold && chart.scales.y && chart.options.indexAxis !== "y") {
+        var ty = chart.scales.y.getPixelForValue(opts.threshold.value);
+        if (ty >= area.top && ty <= area.bottom) {
+          ctx.save();
+          ctx.strokeStyle = css("--ink-2"); ctx.globalAlpha = .7; ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+          ctx.beginPath(); ctx.moveTo(area.left, ty); ctx.lineTo(area.right, ty); ctx.stroke();
+          ctx.setLineDash([]); ctx.globalAlpha = 1; ctx.fillStyle = css("--ink-2");
+          ctx.font = "600 11px " + (css("--font-ui") || "sans-serif"); ctx.textAlign = "right";
+          ctx.fillText(opts.threshold.label, area.right - 4, ty - 5);
+          ctx.restore();
+        }
+      }
       if (opts && opts.todayIndex !== undefined && opts.todayIndex !== null && chart.config.type !== "scatter") {
         var tx = x.getPixelForValue(opts.todayIndex);
         if (tx >= area.left && tx <= area.right) {
@@ -242,7 +261,7 @@
         var data = JSON.parse(src.textContent);
         var cfg = builders[kind](data);
         cfg.options.plugins = cfg.options.plugins || {};
-        cfg.options.plugins.orGuides = { todayIndex: data.todayIndex };
+        cfg.options.plugins.orGuides = { todayIndex: data.todayIndex, threshold: data.threshold };
         instances.push(new Chart(cv.getContext("2d"), cfg));
       } catch (e) {
         if (window.console) console.error("Grafik çizilemedi", kind, e);

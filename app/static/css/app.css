@@ -868,3 +868,34 @@ body[data-view="sade"] .simple-wide { grid-template-columns: minmax(0, 1fr); }
 :root[data-theme="dark"] .error-page .code { color: var(--brand); }
 .hero-rec .why-full { font-size: .86rem; color: #b4c8d8; line-height: 1.5; margin: 12px 0 0; max-width: 70ch; }
 .table-wrap { position: relative; } /* içindeki .sr-only öğeler sayfayı taşırmasın */
+
+/* kahraman: ne yapmalıyım? tek cümle, sonra neden */
+.hero-rec .hero-do { font: 600 1.22rem/1.35 var(--font-display); color: #fff; margin: 0 0 16px; letter-spacing: -.01em; max-width: 34ch; text-wrap: balance; }
+.hero-rec .hero-do b { color: var(--sun); font-weight: 700; }
+.hero-rec .hero-actions { flex-wrap: wrap; align-items: center; }
+.hero-rec .btn.apply { background: var(--sun); border-color: var(--sun); color: #1b1505; font-weight: 700; }
+.hero-rec .btn.apply:hover { background: #ffd070; border-color: #ffd070; color: #1b1505; }
+.legend i.lg-opp { width: 10px; height: 10px; border-radius: 50%; background: var(--bougain); border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--bougain); }
+
+/* sayfalar arası geçiş: içerik yumuşakça değişir, menü yerinde kalır, etkin öğe yeni yerine kayar */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .2s; animation-timing-function: ease-out; }
+  .sidebar { view-transition-name: or-sidebar; }
+  .nav a.active { view-transition-name: or-nav-active; }
+  ::view-transition-group(or-nav-active) { animation-duration: .32s; animation-timing-function: cubic-bezier(.22, 1, .36, 1); }
+  ::view-transition-old(or-sidebar), ::view-transition-new(or-sidebar) { animation: none; }
+  /* şelale: adımlar sırayla uzar (fiyatın nasıl oluştuğunu anlatır) */
+  .js-motion .waterfall .seg-bar { animation: wf-grow .7s cubic-bezier(.16, 1, .3, 1) both; transform-origin: left; }
+  .js-motion .waterfall .step:nth-child(2) .seg-bar { animation-delay: .08s; } .js-motion .waterfall .step:nth-child(3) .seg-bar { animation-delay: .16s; }
+  .js-motion .waterfall .step:nth-child(4) .seg-bar { animation-delay: .24s; } .js-motion .waterfall .step:nth-child(5) .seg-bar { animation-delay: .32s; }
+  .js-motion .waterfall .step:nth-child(n+6) .seg-bar { animation-delay: .4s; }
+  @keyframes wf-grow { from { transform: scaleX(0); opacity: .3; } }
+  .js-motion .bar-fill { animation: wf-grow .8s cubic-bezier(.16, 1, .3, 1) both; transform-origin: left; }
+}
+.heat-grid .c:not(.blank), .cal .day:not(.blank) { transition: transform .12s, box-shadow .12s; }
+.heat-grid .c:not(.blank):hover { transform: scale(1.18); box-shadow: 0 4px 10px rgba(15, 34, 51, .25); z-index: 1; }
+.cal .day:not(.blank):hover { transform: translateY(-2px); box-shadow: 0 8px 18px -8px rgba(15, 34, 51, .35); }
+table.data tbody tr { transition: background .12s; }
+.nav a .ico { transition: transform .2s cubic-bezier(.22, 1, .36, 1); }
+.nav a:hover .ico { transform: translateX(2px); }
