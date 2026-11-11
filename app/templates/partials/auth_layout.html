@@ -3,15 +3,15 @@
 {% block body %}
 <div class="auth-wrap">
   <aside class="auth-side">
-    <a class="brand" href="/">{{ ui.brand_mark() }}{{ settings.app_name }}</a>
+    <a class="brand" href="/">{{ ui.brand_mark() }}<span class="brand-name">{{ settings.app_name }}</span></a>
     {{ ui.radar(radar_sample, "Oteliniz") if radar_sample else '' }}
     <div class="mini-rec"><div class="s"><span class="sample-chip">Örnek</span> Bu gece için önerilen</div><div class="p">€142</div><div class="s">Rakip medyanı %6 arttı, talep yüksek. Bant €118 – €171.</div></div>
-    <p class="quote">{% block side_quote %}Rakip fiyatı, kalan oda ve talep. Her sabah tek ekranda.{% endblock %}</p>
-    <p class="sub">{% block side_sub %}Otelinizin sistemlerine bağlanmadan, halka açık veriyle çalışır.{% endblock %}</p>
+    <p class="quote">{% block side_quote %}Bu gecenin fiyatı, her sabah masanızda.{% endblock %}</p>
+    <p class="sub">{% block side_sub %}Rakip fiyatı, kalan oda ve talep tek ekranda. Entegrasyon gerekmez.{% endblock %}</p>
   </aside>
   <main class="auth-main" id="icerik">
     {{ ui.demo_banner() }}
-    <div class="auth-mobile-head"><a class="brand" href="/">{{ ui.brand_mark() }}{{ settings.app_name }}</a>
+    <div class="auth-mobile-head"><a class="brand" href="/">{{ ui.brand_mark() }}<span class="brand-name">{{ settings.app_name }}</span></a>
       <button class="theme-toggle" type="button" data-theme-toggle aria-label="Açık/koyu tema">{{ ui.icon('moon') }}</button></div>
     <div class="auth-card {% block card_class %}{% endblock %}">
       {{ ui.flashes(flashes) }}

@@ -280,6 +280,23 @@ Kare SVG: merkezde oteliniz (turuncu elmas), rakipler gerçek kerteriz ve karek�
 daire boyu benzerlik puanı, amber daire elle eklenen rakip. Kesikli mesafe halkaları ve kuzey işareti; isteğe bağlı yavaş
 tarama (sweep) animasyonu hareket azaltma tercihinde durur. Yanında aynı numaralarla rakip listesi bulunur.
 
+### Logo
+Radar halkası (Otel'in O'su), 60° tarama dilimi (Ege mavisi; lacivert zeminde açık mavi) ve dilimin içinde bulunan otel
+noktası (güneş sarısı `--sun` #f2b84b). Halka `currentColor` ile çizilir; her zeminde çalışır. Yazı: Bricolage 700.
+
+### Deniz haritası zemini
+Lacivert yüzeylerde (açılış, kapanış bandı, kahraman kart, giriş yan paneli) eş derinlik çizgileri deseni
+(`app/static/img/chart-contours.svg`). Yalnızca lacivert üzerinde, düşük karşıtlıkla kullanılır.
+
+### Hareket
+- Tanıtımın tek odak anı açılıştaki radar taramasıdır; diğer bölümlerde yalnızca ürün görüntüleri açılır.
+- Panelde hareket durum anlatır: grafik açılışı, bant işaretleri, sayfa geçişi (200 ms), etkin menü öğesinin kayması.
+- Hepsi `prefers-reduced-motion` tercihinde kapalıdır; varsayılan durum her şeyin görünür olduğu durumdur.
+
+### Güneş sarısı
+`--sun` yalnızca lacivert zemin üzerindeki birincil çağrıda (açılış düğmesi, "Uyguladım", önerilen paket etiketi) ve
+logodaki otel noktasında kullanılır. Açık zeminde birincil renk Ege mavisidir.
+
 ## Do's and Don'ts
 
 ### Do:

@@ -1,10 +1,10 @@
 {% extends "partials/auth_layout.html" %}
 {% block title %}Kayıt ol{% endblock %}
 {% block card_class %}wide{% endblock %}
-{% block side_quote %}Kayıt için yalnızca otelinizin adı ve adresi gerekir.{% endblock %}
+{% block side_quote %}Beş dakikada kurulur. İlk öneriniz aynı gün hazır.{% endblock %}
 {% block side_sub %}Konum, yıldız sınıfı ve tesis tipini halka açık kaynaklardan otomatik çekeriz. 14 gün ücretsiz, kart istemez.{% endblock %}
 {% block content %}
-<h1>Otelinizi ekleyin</h1>
+<h1>Otelinizi ekleyin, rakiplerinizi görün</h1>
 <p class="sub">Adım 1 / 2: otel ve yetkili bilgileri</p>
 {{ ui.errors_box(errors) }}
 <form class="form" method="post" action="/kayit" style="margin-top:16px">

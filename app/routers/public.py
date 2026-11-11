@@ -17,9 +17,11 @@ def sample_radar() -> dict:
     import math
 
     pts = []
-    for i, (deg, km, score) in enumerate([(35, 1.2, .82), (110, 3.4, .74), (200, 2.1, .69), (265, 6.5, .58), (320, 9.0, .51)], start=1):
+    sample = [(35, 1.2, .82, 172), (110, 3.4, .74, 158), (200, 2.1, .69, 161), (265, 6.5, .58, 149), (320, 9.0, .51, 186)]
+    for i, (deg, km, score, price) in enumerate(sample, start=1):
         r = math.sqrt(km / 11) * 46
-        pts.append({"hotel": {"name": f"Örnek rakip {i}"}, "rank": i, "dist": km, "score": score, "manual": i == 4, "price": None,
+        pts.append({"hotel": {"name": f"Örnek rakip {i}"}, "rank": i, "dist": km, "score": score, "manual": i == 4, "price": price,
+                    "delay": round(deg / 360 * 2.2, 2),  # tarama ışını bu rakibe ulaştığında belirir
                     "x": round(50 + r * math.sin(math.radians(deg)), 2), "y": round(50 - r * math.cos(math.radians(deg)), 2)})
     rings = [{"km": km, "r": round(math.sqrt(km / 11) * 46, 2)} for km in (2, 5, 10)]
     return {"points": pts, "rings": rings, "max_km": 9.0}

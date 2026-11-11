@@ -207,3 +207,43 @@ Mevcut kimlik korundu: kireç beyazı, liman laciverti, Ege mavisi, begonvil, Br
   sistem koyu temasında (90 görünüm) da 0.
 - Testler: **287 birim/entegrasyon** (178 mevcut + 109 yeni, `tests/integration/test_ui_quality.py`) ve **9 E2E**
   (7 mevcut + mobil menü klavyesi, 390 px sığma). `ruff` temiz.
+
+## 11. Profesyonel arayüz turu (11 Kasım 2026)
+
+Dal `feat/pro-redesign`. Kimlik aynı kaldı (kireç beyazı, liman laciverti, Ege mavisi, begonvil yalnızca fırsat, Bricolage +
+Instrument Sans, rakip radarı); tanıtım yüzeyleri ve panelin ana anları güçlendirildi.
+
+**Marka:**
+- Yeni logo işareti: radar halkası (Otel'in O'su), tarama dilimi ve dilimin bulduğu otel noktası. Favicon aynı çizimden.
+- Deniz haritası eş derinlik çizgileri: lacivert yüzeylerin zemin deseni.
+- İkisi de `scripts/make_brand_assets.py` ile üretiliyor.
+
+**Tanıtım ve paketler (`app/static/css/site.css`):**
+- Açılış: "Bu gecenin fiyatını tahmin etmeyin. Bilin." başlığı, otel adı kutusu (`/kayit?otel=` ile kayıt formunu dolduruyor)
+  ve odak anı: radar bir tur tarar, ışın rakibe ulaştıkça fiyatı belirir, ardından öneri kartı oluşur.
+- Dört soru bölümü (ne fiyat, rakipler, talep, neden), panel görüntüsü, kurulum adımları, "Sonuç iddia edilmez. Ölçülür."
+  bölümü, paketler ve kapanış çağrısı.
+- Ürün görüntüleri çalışan uygulamadan `scripts/make_product_shots.py` ile üretiliyor (`app/static/img/shots`).
+- Paketler sayfası: öne çıkan paket, simgeli karşılaştırma tablosu, açılır SSS.
+- Metin iddialı ama doğru: uydurma müşteri sayısı, referans ya da kesin gelir vaadi yok (testle korunuyor).
+
+**Panel:**
+- Kahraman alan önce ne yapılacağını söylüyor ("fiyatınızı €79 düzeyinden €71 düzeyine indirin"), sonra nedenini;
+  "Uyguladım" düğmesi orada.
+- "Sade / Ayrıntılı" görünüm seçimi: sade görünüm öneri, hafta ve radarı gösterir; tercih tarayıcıda saklanır.
+- Öneri ayrıntısında da sade etkenler ve güven rozeti var.
+
+**Grafikler:**
+- Fiyat grafiğinde fırsat günleri (öneri %8+ yukarıda) begonvil noktayla işaretli.
+- Cuma ve cumartesi geceleri gölgeli; talep grafiklerinde "yüksek talep" eşiği çizgiyle gösteriliyor.
+- İpucunda öneri ile mevcut fiyatın farkı yazıyor.
+
+**Hareket (hepsi `prefers-reduced-motion` tercihinde kapalı):**
+- Sayfalar arası geçiş (View Transitions): içerik yumuşakça değişir, menü yerinde kalır, etkin menü öğesi yeni yerine kayar.
+- Çizgi grafikler soldan sağa açılır, çubuklar sırayla yükselir, şelale adımları sırayla uzar.
+- Fiyat bandı işaretleri yerine kayar; KPI eğilim çizgileri bir kez çizilir.
+
+**Doğrulama:**
+- 297 birim/entegrasyon (yeni: `tests/integration/test_pro_redesign.py`) ve 11 E2E testi yeşil; `ruff` temiz.
+- 180 görünümde 0 konsol hatası, 0 taşma, 0 kontrast ihlali, 0 etiketsiz alan (`docs/screenshots/after`, güncel durum).
+- `scripts/record_tour.py` 45 ekranı gezip sınayarak tur videosu kaydediyor.

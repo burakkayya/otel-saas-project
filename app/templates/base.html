@@ -6,20 +6,21 @@
   <meta name="csrf-token" content="{{ csrf_token }}">
   <title>{% block title %}Otel fiyat önerileri{% endblock %} | {{ settings.app_name }}</title>
   <meta name="description" content="Otelinizin sistemlerine bağlanmadan, halka açık fiyat ve talep verisiyle günlük oda fiyatı önerisi.">
-  <script>try{var t=localStorage.getItem("or-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+  <script>try{var t=localStorage.getItem("or-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}
+  try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("js-motion")}catch(e){}</script>
   <meta name="theme-color" content="#f4f3ee" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0d1720" media="(prefers-color-scheme: dark)">
   <link rel="preload" href="/static/fonts/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/static/fonts/instrument-sans-latin-ext-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/static/fonts/bricolage-grotesque-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/static/css/app.css?v=7">
+  <link rel="stylesheet" href="/static/css/app.css?v=10">
   <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
   {% block head %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
 <a class="skip-link" href="#icerik">İçeriğe geç</a>
 {% block body %}{% endblock %}
-<script src="/static/js/app.js?v=3"></script>
+<script src="/static/js/app.js?v=5"></script>
 {% block scripts %}{% endblock %}
 </body>
 </html>

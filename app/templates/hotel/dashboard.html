@@ -2,7 +2,7 @@
 {% block title %}Panel{% endblock %}
 {% block page_title %}Panel{% endblock %}
 {% block crumbs %}<div class="crumbs">{{ today()|dt('long') }}. Öneriler {{ data.room_type.raw_name if data.room_type else 'odalarınız' }} ve diğer oda tipleriniz için güncel.</div>{% endblock %}
-{% block top_actions %}<a class="btn" href="/panel/raporlar/oneriler.csv">{{ ui.icon('download') }}CSV</a><a class="btn primary" href="/panel/oneriler">Tüm öneriler</a>{% endblock %}
+{% block top_actions %}<div class="seg view-seg" role="group" aria-label="Görünüm" hidden><button type="button" data-density="sade" aria-pressed="false">Sade</button><button type="button" data-density="ayrinti" aria-pressed="true">Ayrıntılı</button></div><a class="btn" href="/panel/raporlar/oneriler.csv">{{ ui.icon('download') }}CSV</a><a class="btn primary" href="/panel/oneriler">Tüm öneriler</a>{% endblock %}
 {% block content %}
 {% set t = data.today_row %}
 {% set k = data.kpi %}
@@ -21,6 +21,9 @@
     </div>
   </div>
   <div>
+    {% if t.own and t.change is not none %}
+    <p class="hero-do">{% if t.change <= -2 %}Bu gece için fiyatınızı {{ t.own|eur }} düzeyinden <b>{{ t.suggested|eur }}</b> düzeyine indirin.{% elif t.change >= 2 %}Bu gece için fiyatınızı {{ t.own|eur }} düzeyinden <b>{{ t.suggested|eur }}</b> düzeyine yükseltin.{% else %}Fiyatınız yerinde. Bu gece için <b>{{ t.own|eur }}</b> düzeyini koruyun.{% endif %}</p>
+    {% endif %}
     <p class="why-lead">Neden bu fiyat?</p>
     <ul class="drivers">{% for d in rationale_drivers(t.rationale) %}<li class="{{ d.dir }}">{{ ui.icon({'up': 'up', 'down': 'down'}.get(d.dir, 'activity')) }}<span>{{ d.text }}</span></li>{% endfor %}</ul>
     <div class="meta">
@@ -34,14 +37,14 @@
       <div class="lbl"><span>Fiyat bandı ve konumunuz</span></div>
       {{ ui.range_bar(t.floor, t.ceiling, t.suggested, t.own, t.median) }}
     </div>
-    <div class="hero-actions"><a class="btn" href="/panel/oneriler/{{ t.id }}">Gerekçeyi incele</a><a class="btn ghost-light" href="/panel/oneriler?gorunum=takvim">Takvim</a></div>
+    <div class="hero-actions">{% if t.action == 'applied' %}<span class="badge good">{{ ui.icon('check') }}Uygulandı</span>{% else %}<form method="post" action="/panel/oneriler/{{ t.id }}/aksiyon" class="inline">{{ ui.csrf() }}<input type="hidden" name="action" value="applied"><input type="hidden" name="next" value="/panel"><button class="btn apply" type="submit" title="Fiyatı kendi sistemimde uyguladım">{{ ui.icon('check') }}Uyguladım</button></form>{% endif %}<a class="btn ghost-light" href="/panel/oneriler/{{ t.id }}">Gerekçeyi incele</a><a class="btn ghost-light" href="/panel/oneriler?gorunum=takvim">Takvim</a></div>
   </div>
 </section>
 {% else %}
 <div class="panel"><div class="panel-body">{{ ui.empty("Bugün için öneri yok", "Rakip setiniz hazır olduğunda ilk öneriler oluşturulur.", "/panel/rakipler", "Rakip setine git") }}</div></div>
 {% endif %}
 
-<div class="grid g-4" style="margin-top:18px">
+<div class="grid g-4 detail-only" style="margin-top:18px">
   {{ ui.kpi("Önümüzdeki 30 gün ort. öneri", k.sug_avg|eur, "tag",
             ("Mevcut ortalamanıza göre " ~ (k.sug_vs_own|pct(1, true))) if k.sug_vs_own is not none else "Mevcut fiyat gözlenmedi",
             data.chart.suggested[:30], "series-1") }}
@@ -53,7 +56,7 @@
             uptake.weekly|map(attribute='rate')|list, "series-3", "good") }}
 </div>
 
-<div class="panel" style="margin-top:18px">
+<div class="panel detail-only" style="margin-top:18px">
   <div class="panel-head">
     <div><h2>Önümüzdeki 60 gün: öneri ve piyasa</h2><p>{{ CATEGORY_LABELS[data.category] }} kategorisi. Gölgeli alan rakiplerin orta %50'lik fiyat aralığı.</p></div>
     <div class="actions">
@@ -67,6 +70,8 @@
       <span style="color:var(--series-2)"><i class="dash" style="background:var(--series-2)"></i><span class="ink-2">Mevcut fiyatınız</span></span>
       <span><i style="background:var(--series-3)"></i>Rakip medyanı</span>
       <span><i class="band" style="background:var(--series-3)"></i>Rakip P25–P75</span>
+      <span><i class="lg-opp"></i>Fırsat günü (öneri %8+ yukarıda)</span>
+      <span class="wk"><i></i>Cuma ve cumartesi geceleri</span>
     </div>
     {{ ui.chart("price", data.chart | combine({"suggestedFill": true}), "dash-price", "tall", "Önerilen fiyat, mevcut fiyat ve rakip medyanı") }}
     <details class="table-view"><summary>Tablo olarak göster</summary>
@@ -95,9 +100,9 @@
       {% else %}<tr><td colspan="7" class="muted">Öneri bulunamadı.</td></tr>{% endfor %}
       </tbody></table></div></div>
   </div>
-    <div class="panel">
+    <div class="panel detail-only">
       <div class="panel-head"><div><h2>Talep, 60 gün</h2><p>Uçuş arama, etkinlik ve tatil bileşimi</p></div></div>
-      <div class="panel-body">{{ ui.chart("bar", {"labels": data.chart.labels, "unit": "score", "sequential": true, "max": 100, "series": [{"label": "Talep skoru", "data": data.chart.demand}]}, "dash-demand", "short", "Talep skoru") }}</div>
+      <div class="panel-body">{{ ui.chart("bar", {"labels": data.chart.labels, "unit": "score", "sequential": true, "max": 100, "threshold": {"value": 55, "label": "Yüksek talep eşiği (55)"}, "series": [{"label": "Talep skoru", "data": data.chart.demand}]}, "dash-demand", "short", "Talep skoru") }}</div>
     </div>
   </div>
   <div class="stack">
@@ -105,7 +110,7 @@
       <div class="panel-head"><div><h2>Rakip radarı</h2><p>{{ radar.points|length }} rakip, en uzak {{ radar.max_km|num(1) }} km</p></div><div class="actions"><a class="btn sm ghost" href="/panel/rakipler">Yönet</a></div></div>
       <div class="panel-body">{{ ui.radar(radar, hotel.name) }}{{ ui.radar_legend() }}</div>
     </div>
-    <div class="panel">
+    <div class="panel detail-only">
       <div class="panel-head"><div><h2>Tahmini etki</h2><p>Kontrol grubuna göre (fark-içinde-fark)</p></div>{% if roi %}{{ ui.conf_badge(roi.confidence) }}{% endif %}</div>
       <div class="panel-body">
         {% if roi and roi.details and roi.details.did %}

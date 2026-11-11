@@ -71,11 +71,13 @@ def _register_ctx(db: Session, **extra) -> dict:
 
 
 @router.get("/kayit")
-def register_page(request: Request, paket: str | None = None, db: Session = Depends(get_db),
+def register_page(request: Request, paket: str | None = None, otel: str | None = None, db: Session = Depends(get_db),
                   user: User | None = Depends(current_user)):
     if user:
         return redirect(home_for(user))
     form = request.session.get("pending_registration") or {"plan_code": paket or "profesyonel"}
+    if otel and otel.strip():  # tanıtım sayfasındaki "otelinizin adı" kutusundan gelen ön doldurma
+        form = {**form, "hotel_name": otel.strip()[:120]}
     return render(request, "public/register.html", form=form, errors=[], **_register_ctx(db))
 
 

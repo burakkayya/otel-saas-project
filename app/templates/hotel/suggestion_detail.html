@@ -3,9 +3,12 @@
 {% block page_title %}{{ s.stay_date|dt('day') }}, {{ s.room_type.raw_name }}{% endblock %}
 {% block crumbs %}<div class="crumbs"><a href="/panel/oneriler">Fiyat önerileri</a> / ayrıntı</div>{% endblock %}
 {% block content %}
-<section class="hero-rec">
-  <div><div class="label">Önerilen fiyat</div><div class="price"><span data-count="{{ s.suggested_price|float }}">{{ s.suggested_price|eur }}</span></div></div>
-  <div><p class="why">{{ r.text }}</p>
+<section class="hero-rec rec-detail">
+  <div><h2 class="label">Önerilen fiyat</h2><div class="price"><span data-count="{{ s.suggested_price|float }}">{{ s.suggested_price|eur }}</span></div>
+    {% if r.confidence %}<div class="hero-chips">{{ ui.conf_badge(r.confidence) }}</div>{% endif %}</div>
+  <div><p class="why-lead">Neden bu fiyat?</p>
+    <ul class="drivers">{% for d in rationale_drivers(r) %}<li class="{{ d.dir }}">{{ ui.icon({'up': 'up', 'down': 'down'}.get(d.dir, 'activity')) }}<span>{{ d.text }}</span></li>{% endfor %}</ul>
+    <p class="why-full">{{ r.text }}</p>
     <div class="meta"><span>Taban <b>{{ s.price_floor|eur }}</b></span><span>Tavan <b>{{ s.price_ceiling|eur }}</b></span>
       <span>Mevcut fiyat <b>{{ own.price_eur|eur if own else '—' }}</b></span><span>Model <b>{{ s.model_version }}</b></span></div></div>
   <div>

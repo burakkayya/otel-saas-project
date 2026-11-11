@@ -101,7 +101,7 @@ def charts_drawn(page) -> int:
 
 def test_landing_and_pricing(page):
     page.go("/")
-    assert "gerekçesiyle" in page.page.inner_text("h1")
+    assert "Bilin" in page.page.inner_text("h1")
     page.page.click("text=Paketler")
     page.page.wait_for_load_state("networkidle")
     assert page.page.locator(".plan").count() >= 3
@@ -225,3 +225,42 @@ def test_admin_job_and_impersonation(page):
     for path in ("/admin/api-maliyet", "/admin/model", "/admin/talep", "/admin/oteller/1"):
         assert page.go(path).status == 200
     assert not page.errors, page.errors
+
+
+def test_dashboard_simple_and_detailed_view(browser, server):
+    """Sade görünüm ayrıntı bölümlerini gizler, tercih sayfalar arasında korunur; ayrıntılıya dönünce grafikler çizilir."""
+    ctx = browser.new_context(viewport={"width": 1280, "height": 900})
+    p = Page(ctx.new_page(), server)
+    p.login("otel@otelradar.local", "Demo1234!")
+    visible = lambda: p.page.evaluate("getComputedStyle(document.querySelector('.detail-only')).display !== 'none'")  # noqa: E731
+    assert visible()
+    p.page.click("[data-density='sade']")
+    assert not visible()
+    assert p.page.get_attribute("[data-density='sade']", "aria-pressed") == "true"
+    p.go("/panel")
+    assert not visible(), "tercih korunmalı"
+    p.page.click("[data-density='ayrinti']")
+    assert visible() and charts_drawn(p.page) >= 1
+    ctx.close()
+
+
+def test_landing_start_form_leads_to_registration(browser, server):
+    """Tanıtımdaki otel adı kutusu kayıt formuna taşır ve adı doldurur; ürün görüntüleri yüklenir, JS hatası olmaz."""
+    ctx = browser.new_context(viewport={"width": 1280, "height": 900})
+    page = ctx.new_page()
+    errors = []
+    page.on("pageerror", lambda e: errors.append(str(e)))
+    page.goto(server + "/")
+    assert page.locator(".scope svg").is_visible()
+    page.fill("#otel-ust", "Deniz Feneri Butik Otel")
+    page.click(".hero .start-form button")
+    page.wait_for_url("**/kayit?otel=*")
+    assert page.input_value("#hotel_name") == "Deniz Feneri Butik Otel"
+    page.goto(server + "/")
+    for y in range(0, 9000, 600):
+        page.evaluate(f"window.scrollTo(0, {y})")
+        page.wait_for_timeout(60)
+    page.wait_for_load_state("networkidle")
+    broken = page.evaluate("[...document.images].filter(i => i.complete && i.naturalWidth === 0).length")
+    assert broken == 0 and not errors
+    ctx.close()
