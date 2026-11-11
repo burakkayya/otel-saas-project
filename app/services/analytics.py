@@ -57,6 +57,9 @@ def suggestion_rows(db: Session, hotel: Hotel, start: date, end: date, category:
     sugg = latest_suggestions(db, rt_ids, start, end)
     own = latest_observations(db, rt_ids, start, end)
     dm = demand_map(db, hotel.province, start, end)
+    from app.services.outcomes import status_map
+
+    outcomes = status_map(db, rt_ids, start, end)
     rows = []
     for rt in sorted(rts, key=lambda r: r.id):
         d = start
@@ -74,7 +77,8 @@ def suggestion_rows(db: Session, hotel: Hotel, start: date, end: date, category:
                     "own": own_price, "own_available": o.available if o else None,
                     "change": change, "median": r.get("comp_median"), "demand": float(ds.demand_score) if ds else r.get("demand_score"),
                     "demand_level": r.get("demand_level"), "text": r.get("text"), "confidence": r.get("confidence"), "rationale": r,
-                    "action": s.user_action, "created_at": s.created_at, "season": r.get("season_label"),
+                    "created_at": s.created_at, "season": r.get("season_label"),
+                    "outcome": outcomes.get((rt.id, d)), "own_occ": r.get("own_occ"), "comp_occ": r.get("comp_occ"),
                 })
             d += timedelta(days=1)
     return rows

@@ -32,6 +32,7 @@ from app.services.compset import build_compset, set_feedback
 from app.services.costs import ensure_provider_costs
 from app.services.demand import refresh_demand
 from app.services.market import _aware
+from app.services.outcomes import evaluate_outcomes
 from app.services.pipeline import ensure_hotel_settings, ingest_rates, set_setting, upsert_hotel
 from app.services.pricing import MODEL_VERSION, generate_for_hotel
 from app.services.providers import UsageTracker, get_providers
@@ -270,6 +271,7 @@ def seed_demo(db: Session, scale: float = 1.0, history_days: int = 120, horizon:
         generate_for_hotel(db, h, today, today + timedelta(days=horizon), as_of=today,
                            created_at=datetime.combine(today, time(5, 0), tzinfo=timezone.utc), coefs=coefs)
         record_uptake(db, h)
+        evaluate_outcomes(db, h, today=today, lookback_days=min(history_days, 45))
         db.commit()
         if verbose:
             print(f"  abone: {h.name} ({plan_code})")

@@ -55,7 +55,7 @@
   </div></div>
 {% else %}
   <div class="panel">
-    <div class="panel-head"><div><h2>{{ rows|length }} öneri</h2><p>Uyum toleransınız ±%{{ tolerance|num(0) }}. Fiyatı kendi sisteminizde değiştirdikten sonra “Uyguladım” ile işaretleyebilirsiniz.</p></div><div class="actions">{{ ui.range_legend() }}</div></div>
+    <div class="panel-head"><div><h2>{{ rows|length }} öneri</h2><p>Fiyatınızı kendi sisteminizde değiştirmeniz yeterli. Sistem her taramada satış kanalındaki fiyatınızı öneriyle karşılaştırır ve ±%{{ tolerance|num(0) }} içindeyse “Uygulandı” sayar.</p></div><div class="actions">{{ ui.range_legend() }}</div></div>
     <div class="panel-body flush"><div class="table-wrap"><table class="data stack-sm">
       <thead><tr><th>Tarih</th><th>Talep</th><th class="num">Mevcut</th><th class="num">Rakip medyanı</th><th class="num">Öneri</th><th>Bant</th><th class="num">Fark</th><th>Gerekçe</th><th><span class="sr-only">İşlemler</span></th></tr></thead>
       <tbody>
@@ -71,12 +71,7 @@
           <td class="cell-wide" data-label="Gerekçe">{% set dr = rationale_drivers(r.rationale) %}<div class="rationale clamp" title="{{ r.text }}">{{ dr|map(attribute="text")|join(" · ") if dr else r.text }}</div></td>
           <td class="num cell-actions">
             <div class="row" style="gap:4px;flex-wrap:nowrap">
-            {% if r.action == 'applied' %}<span class="badge good">{{ ui.icon('check') }}Uygulandı</span>
-            {% elif r.action == 'ignored' %}<span class="badge">Yok sayıldı</span>
-            {% else %}
-              <form method="post" action="/panel/oneriler/{{ r.id }}/aksiyon" class="inline">{{ ui.csrf() }}<input type="hidden" name="action" value="applied"><input type="hidden" name="next" value="/panel/oneriler?kategori={{ cat }}{{ q }}"><button class="btn sm" type="submit" title="Fiyatı kendi sistemimde uyguladım">{{ ui.icon('check') }}Uyguladım</button></form>
-              <form method="post" action="/panel/oneriler/{{ r.id }}/aksiyon" class="inline">{{ ui.csrf() }}<input type="hidden" name="action" value="ignored"><input type="hidden" name="next" value="/panel/oneriler?kategori={{ cat }}{{ q }}"><button class="btn sm ghost" type="submit" aria-label="Yok say">{{ ui.icon('x') }}</button></form>
-            {% endif %}
+            {{ ui.outcome_badge(r.outcome) }}
             <a class="btn sm ghost" href="/panel/oneriler/{{ r.id }}" aria-label="Detay">{{ ui.icon('eye') }}</a>
             </div>
           </td>

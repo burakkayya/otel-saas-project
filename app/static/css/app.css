@@ -919,3 +919,11 @@ table.data tbody tr { transition: background .12s; }
 .tonight-item .ti-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
 .tonight-item .ti-price { font: 700 1.35rem/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
 .tonight-item.primary-rt { border-color: color-mix(in srgb, var(--brand) 40%, var(--line)); }
+
+/* doluluk: siz ve rakipler (tahmini) */
+.occ-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 14px; }
+.occ-kpi { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 12px; background: var(--surface-2, var(--surface)); border: 1px solid var(--line); }
+.occ-kpi .lbl { font-size: .8rem; color: var(--muted); font-weight: 600; }
+.occ-kpi b { font: 700 1.5rem/1.15 var(--font-display); font-variant-numeric: tabular-nums; color: var(--ink); }
+.occ-kpi b .ink-2 { font-size: 1.05rem; font-weight: 600; }
+.occ-kpi small { color: var(--ink-2); font-size: .82rem; }
