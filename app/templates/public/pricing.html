@@ -4,7 +4,7 @@
 {% macro yes() %}<span class="yes">{{ ui.icon('check') }}<span class="sr-only">Var</span></span>{% endmacro %}
 {% block content %}
 <section class="wrap page-head">
-  <h1>Bir gecelik oda fiyatına, bir ay boyunca doğru fiyat.</h1>
+  <h1>Bir gecelik oda fiyatına, bir ay boyunca fiyat istihbaratı.</h1>
   <p>Her paket 14 gün ücretsiz başlar, kredi kartı istenmez. Sözleşme yok: paketinizi panelden istediğiniz gün değiştirir ya da bırakırsınız.</p>
   {{ ui.plan_cards(plans) }}
   <p class="fineprint">Fiyatlar aylıktır, KDV dahil değildir.</p>
@@ -17,14 +17,14 @@
       <table class="data">
         <thead><tr><th>Özellik</th>{% for p in plans %}<th class="num">{{ p.name }}</th>{% endfor %}</tr></thead>
         <tbody>
-          <tr><td>Rakip seti büyüklüğü</td>{% for p in plans %}<td class="num">{{ p.max_competitors }} otel</td>{% endfor %}</tr>
-          <tr><td>Oda kategorisi</td>{% for p in plans %}<td class="num">{{ p.max_room_types }}</td>{% endfor %}</tr>
-          <tr><td>İleriye dönük öneri ufku</td>{% for p in plans %}<td class="num">{{ p.horizon_days }} gün</td>{% endfor %}</tr>
-          <tr><td>Günlük fiyat önerisi, taban, tavan ve gerekçe</td>{% for p in plans %}<td class="num">{{ yes() }}</td>{% endfor %}</tr>
-          <tr><td>Pazar fiyat ızgarası ve CSV raporlar</td>{% for p in plans %}<td class="num">{{ yes() }}</td>{% endfor %}</tr>
-          <tr><td>Geriye dönük test (backtest)</td>{% for p in plans %}<td class="num">{{ yes() }}</td>{% endfor %}</tr>
-          <tr><td>Talep sinyalleri: uçuş, etkinlik, tatil</td>{% for p in plans %}<td class="num">{% if p.monthly_price_eur >= 100 %}{{ yes() }}{% else %}Özet{% endif %}</td>{% endfor %}</tr>
-          <tr><td>Kontrol grubuyla etki ölçümü</td>{% for p in plans %}<td class="num">{% if p.monthly_price_eur >= 300 %}{{ yes() }}{% else %}Uyum oranı{% endif %}</td>{% endfor %}</tr>
+          <tr><th scope="row">Rakip seti büyüklüğü</th>{% for p in plans %}<td class="num">{{ p.max_competitors }} otel</td>{% endfor %}</tr>
+          <tr><th scope="row">Oda kategorisi</th>{% for p in plans %}<td class="num">{{ p.max_room_types }}</td>{% endfor %}</tr>
+          <tr><th scope="row">İleriye dönük öneri ufku</th>{% for p in plans %}<td class="num">{{ p.horizon_days }} gün</td>{% endfor %}</tr>
+          <tr><th scope="row">Günlük fiyat önerisi, taban, tavan ve gerekçe</th>{% for p in plans %}<td class="num">{{ yes() }}</td>{% endfor %}</tr>
+          <tr><th scope="row">Pazar fiyat ızgarası ve CSV raporlar</th>{% for p in plans %}<td class="num">{{ yes() }}</td>{% endfor %}</tr>
+          <tr><th scope="row">Geriye dönük test (backtest)</th>{% for p in plans %}<td class="num">{{ yes() }}</td>{% endfor %}</tr>
+          <tr><th scope="row">Talep sinyalleri: uçuş, etkinlik, tatil</th>{% for p in plans %}<td class="num">{% if p.monthly_price_eur >= 100 %}{{ yes() }}{% else %}Özet{% endif %}</td>{% endfor %}</tr>
+          <tr><th scope="row">Kontrol grubuyla etki ölçümü</th>{% for p in plans %}<td class="num">{% if p.monthly_price_eur >= 300 %}{{ yes() }}{% else %}Uyum oranı{% endif %}</td>{% endfor %}</tr>
         </tbody>
       </table>
     </div></div>
@@ -39,8 +39,8 @@
       <details><summary>Kurulum ne kadar sürer?</summary><p>Beş dakika. Otelinizin adını ve adresini yazar, önerdiğimiz rakip setini onaylarsınız. İlk önerileriniz aynı gün panelinizde olur.</p></details>
       <details><summary>Öneriler neye dayanıyor?</summary><p>Rakip setinizin aynı oda kategorisindeki fiyat dağılımına, rakiplerde kalan oda sayısına, bölgenizdeki talep skoruna ve mevsime. Her önerinin yanında onu oluşturan etkenler açıkça yazar.</p></details>
       <details><summary>İşe yaradığını nasıl bileceğim?</summary><p>Panelinizde üç ayrı ölçüm bulunur: geriye dönük test, öneriye uyum oranı ve aynı bölgedeki benzer otellerden oluşan kontrol grubuyla karşılaştırma. Etki rakamları tahmini olarak, güven düzeyiyle birlikte raporlanır.</p></details>
-      <details><summary>Hangi bölgelerde çalışıyor?</summary><p>Muğla ve Antalya'da. Bodrum, Marmaris, Fethiye, Kaş, Belek ve çevresindeki tesisler bugün kullanabilir.</p></details>
-      <details><summary>Otelim listede yoksa?</summary><p>Yeni kayıt açarız. Konumunuzu adresinizden bulur, önerileri bölgenizdeki rakip dağılımına göre üretiriz.</p></details>
+      <details><summary>Hangi bölgelerde çalışıyor?</summary><p>Pilot dönemde Muğla ve Antalya'da: Bodrum, Marmaris, Fethiye, Kaş, Belek ve çevresi. Diğer bölgeler yol haritamızda.</p></details>
+      <details><summary>Otelim listede yoksa?</summary><p>OTA'larda listelenen tesisleri otomatik izleriz. Listede yoksanız yeni kayıt açar, önerileri bölgenizdeki rakip dağılımına göre üretiriz; kendi fiyatınızı OTA'da yayınladığınızda izlemeye başlarız.</p></details>
     </div>
   </div>
 </section>

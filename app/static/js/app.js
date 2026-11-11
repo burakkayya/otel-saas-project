@@ -97,6 +97,7 @@
       if (isNaN(target) || reduce) return;
       var dur = 900, from = target * 0.82, delay = parseInt(el.getAttribute("data-count-delay") || "0", 10);
       var fmt = new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 0 });
+      if (delay) el.textContent = "€" + fmt.format(from);  // gecikmeli sayaç görünmeden önce başlangıç değerinde beklesin
       setTimeout(function () {
         var start = performance.now();
         function step(now) {
@@ -112,6 +113,7 @@
     var reveals = document.querySelectorAll(".reveal");
     if (reveals.length && !reduce) {
       if ("IntersectionObserver" in window) {
+        root.classList.add("reveal-ready");
         var io = new IntersectionObserver(function (entries) {
           entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
         }, { rootMargin: "0px 0px -12% 0px", threshold: 0.12 });
@@ -124,13 +126,16 @@
     // Sade / ayrıntılı görünüm (panel): tercih tarayıcıda saklanır
     var dens = document.querySelectorAll("[data-density]");
     if (dens.length) {
+      dens.forEach(function (b) { if (b.parentNode) b.parentNode.hidden = false; });
       var applyDensity = function (v) {
         document.body.setAttribute("data-view", v);
         dens.forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-density") === v ? "true" : "false"); });
       };
       var saved = null;
       try { saved = localStorage.getItem("or-view"); } catch (e) { /* depolama kapalı */ }
-      applyDensity(saved === "sade" ? "sade" : "ayrinti");
+      // Kayıtlı tercih yoksa telefonda sade, geniş ekranda ayrıntılı açılır
+      var narrow = window.matchMedia && window.matchMedia("(max-width: 560px)").matches;
+      applyDensity(saved === "sade" || saved === "ayrinti" ? saved : (narrow ? "sade" : "ayrinti"));
       dens.forEach(function (b) {
         b.addEventListener("click", function () {
           var v = b.getAttribute("data-density");

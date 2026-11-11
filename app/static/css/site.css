@@ -51,6 +51,7 @@
 .start-form { display: flex; gap: 8px; max-width: 520px; padding: 7px; border-radius: 16px; background: rgba(255, 255, 255, .08);
   border: 1px solid rgba(255, 255, 255, .18); transition: border-color .2s, background .2s; }
 .start-form:focus-within { border-color: #8fd0ff; background: rgba(255, 255, 255, .12); }
+.start-form:has(input:focus-visible) { outline: 2px solid #8fd0ff; outline-offset: 3px; }
 .start-form input { flex: 1; min-width: 0; background: transparent; border: 0; color: #fff; font-size: 1.05rem; padding: 10px 12px; caret-color: var(--sun); }
 .start-form input::placeholder { color: #b9cddd; }
 .start-form input:focus { box-shadow: none; outline: none; }
@@ -95,7 +96,7 @@
   @keyframes sc-sweep { 0% { transform: rotate(0); opacity: 0; } 8% { opacity: 1; } 88% { opacity: 1; } 100% { transform: rotate(360deg); opacity: 0; } }
   @keyframes sc-ping { 0% { opacity: 0; transform: scale(.2); } 55% { opacity: 1; transform: scale(1.5); } 100% { opacity: 1; transform: none; } }
   @keyframes sc-chip { from { opacity: 0; transform: translate(-50%, -120%) scale(.8); filter: blur(4px); } to { opacity: 1; transform: translate(-50%, -190%); filter: none; } }
-  @keyframes sc-card { from { opacity: 0; transform: translateY(26px); clip-path: inset(0 0 60% 0 round 18px); } to { opacity: 1; transform: none; clip-path: inset(0 round 18px); } }
+  @keyframes sc-card { from { opacity: 0; transform: translateY(26px); clip-path: inset(0 0 60% 0 round 18px); } to { opacity: 1; transform: none; clip-path: inset(-90px round 18px); } }
   @keyframes sc-mark { from { left: 0; opacity: 0; } }
 }
 
@@ -130,9 +131,10 @@
 .shot img { display: block; width: 100%; height: auto; }
 .band-deep .shot { margin-top: clamp(32px, 5vw, 56px); border-color: rgba(255, 255, 255, .12); box-shadow: 0 50px 120px -30px rgba(0, 0, 0, .7); }
 @media (prefers-reduced-motion: no-preference) {
-  .js-motion .reveal { clip-path: inset(0 0 100% 0 round 16px); opacity: .001; transform: translateY(18px);
+  /* gizli başlangıç yalnızca app.js gözlemciyi kurduktan sonra (reveal-ready) geçerlidir: JS hata verirse içerik görünür kalır */
+  .reveal-ready .reveal { clip-path: inset(0 0 100% 0 round 16px); opacity: .001; transform: translateY(18px);
     transition: clip-path .9s cubic-bezier(.16, 1, .3, 1), opacity .5s ease-out, transform .9s cubic-bezier(.16, 1, .3, 1); }
-  .js-motion .reveal.in { clip-path: inset(0 round 16px); opacity: 1; transform: none; }
+  .reveal-ready .reveal.in { clip-path: inset(-160px round 16px); opacity: 1; transform: none; }
 }
 
 /* adımlar: sıra bilgi taşıdığı için numaralı */
@@ -185,7 +187,8 @@
 .page-head p { color: var(--ink-2); max-width: 56ch; margin: 18px 0 0; font-size: 1.12rem; line-height: 1.6; }
 .compare { margin-top: 28px; }
 .compare table.data td, .compare table.data th { padding: 14px 18px; font-size: .96rem; }
-.compare table.data th { font-family: var(--font-display); font-size: .98rem; color: var(--ink); }
+.compare table.data thead th { font-family: var(--font-display); font-size: .98rem; color: var(--ink); }
+.compare table.data tbody th { background: none; font-weight: 500; color: var(--ink); white-space: normal; position: static; border-bottom: 1px solid var(--line-2); }
 .compare .yes { color: var(--good); display: inline-flex; }
 .compare .yes .ico { width: 18px; height: 18px; stroke-width: 2.6; }
 .faq { margin-top: 28px; border-top: 1px solid var(--line); max-width: 860px; }
@@ -235,3 +238,5 @@
 .closing-btn { background: var(--sun) !important; border-color: var(--sun) !important; color: #1b1505 !important; font-weight: 700; }
 @media (min-width: 1001px) { .scope-card { left: -14%; bottom: -15%; } }
 .hero::before { opacity: .75; }
+@media print { .reveal { clip-path: none !important; opacity: 1 !important; transform: none !important; } }
+.live-panel .sample-chip, .shot .sample-chip { background: var(--surface-3); color: var(--ink-2); margin: 0 0 0 auto; }

@@ -2,7 +2,7 @@
 {% block title %}Panel{% endblock %}
 {% block page_title %}Panel{% endblock %}
 {% block crumbs %}<div class="crumbs">{{ today()|dt('long') }}. Öneriler {{ data.room_type.raw_name if data.room_type else 'odalarınız' }} ve diğer oda tipleriniz için güncel.</div>{% endblock %}
-{% block top_actions %}<div class="seg view-seg" role="group" aria-label="Görünüm"><button type="button" data-density="sade" aria-pressed="false">Sade</button><button type="button" data-density="ayrinti" aria-pressed="true">Ayrıntılı</button></div><a class="btn" href="/panel/raporlar/oneriler.csv">{{ ui.icon('download') }}CSV</a><a class="btn primary" href="/panel/oneriler">Tüm öneriler</a>{% endblock %}
+{% block top_actions %}<div class="seg view-seg" role="group" aria-label="Görünüm" hidden><button type="button" data-density="sade" aria-pressed="false">Sade</button><button type="button" data-density="ayrinti" aria-pressed="true">Ayrıntılı</button></div><a class="btn" href="/panel/raporlar/oneriler.csv">{{ ui.icon('download') }}CSV</a><a class="btn primary" href="/panel/oneriler">Tüm öneriler</a>{% endblock %}
 {% block content %}
 {% set t = data.today_row %}
 {% set k = data.kpi %}
@@ -83,7 +83,7 @@
   </div>
 </div>
 
-<div class="grid g-main-side simple-wide-off" style="margin-top:18px">
+<div class="grid g-main-side" style="margin-top:18px">
   <div class="stack">
   <div class="panel">
     <div class="panel-head"><div><h2>Bu hafta</h2><p>Önümüzdeki 7 günün önerileri ve fiyat bantları</p></div><div class="actions"><a class="btn sm" href="/panel/oneriler">Tümü</a></div></div>

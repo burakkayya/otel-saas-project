@@ -163,7 +163,7 @@
 {% set d = values|spark(w, h) %}
 {% if d %}<svg class="spark" viewBox="0 0 {{ w }} {{ h }}" preserveAspectRatio="none" role="img" aria-label="{{ label }}">
   <path d="{{ values|spark(w, h, true) }}" fill="var(--{{ color }})" opacity=".12"/>
-  <path d="{{ d }}" fill="none" stroke="var(--{{ color }})" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="{{ d }}" pathLength="1" fill="none" stroke="var(--{{ color }})" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/>
 </svg>{% endif %}
 {%- endmacro %}
 

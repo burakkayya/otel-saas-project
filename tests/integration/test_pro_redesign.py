@@ -50,3 +50,40 @@ def test_logo_mark_is_shared(client, hotel_browser):
         assert 'class="bm-sweep"' in html
     assert "bm" not in Path("app/static/img/favicon.svg").read_text(encoding="utf-8")
     assert client.get("/static/img/favicon.svg").status_code == 200
+
+
+def test_all_landing_samples_are_labelled(client):
+    """Kurgusal veri gösteren her görsel (canlı panel ve ürün görüntüleri) 'Örnek veri' etiketi taşır."""
+    html = client.get("/").text
+    assert html.count("Örnek veri") >= 5
+
+
+def test_public_copy_avoids_outcome_promises(client):
+    """Tanıtım ve paket metinleri kesin sonuç vaat etmez, tutarlıdır ve pilot kapsamını söyler."""
+    landing, pricing = client.get("/").text, client.get("/fiyatlar").text
+    for phrase in ("rakiplerinizden önce", "doğru fiyat.", "kaldıramayacağı", "Ertesi sabah", "Rakiplerimi göster"):
+        assert phrase not in landing and phrase not in pricing, phrase
+    assert "Pilot dönemde" in pricing and "OTA" in pricing
+
+
+def test_reveal_hidden_state_requires_running_js():
+    """Ürün görüntülerinin gizli başlangıcı yalnızca app.js gözlemciyi kurduğunda geçerlidir (JS hatasında içerik görünür)."""
+    css = Path("app/static/css/site.css").read_text(encoding="utf-8")
+    js = Path("app/static/js/app.js").read_text(encoding="utf-8")
+    assert ".reveal-ready .reveal" in css and ".js-motion .reveal" not in css
+    assert 'classList.add("reveal-ready")' in js and "@media print { .reveal" in css
+
+
+def test_hero_apply_marks_suggestion_and_returns_to_dashboard(hotel_browser):
+    """Kahraman alandaki 'Uyguladım' öneriyi işaretler, panele döner ve düğme rozetle yer değiştirir."""
+    import re
+
+    html = hotel_browser.get("/panel").text
+    hero = html.split('class="hero-rec"', 1)[1].split("</section>", 1)[0]
+    m = re.search(r'action="(/panel/oneriler/(\d+)/aksiyon)"', hero)
+    assert m, "kahraman alanda Uyguladım formu yok"
+    r = hotel_browser.post(m.group(1), {"action": "applied", "next": "/panel"})
+    assert r.status_code == 303 and r.headers["location"] == "/panel"
+    hero = hotel_browser.get("/panel").text.split('class="hero-rec"', 1)[1].split("</section>", 1)[0]
+    assert "Uygulandı" in hero and "/aksiyon" not in hero
+    hotel_browser.post(m.group(1), {"action": "reset", "next": "/panel"})

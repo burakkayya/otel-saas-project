@@ -99,7 +99,7 @@
       ];
       // Fırsat günleri: önerinin mevcut fiyatın %8+ üstünde olduğu geceler çizgi üzerinde begonvil noktayla işaretlenir
       var opp = (d.suggested || []).map(function (v, i) { var own = d.own ? d.own[i] : null; return v != null && own ? (v / own - 1) >= 0.08 : false; });
-      var sugDs = ds[4], bg = css("--bougain") || s1;
+      var sugDs = ds.filter(function (x) { return x.label === "Önerilen fiyat"; })[0], bg = css("--bougain") || s1;
       sugDs.pointRadius = opp.map(function (b) { return b ? 4.5 : 0; });
       sugDs.pointBackgroundColor = opp.map(function (b) { return b ? bg : s1; });
       sugDs.pointBorderColor = css("--surface"); sugDs.pointBorderWidth = 2;

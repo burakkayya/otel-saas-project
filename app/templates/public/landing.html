@@ -5,7 +5,7 @@
 
 {% macro shot(file, alt, w, h, path) -%}
 <figure class="shot reveal">
-  <figcaption><span class="shot-dot" aria-hidden="true"></span>{{ settings.app_name|lower }} / {{ path }}</figcaption>
+  <figcaption><span class="shot-dot" aria-hidden="true"></span>{{ settings.app_name|lower }} / {{ path }}<span class="sample-chip">Örnek veri</span></figcaption>
   <img src="/static/img/shots/{{ file }}?v=1" alt="{{ alt }}" width="{{ w }}" height="{{ h }}" loading="lazy" decoding="async">
 </figure>
 {%- endmacro %}
@@ -14,7 +14,7 @@
 <form class="start-form" action="/kayit" method="get">
   <label class="sr-only" for="{{ id }}">Otelinizin adı</label>
   <input id="{{ id }}" type="text" name="otel" placeholder="Otelinizin adı" autocomplete="organization" required minlength="3">
-  <button class="btn primary lg" type="submit">Rakiplerimi göster{{ ui.icon('up', 'ico go') }}</button>
+  <button class="btn primary lg" type="submit">Ücretsiz başla{{ ui.icon('up', 'ico go') }}</button>
 </form>
 <p class="start-note">14 gün ücretsiz · Kart istemez · Kurulum 5 dakika</p>
 {%- endmacro %}
@@ -34,7 +34,7 @@
     </div>
 
     {# Odak anı: radar bir tur tarar, ışın her rakibe ulaştığında fiyatı belirir, ardından öneri oluşur. #}
-    <div class="scope" role="img" aria-label="Örnek tarama: 5 rakibin fiyatı €149 ile €186 arasında, rakip medyanı €161, bu gece için önerilen fiyat €168">
+    <div class="scope" role="img" aria-label="Örnek tarama: 5 rakibin fiyatı €149 ile €186 arasında, rakip medyanı €161, mevcut fiyat €155, bu gece için önerilen fiyat €168, taban €139, tavan €192">
       <svg viewBox="0 0 100 100" aria-hidden="true">
         <defs>
           <radialGradient id="sc-bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#1b4868"/><stop offset="100%" stop-color="#0d2536"/></radialGradient>
@@ -68,7 +68,7 @@
     <div class="feature">
       <div class="feature-copy">
         <h3>Ne fiyat vermeliyim?</h3>
-        <p>Her gece için tek bir rakam, altında güvenle inebileceğiniz taban, üstünde piyasanın kaldıramayacağı tavan. Mevcut fiyatınız ve rakip medyanı aynı çizgide; nerede durduğunuzu bir bakışta görürsünüz.</p>
+        <p>Her gece için tek bir rakam, altında güvenle inebileceğiniz taban, üstüne çıkmamanız gereken tavan. Mevcut fiyatınız ve rakip medyanı aynı çizgide; nerede durduğunuzu bir bakışta görürsünüz.</p>
         <ul class="ticks">
           <li>{{ ui.icon('check') }}Oda tipi ve konaklama tarihi bazında öneri</li>
           <li>{{ ui.icon('check') }}90 güne kadar ileriye dönük takvim</li>
@@ -77,7 +77,7 @@
       </div>
       <div class="feature-art">
         <div class="panel live-panel reveal">
-          <div class="panel-head"><div><h4>Haftanın fiyat bantları</h4></div></div>
+          <div class="panel-head"><div><h4>Haftanın fiyat bantları</h4></div><span class="sample-chip">Örnek veri</span></div>
           <div class="panel-body">
             {{ ui.range_legend() }}
             <table class="data week"><tbody>
@@ -106,7 +106,7 @@
     <div class="feature">
       <div class="feature-copy">
         <h3>Talep nereye gidiyor?</h3>
-        <p>Uçuş aramaları, etkinlikler, bayramlar ve okul tatilleri tek bir talep skorunda birleşir. Dolacak geceyi rakiplerinizden önce görür, fiyatı o gece gelmeden ayarlarsınız.</p>
+        <p>Uçuş aramaları, etkinlikler, bayramlar ve okul tatilleri tek bir talep skorunda birleşir. Talebin yükseldiği geceyi haftalar öncesinden görür, fiyatı o gece gelmeden ayarlarsınız.</p>
         <ul class="ticks">
           <li>{{ ui.icon('check') }}0–100 talep skoru, bileşenleriyle birlikte</li>
           <li>{{ ui.icon('check') }}Üç aylık talep takvimi ve etkinlik günleri</li>
@@ -141,9 +141,9 @@
 
 <section class="band" id="nasil">
   <div class="wrap">
-    <h2 class="band-title">Beş dakikada kurulur. Ertesi sabah çalışır.</h2>
+    <h2 class="band-title">Beş dakikada kurulur. İlk öneriniz aynı gün hazır.</h2>
     <ol class="steps">
-      <li><h3>Otelinizi yazın</h3><p>Adı ve adresi yeterli. Konumu, yıldız sınıfını ve tesis tipini biz buluruz.</p></li>
+      <li><h3>Otelinizi yazın</h3><p>Adını, ilini ve adresini girin. Konumunuzu ve rakip adaylarınızı biz buluruz.</p></li>
       <li><h3>Rakiplerinizi onaylayın</h3><p>Size en çok benzeyen otelleri öneririz. Gerçek rakibiniz kimse listeyi ona göre düzeltirsiniz.</p></li>
       <li><h3>Biz her gün tararız</h3><p>Fiyatlar, kalan odalar, uçuş aramaları, etkinlikler ve tatiller her sabah güncellenir.</p></li>
       <li><h3>Fiyatı siz uygularsınız</h3><p>Öneriyi kendi sisteminize girersiniz. Kontrol her zaman sizdedir.</p></li>
