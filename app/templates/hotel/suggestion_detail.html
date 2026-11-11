@@ -5,9 +5,10 @@
 {% block content %}
 <section class="hero-rec rec-detail">
   <div><h2 class="label">Önerilen fiyat</h2><div class="price"><span data-count="{{ s.suggested_price|float }}">{{ s.suggested_price|eur }}</span></div>
-    {% if r.confidence %}<div class="hero-chips">{{ ui.conf_badge(r.confidence) }}</div>{% endif %}</div>
+    <div class="hero-chips">{{ ui.action_chip(action, change) }}{% if r.confidence %}{{ ui.conf_badge(r.confidence) }}{% endif %}</div></div>
   <div><p class="why-lead">Neden bu fiyat?</p>
-    <ul class="drivers">{% for d in rationale_drivers(r) %}<li class="{{ d.dir }}">{{ ui.icon({'up': 'up', 'down': 'down'}.get(d.dir, 'activity')) }}<span>{{ d.text }}</span></li>{% endfor %}</ul>
+    {% if r.headline %}<p class="hero-headline">{{ r.headline }}</p>{% endif %}
+    <ul class="drivers">{% for d in rationale_drivers(r, 3, r.headline is defined and r.headline) %}<li class="{{ d.dir }}">{{ ui.icon({'up': 'up', 'down': 'down'}.get(d.dir, 'activity')) }}<span>{{ d.text }}</span></li>{% endfor %}</ul>
     <p class="why-full">{{ r.text }}</p>
     <div class="meta"><span>Taban <b>{{ s.price_floor|eur }}</b></span><span>Tavan <b>{{ s.price_ceiling|eur }}</b></span>
       <span>Mevcut fiyat <b>{{ own.price_eur|eur if own else '—' }}</b></span><span>Model <b>{{ s.model_version }}</b></span></div></div>
@@ -20,6 +21,7 @@
     <div class="meta" style="margin-top:10px">
       <span>Tahmini doluluğunuz <b>{{ ('%' ~ (occ.own * 100)|round|int) if occ.own is not none else '—' }}</b></span>
       <span>Rakip medyanı <b>{{ ('%' ~ (occ.comp * 100)|round|int) if occ.comp is not none else '—' }}</b></span>
+      {% if r.expected_occ is not none %}<span>Bu tarihte beklenen <b>%{{ (r.expected_occ * 100)|round|int }}</b></span>{% endif %}
       {% if outcome and outcome.revpar_index is not none %}<span>RevPAR endeksi <b>{{ outcome.revpar_index|num(2) }}</b></span>{% endif %}
     </div>
   </div>

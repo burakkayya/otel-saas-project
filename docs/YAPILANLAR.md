@@ -276,3 +276,11 @@ Tasarım: `docs/superpowers/plans/2026-11-11-doluluk-motoru.md`.
   %10 kısıyor, kaybettirmiyorsa ve pazar doluysa açıyor; sınır varsayılanın 0,5–1,5 katı; denetim kaydına yazılıyor.
 
 Testler: 316 birim/entegrasyon, 11 E2E; değişen 8 ekranın 32 görünümünde 0 sorun.
+
+## 14. Netlik ve isabet turu (11 Kasım 2026)
+
+Ayrıntı: `docs/superpowers/plans/2026-11-11-netlik-ve-isabet.md`.
+- Motor: rezervasyon hızı (kalan güne göre beklenen doluluk), benzerlik ağırlıklı rakip dağılımı, tek fiil (Yükselt / İndir / Koru, ±%3 bandı), fiille aynı yönde ana neden başlığı, otelin kendi sınırı öneriyi tutuyorsa bildirme. Model `v1.2-pace`.
+- Ekranlar: panelde "Önce bunlara bakın" listesi, öneri listesinde 9 yerine 7 sütun ("Ne yapmalı", "Neden"), öneri ayrıntısında fiil ve beklenen doluluk.
+
+Testler: 328 birim/entegrasyon, 11 E2E; 180 görünümde 0 sorun.

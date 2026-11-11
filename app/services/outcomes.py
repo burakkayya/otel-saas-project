@@ -205,10 +205,10 @@ def tune_weights(db: Session, today: date | None = None, lookback_days: int = 90
         m = statistics.fmean(rp for rp, _ in ups)
         market = statistics.fmean(c for _, c in ups)
         if m < -0.08:
-            scale(("demand", "occupancy", "compression", "max_up"), 1 - TUNE_STEP)
+            scale(("demand", "occupancy", "pace", "compression", "max_up"), 1 - TUNE_STEP)
             reasons.append(f"Artışlar uygulanan günlerde rakiplere göre doluluk {m * 100:.1f} puan geriledi")
         elif m > -0.02 and market >= 0.7:
-            scale(("demand", "occupancy", "compression", "max_up"), 1 + TUNE_STEP)
+            scale(("demand", "occupancy", "pace", "compression", "max_up"), 1 + TUNE_STEP)
             reasons.append("Artışlar pay kaybettirmedi ve pazar dolu")
     if len(downs) >= MIN_TUNE_SAMPLE:
         m = statistics.fmean(downs)

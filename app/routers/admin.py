@@ -475,7 +475,7 @@ def model_save(request: Request, demand: str = Form(...), inventory: str = Form(
     if any(v < 0 or v > 1 for v in w.values()):
         return redirect("/admin/model", request, "Ağırlıklar 0 ile 1 arasında olmalı.", "error")
     old = load_weights(db)
-    set_setting(db, "pricing_weights", w)
+    set_setting(db, "pricing_weights", {**old, **w})  # formda olmayan ağırlıklar (doluluk, hız, sıkışma) korunur
     set_setting(db, "model_version", version.strip() or MODEL_VERSION)
     audit(db, request, user, "model_updated", "model", version, {"from": old, "to": w})
     db.commit()
