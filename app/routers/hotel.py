@@ -66,14 +66,28 @@ def dashboard(request: Request, hc: HotelContext = Depends(require_hotel), db: S
                      .order_by(RoiEstimate.created_at.desc())).scalars().first()
     comps = list(db.execute(select(CompetitorSet).where(CompetitorSet.hotel_id == hc.hotel.id).order_by(CompetitorSet.rank)).scalars())
     radar = analytics.radar_layout(hc.hotel, comps)
+    # Bu gece, tüm oda kategorileri (resort gelir yöneticisi için): kategori başına ilk oda tipinin önerisi
+    tonight, seen = [], set()
+    for r in analytics.suggestion_rows(db, hc.hotel, date.today(), date.today()):
+        if r["room_type"].category not in seen:
+            seen.add(r["room_type"].category)
+            tonight.append(r)
     return render(request, "hotel/dashboard.html", **ctx(request, hc, db, "dashboard", data=data, notes=notes,
-                                                            uptake=up, roi=roi, comps=comps, radar=radar))
+                                                            uptake=up, roi=roi, comps=comps, radar=radar, tonight=tonight))
 
 
 @router.get("/hos-geldiniz")
 def welcome(request: Request, hc: HotelContext = Depends(require_hotel), db: Session = Depends(get_db)):
     comps = list(db.execute(select(CompetitorSet).where(CompetitorSet.hotel_id == hc.hotel.id).order_by(CompetitorSet.rank)).scalars())
-    return render(request, "hotel/welcome.html", **ctx(request, hc, db, "dashboard", comps=comps))
+    hs = ensure_hotel_settings(db, hc.hotel)
+    # Adımlar kullanıcının gerçek işaretlerine bağlıdır (rakip onayı/elle ekleme, oda tipi düzeltme, fiyat sınırı)
+    steps = {
+        "profile": True,
+        "competitors": any(c.feedback == "confirmed" or c.is_manual for c in comps),
+        "room_types": any(rt.reviewed or rt.mapped_by == "manual" for rt in hc.hotel.room_types),
+        "limits": hs.min_price_eur is not None or hs.max_price_eur is not None,
+    }
+    return render(request, "hotel/welcome.html", **ctx(request, hc, db, "dashboard", comps=comps, steps=steps))
 
 
 @router.post("/hos-geldiniz", dependencies=[Depends(csrf_protect)])
@@ -415,29 +429,39 @@ def settings_save(request: Request, strategy: str = Form("balanced"), tolerance_
                   ceiling_margin_pct: str = Form("5"), room_count: str = Form(""), star_rating: str = Form(""),
                   notify_email: str = Form(""), hc: HotelContext = Depends(require_hotel), db: Session = Depends(get_db)):
     hs = ensure_hotel_settings(db, hc.hotel)
-    errors = []
-    try:
-        tol = _opt_float(tolerance_pct)
-        mn, mx = _opt_float(min_price_eur), _opt_float(max_price_eur)
-        fl, cm = _opt_float(floor_below_p25_pct), _opt_float(ceiling_margin_pct)
-    except ValueError:
-        errors.append("Sayısal alanlarda geçersiz değer var.")
-        tol = mn = mx = fl = cm = None
+    fe: dict[str, str] = {}  # alan → Türkçe hata
+
+    def num(name: str, raw: str) -> float | None:
+        try:
+            return _opt_float(raw)
+        except ValueError:
+            fe[name] = "Sayı girin (örn. 120)."
+            return None
+
+    tol, mn, mx = num("tolerance_pct", tolerance_pct), num("min_price_eur", min_price_eur), num("max_price_eur", max_price_eur)
+    fl, cm = num("floor_below_p25_pct", floor_below_p25_pct), num("ceiling_margin_pct", ceiling_margin_pct)
     if strategy not in STRATEGY_LABEL:
-        errors.append("Geçersiz strateji.")
-    if tol is None or not 1 <= tol <= 25:
-        errors.append("Uyum toleransı %1 ile %25 arasında olmalı.")
-    if mn is not None and mx is not None and mn >= mx:
-        errors.append("Minimum fiyat, maksimum fiyattan küçük olmalı.")
-    if (mn is not None and mn <= 0) or (mx is not None and mx <= 0):
-        errors.append("Fiyat sınırları pozitif olmalı.")
-    if fl is None or not 0 <= fl <= 50 or cm is None or not 0 <= cm <= 50:
-        errors.append("Taban/tavan yüzdeleri 0-50 arasında olmalı.")
+        fe["strategy"] = "Listeden bir strateji seçin."
+    if "tolerance_pct" not in fe and (tol is None or not 1 <= tol <= 25):
+        fe["tolerance_pct"] = "Uyum toleransı %1 ile %25 arasında olmalı."
+    for name, v in (("min_price_eur", mn), ("max_price_eur", mx)):
+        if name not in fe and v is not None and v <= 0:
+            fe[name] = "Fiyat sınırı sıfırdan büyük olmalı."
+    if "min_price_eur" not in fe and "max_price_eur" not in fe and mn is not None and mx is not None and mn >= mx:
+        fe["min_price_eur"] = "Minimum fiyat, maksimum fiyattan küçük olmalı."
+        fe["max_price_eur"] = "Maksimum fiyat, minimum fiyattan büyük olmalı."
+    for name, v in (("floor_below_p25_pct", fl), ("ceiling_margin_pct", cm)):
+        if name not in fe and (v is None or not 0 <= v <= 50):
+            fe[name] = "0 ile 50 arasında bir yüzde girin."
+    errors = list(dict.fromkeys(fe.values()))
     rc = int(room_count) if room_count.strip().isdigit() else None
     sr = int(star_rating) if star_rating.strip().isdigit() and 1 <= int(star_rating) <= 5 else None
     if errors:
+        form = {"strategy": strategy, "tolerance_pct": tolerance_pct, "min_price_eur": min_price_eur, "max_price_eur": max_price_eur,
+                "floor_below_p25_pct": floor_below_p25_pct, "ceiling_margin_pct": ceiling_margin_pct,
+                "room_count": room_count, "star_rating": star_rating, "notify_email": bool(notify_email)}
         return render(request, "hotel/settings.html", status_code=422,
-                      **ctx(request, hc, db, "settings", hs=hs, strategies=STRATEGY_LABEL, errors=errors))
+                      **ctx(request, hc, db, "settings", hs=hs, strategies=STRATEGY_LABEL, errors=errors, fe=fe, form=form))
     hs.strategy, hs.tolerance_pct, hs.min_price_eur, hs.max_price_eur = strategy, tol, mn, mx
     hs.floor_below_p25_pct, hs.ceiling_margin_pct, hs.notify_email = fl, cm, bool(notify_email)
     if rc:
@@ -500,15 +524,19 @@ def account_save(request: Request, full_name: str = Form(...), current_password:
                  hc: HotelContext = Depends(require_hotel), db: Session = Depends(get_db)):
     if hc.impersonating:
         return redirect("/panel/hesap", request, "Yönetici görünümünde hesap bilgileri değiştirilemez.", "warning")
-    errors = []
+    fe: dict[str, str] = {}
     if len(full_name.strip()) < 3:
-        errors.append("Ad soyad en az 3 karakter olmalı.")
+        fe["full_name"] = "Ad soyad en az 3 karakter olmalı."
     if new_password:
         if not verify_password(current_password, hc.user.password_hash):
-            errors.append("Mevcut parola hatalı.")
-        errors += password_problems(new_password)
+            fe["current_password"] = "Mevcut parola hatalı."
+        problems = password_problems(new_password)
+        if problems:
+            fe["new_password"] = " ".join(problems)
+    errors = list(fe.values())
     if errors:
-        return render(request, "hotel/account.html", status_code=422, **ctx(request, hc, db, "account", errors=errors))
+        return render(request, "hotel/account.html", status_code=422,
+                      **ctx(request, hc, db, "account", errors=errors, fe=fe, form={"full_name": full_name}))
     hc.user.full_name = full_name.strip()
     if new_password:
         hc.user.password_hash = hash_password(new_password)

@@ -40,6 +40,16 @@
     <div class="hero-actions">{% if t.action == 'applied' %}<span class="badge good">{{ ui.icon('check') }}Uygulandı</span>{% else %}<form method="post" action="/panel/oneriler/{{ t.id }}/aksiyon" class="inline">{{ ui.csrf() }}<input type="hidden" name="action" value="applied"><input type="hidden" name="next" value="/panel"><button class="btn apply" type="submit" title="Fiyatı kendi sistemimde uyguladım">{{ ui.icon('check') }}Uyguladım</button></form>{% endif %}<a class="btn ghost-light" href="/panel/oneriler/{{ t.id }}">Gerekçeyi incele</a><a class="btn ghost-light" href="/panel/oneriler?gorunum=takvim">Takvim</a></div>
   </div>
 </section>
+{% if tonight|length > 1 %}
+<nav class="tonight-strip" aria-label="Bu gece, tüm oda tipleri">
+  {% for r in tonight %}
+  <a class="tonight-item {{ 'primary-rt' if r.room_type.id == t.room_type.id }}" href="/panel/oneriler/{{ r.id }}">
+    <span class="ti-cat">{{ CATEGORY_LABELS.get(r.room_type.category, r.room_type.category) }} · {{ r.room_type.raw_name }}</span>
+    <span class="ti-row"><span class="ti-price">{{ r.suggested|eur }}</span>{{ ui.change_badge(r.change) }}</span>
+  </a>
+  {% endfor %}
+</nav>
+{% endif %}
 {% else %}
 <div class="panel"><div class="panel-body">{{ ui.empty("Bugün için öneri yok", "Rakip setiniz hazır olduğunda ilk öneriler oluşturulur.", "/panel/rakipler", "Rakip setine git") }}</div></div>
 {% endif %}

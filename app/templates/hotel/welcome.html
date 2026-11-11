@@ -3,12 +3,17 @@
 {% block page_title %}Hoş geldiniz, {{ hotel.name }}{% endblock %}
 {% block crumbs %}<div class="crumbs">İlk önerileriniz hazır. Dört kısa kontrol, sonra panel sizin.</div>{% endblock %}
 {% block content %}
+{% set done_n = steps.values()|select|list|length %}
+<div class="onboard-progress" role="group" aria-label="Kurulum ilerlemesi">
+  <div class="op-bar"><span style="width: {{ (done_n / 4 * 100)|round|int }}%"></span></div>
+  <p><b>{{ done_n }} / 4</b> adım tamamlandı{% if done_n == 4 %}. Her şey hazır.{% endif %}</p>
+</div>
 <div class="grid g-main-side">
   <ol class="steps-list">
     <li class="done"><div><b>Otel profili oluşturuldu</b><div class="small ink-2">{{ hotel.district or '' }} {{ hotel.province }}{% if hotel.star_rating %}, {{ hotel.star_rating }} yıldız{% endif %}. Konum otomatik bulundu.</div></div><a class="btn sm" href="/panel/ayarlar">Düzelt</a></li>
-    <li class="{{ 'done' if comps }}"><div><b>Rakip setinizi kontrol edin</b><div class="small ink-2">Sistem {{ comps|length }} rakip önerdi{% if comps %}: {{ comps[:3]|map(attribute='competitor.name')|join(', ') }}{% if comps|length > 3 %} ve diğerleri{% endif %}{% endif %}.</div></div><a class="btn sm" href="/panel/rakipler">İncele</a></li>
-    <li><div><b>Oda tiplerinizi doğrulayın</b><div class="small ink-2">{{ hotel.room_types|length }} oda tipi standart kategorilere eşlendi.</div></div><a class="btn sm" href="/panel/oda-tipleri">İncele</a></li>
-    <li><div><b>Fiyat sınırlarınızı belirleyin</b><div class="small ink-2">İsterseniz en düşük ve en yüksek fiyatınızı girin; öneriler bu aralığın dışına çıkmaz.</div></div><a class="btn sm" href="/panel/ayarlar">Ayarla</a></li>
+    <li class="{{ 'done' if steps.competitors }}"><div><b>Rakip setinizi onaylayın</b><div class="small ink-2">Sistem {{ comps|length }} rakip önerdi{% if comps %}: {{ comps[:3]|map(attribute='competitor.name')|join(', ') }}{% if comps|length > 3 %} ve diğerleri{% endif %}{% endif %}.</div></div><a class="btn sm {{ '' if steps.competitors else 'primary' }}" href="/panel/rakipler">{{ 'Gözden geçir' if steps.competitors else 'Onayla' }}</a></li>
+    <li class="{{ 'done' if steps.room_types }}"><div><b>Oda tiplerinizi doğrulayın</b><div class="small ink-2">{{ hotel.room_types|length }} oda tipi standart kategorilere eşlendi.</div></div><a class="btn sm" href="/panel/oda-tipleri">İncele</a></li>
+    <li class="{{ 'done' if steps.limits }}"><div><b>Fiyat sınırlarınızı belirleyin</b><div class="small ink-2">İsterseniz en düşük ve en yüksek fiyatınızı girin; öneriler bu aralığın dışına çıkmaz.</div></div><a class="btn sm" href="/panel/ayarlar">Ayarla</a></li>
   </ol>
   <div class="panel"><div class="panel-body">
     <h2>Her sabah iki dakika yeter.</h2>

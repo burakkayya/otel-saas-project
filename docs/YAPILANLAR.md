@@ -247,3 +247,15 @@ Instrument Sans, rakip radarı); tanıtım yüzeyleri ve panelin ana anları gü
 - 297 birim/entegrasyon (yeni: `tests/integration/test_pro_redesign.py`) ve 11 E2E testi yeşil; `ruff` temiz.
 - 180 görünümde 0 konsol hatası, 0 taşma, 0 kontrast ihlali, 0 etiketsiz alan (`docs/screenshots/after`, güncel durum).
 - `scripts/record_tour.py` 45 ekranı gezip sınayarak tur videosu kaydediyor.
+
+## 12. Açık arayüz konuları (11 Kasım 2026)
+
+`docs/ACIK_KONULAR.md` §4b'deki maddelerden 5'i kapandı, 2'si kısmen:
+- Fiyat kuralları ve hesap formunda alan bazlı hatalar (`aria-invalid`, alan altı Türkçe mesaj, girilen değerin korunması).
+- Veri hattı sayfası tam yenileme yerine canlı bölgeyi yokluyor.
+- Denetim kaydı ve etkinlik kategorileri Türkçe.
+- İlk kurulum adımları gerçek işaretlere bağlı, ilerleme çubuğuyla.
+- Panelde "Bu gece, tüm oda tipleri" şeridi.
+- "Backtest" yerine "Geçmiş test", MAPE yerine "Ortalama sapma"; pazar ızgarasında satır başlıkları ve tablo başlığı.
+
+Testler: 304 birim/entegrasyon (yeni `tests/integration/test_open_items.py`), 11 E2E; 180 görünümde 0 sorun.

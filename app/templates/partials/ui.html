@@ -72,6 +72,10 @@
 </div>{% endif %}
 {%- endmacro %}
 
+{# Alan hatası nitelikleri ve mesajı: fe = {alan: mesaj} #}
+{% macro invalid(fe, name) -%}{% if fe and fe.get(name) %} aria-invalid="true" aria-describedby="{{ name }}-err"{% endif %}{%- endmacro %}
+{% macro field_error(fe, name) -%}{% if fe and fe.get(name) %}<div class="error-text" id="{{ name }}-err">{{ icon('alert') }}{{ fe[name] }}</div>{% endif %}{%- endmacro %}
+
 {% macro errors_box(errors) -%}
 {% if errors %}<div class="alert error" role="alert">{{ icon('alert') }}<ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul></div>{% endif %}
 {%- endmacro %}

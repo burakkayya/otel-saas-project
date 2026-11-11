@@ -65,6 +65,26 @@ def fmt_signed(value: Any, digits: int = 1) -> str:
     return ("+" if v > 0 else "−") + fmt_number(abs(v), digits)
 
 
+AUDIT_LABELS = {
+    "login": "Giriş", "register": "Kayıt", "password_changed": "Parola değiştirildi",
+    "password_reset_requested": "Parola sıfırlama talebi", "password_reset_by_admin": "Parola yönetici tarafından sıfırlandı",
+    "impersonate_hotel": "Yönetici otel paneline baktı", "hotel_updated": "Otel güncellendi", "settings_updated": "Fiyat kuralları güncellendi",
+    "competitor_added": "Rakip eklendi", "competitor_removed": "Rakip çıkarıldı", "competitor_confirmed": "Rakip onaylandı",
+    "competitor_rejected": "Rakip reddedildi", "compliance_updated": "Yasal kontrol güncellendi", "event_created": "Etkinlik eklendi",
+    "event_deleted": "Etkinlik silindi", "invoice_status": "Fatura durumu değişti", "job_triggered": "İş elle çalıştırıldı",
+    "model_updated": "Öneri modeli güncellendi", "plan_changed": "Paket değiştirildi", "plan_created": "Paket oluşturuldu",
+    "plan_updated": "Paket güncellendi", "provider_cost_updated": "Sağlayıcı maliyeti güncellendi",
+    "room_type_bulk_approve": "Oda eşlemeleri toplu onaylandı", "room_type_mapped": "Oda tipi eşlendi",
+    "subscription_canceled": "Abonelik iptal edildi", "subscription_updated": "Abonelik güncellendi",
+    "suggestion_applied": "Öneri uygulandı", "suggestion_ignored": "Öneri yok sayıldı", "suggestion_reset": "Öneri işareti kaldırıldı",
+    "suggestions_regenerated": "Öneriler yeniden hesaplandı", "system_settings": "Sistem ayarları değişti",
+    "user_created": "Kullanıcı oluşturuldu", "user_toggled": "Kullanıcı durumu değişti",
+}
+EVENT_CATEGORY_LABELS = {"festivals": "Festival", "concerts": "Konser", "conferences": "Konferans", "expos": "Fuar",
+                         "sports": "Spor", "community": "Yerel etkinlik", "public-holidays": "Resmi tatil",
+                         "school-holidays": "Okul tatili", "performing-arts": "Sahne sanatları"}
+
+
 def rationale_drivers(r: dict | None, limit: int = 3) -> list[dict]:
     """Öneri gerekçesini (price_suggestions.rationale) sade Türkçe etkenlere ayırır, en etkili olan başta.
 
@@ -187,7 +207,8 @@ def hue_for(name: str | None) -> int:
 templates.env.filters.update(combine=lambda a, b: {**(a or {}), **(b or {})}, spark=spark_path, initials=initials, hue=hue_for,
     num=fmt_number, eur=fmt_eur, pct=fmt_pct, signed=fmt_signed, dt=fmt_date, ago=ago, json=to_json,
 )
-templates.env.globals.update(settings=settings, today=date.today, rationale_drivers=rationale_drivers)
+templates.env.globals.update(settings=settings, today=date.today, rationale_drivers=rationale_drivers,
+                             AUDIT_LABELS=AUDIT_LABELS, EVENT_CATEGORY_LABELS=EVENT_CATEGORY_LABELS)
 
 
 def _sample_radar():

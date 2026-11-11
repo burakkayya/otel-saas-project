@@ -898,3 +898,24 @@ body[data-view="sade"] .detail-only { display: none !important; }
 table.data tbody tr { transition: background .12s; }
 .nav a .ico { transition: transform .2s cubic-bezier(.22, 1, .36, 1); }
 .nav a:hover .ico { transform: translateX(2px); }
+
+/* pazar ızgarası: satır başlıkları th (erişilebilirlik), görünüm hücreyle aynı */
+.rate-grid tbody th.hname { font-weight: 500; color: var(--ink); background: var(--surface); text-align: left; }
+.rate-grid tr.self th.hname { background: var(--brand-soft); font-weight: 650; }
+.rate-grid tr.median th.hname { font-weight: 650; background: var(--surface-2); border-top: 2px solid var(--line); }
+
+/* ilk kurulum ilerlemesi */
+.onboard-progress { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.onboard-progress p { margin: 0; color: var(--ink-2); font-size: .92rem; white-space: nowrap; }
+.op-bar { flex: 1; max-width: 360px; height: 8px; border-radius: 4px; background: var(--surface-3); overflow: hidden; }
+.op-bar span { display: block; height: 100%; border-radius: 4px; background: var(--good); transition: width .6s cubic-bezier(.22, 1, .36, 1); }
+
+/* bu gece: tüm oda tipleri şeridi */
+.tonight-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-top: 12px; }
+.tonight-item { display: flex; flex-direction: column; gap: 3px; padding: 12px 14px; border-radius: 12px; background: var(--surface);
+  border: 1px solid var(--line); color: var(--ink); transition: border-color .15s, box-shadow .2s; }
+.tonight-item:hover { text-decoration: none; color: var(--ink); border-color: color-mix(in srgb, var(--brand) 45%, var(--line)); box-shadow: 0 10px 24px -16px rgba(15, 34, 51, .35); }
+.tonight-item .ti-cat { font-size: .8rem; color: var(--muted); font-weight: 600; }
+.tonight-item .ti-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.tonight-item .ti-price { font: 700 1.35rem/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
+.tonight-item.primary-rt { border-color: color-mix(in srgb, var(--brand) 40%, var(--line)); }

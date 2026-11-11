@@ -7,10 +7,10 @@
     <div class="panel-body">
       {{ ui.errors_box(errors) }}
       <form class="form" method="post" action="/panel/hesap" style="margin-top:{{ '14px' if errors else '0' }}">{{ ui.csrf() }}
-        <div class="field"><label for="full_name">Ad soyad</label><input id="full_name" name="full_name" value="{{ user.full_name }}" required></div>
+        <div class="field"><label for="full_name">Ad soyad</label><input id="full_name" type="text" name="full_name" value="{{ form.full_name if form else user.full_name }}" required autocomplete="name"{{ ui.invalid(fe, 'full_name') }}>{{ ui.field_error(fe, 'full_name') }}</div>
         <hr style="margin:6px 0">
-        <div class="field"><label for="current_password">Mevcut parola</label><input id="current_password" type="password" name="current_password" autocomplete="current-password"></div>
-        <div class="field"><label for="new_password">Yeni parola</label><input id="new_password" type="password" name="new_password" autocomplete="new-password"><div class="hint">Değiştirmek istemiyorsanız boş bırakın.</div></div>
+        <div class="field"><label for="current_password">Mevcut parola</label><input id="current_password" type="password" name="current_password" autocomplete="current-password"{{ ui.invalid(fe, 'current_password') }}>{{ ui.field_error(fe, 'current_password') }}</div>
+        <div class="field"><label for="new_password">Yeni parola</label><input id="new_password" type="password" name="new_password" autocomplete="new-password"{{ ui.invalid(fe, 'new_password') }}>{{ ui.field_error(fe, 'new_password') }}<div class="hint">En az 8 karakter; en az bir harf ve bir rakam. Değiştirmek istemiyorsanız boş bırakın.</div></div>
         <button class="btn primary" type="submit">Kaydet</button>
       </form>
     </div></div>

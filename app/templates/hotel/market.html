@@ -18,10 +18,11 @@
     {% if veri == 'fiyat' %}<div class="actions"><div class="cal-legend">Sizden ucuz<div class="scale"><span style="background:color-mix(in srgb,var(--div-neg) 55%,transparent)"></span><span style="background:color-mix(in srgb,var(--div-neg) 25%,transparent)"></span><span style="background:var(--surface-3)"></span><span style="background:color-mix(in srgb,var(--div-pos) 25%,transparent)"></span><span style="background:color-mix(in srgb,var(--div-pos) 55%,transparent)"></span></div>Sizden pahalı</div></div>{% endif %}</div>
   <div class="panel-body flush"><div class="table-wrap">
     <table class="rate-grid">
-      <thead><tr><th class="hname">Otel</th>{% for d in grid.dates %}<th class="{{ 'we' if d.weekday() >= 4 and d.weekday() <= 5 }}">{{ d|dt('day') }}</th>{% endfor %}</tr></thead>
+      <caption class="sr-only">{{ 'Rakip fiyatları' if veri == 'fiyat' else 'Rakiplerde kalan oda' }}, {{ CATEGORY_LABELS[cat] }}, {{ gun }} gün</caption>
+      <thead><tr><th scope="col" class="hname">Otel</th>{% for d in grid.dates %}<th scope="col" class="{{ 'we' if d.weekday() >= 4 and d.weekday() <= 5 }}">{{ d|dt('day') }}</th>{% endfor %}</tr></thead>
       <tbody>
       {% for row in grid.rows %}
-        <tr class="{{ 'self' if row.is_self }}"><td class="hname" title="{{ row.hotel.name }}"><div class="hotel-cell">{{ ui.avatar(row.hotel.name, 'sm') }}<span>{{ row.hotel.name }}{% if row.is_self %} <span class="muted small">(siz)</span>{% endif %}</span></div></td>
+        <tr class="{{ 'self' if row.is_self }}"><th scope="row" class="hname" title="{{ row.hotel.name }}"><div class="hotel-cell">{{ ui.avatar(row.hotel.name, 'sm') }}<span>{{ row.hotel.name }}{% if row.is_self %} <span class="muted small">(siz)</span>{% endif %}</span></div></th>
         {% for c in row.cells %}{% set own = grid.rows[0].cells[loop.index0].price %}
           {% if veri == 'oda' %}
             <td class="num {{ 'closed' if c.available == 0 }}">{{ c.available if c.available is not none else '—' }}</td>
@@ -35,7 +36,7 @@
         {% endfor %}</tr>
       {% endfor %}
       {% if veri == 'fiyat' %}
-      <tr class="median"><td class="hname">Rakip medyanı</td>{% for m in grid.median %}<td class="num">{{ m|eur }}</td>{% endfor %}</tr>
+      <tr class="median"><th scope="row" class="hname">Rakip medyanı</th>{% for m in grid.median %}<td class="num">{{ m|eur }}</td>{% endfor %}</tr>
       {% endif %}
       </tbody>
     </table>
