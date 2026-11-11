@@ -618,7 +618,7 @@
  {
   "group": "hotel",
   "name": "suggestion-detail",
-  "path": "/panel/oneriler/1282",
+  "path": "/panel/oneriler/9761",
   "status": 200,
   "width": 1440,
   "theme": "light",
@@ -870,7 +870,7 @@
  {
   "group": "hotel",
   "name": "suggestion-detail",
-  "path": "/panel/oneriler/1282",
+  "path": "/panel/oneriler/9761",
   "status": 200,
   "width": 390,
   "theme": "light",
@@ -1122,7 +1122,7 @@
  {
   "group": "hotel",
   "name": "suggestion-detail",
-  "path": "/panel/oneriler/1282",
+  "path": "/panel/oneriler/9761",
   "status": 200,
   "width": 1440,
   "theme": "dark",
@@ -1374,7 +1374,7 @@
  {
   "group": "hotel",
   "name": "suggestion-detail",
-  "path": "/panel/oneriler/1282",
+  "path": "/panel/oneriler/9761",
   "status": 200,
   "width": 390,
   "theme": "dark",
