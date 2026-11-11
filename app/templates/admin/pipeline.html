@@ -5,7 +5,8 @@
 {% block content %}
 {% set running = runs|selectattr('status', 'equalto', 'running')|list %}
 {% set job_label = {'seed_demo': 'Demo veri kurulumu'} %}{% for n, (lbl, _f) in jobs.items() %}{% set _ = job_label.update({n: lbl}) %}{% endfor %}
-{% if running %}<div class="alert info" style="margin-bottom:16px" data-refresh-while-running>{{ ui.icon('refresh') }}<span>{{ running|length }} iş çalışıyor; sayfa otomatik yenileniyor.</span></div>{% endif %}
+<div id="hat-canli" aria-live="polite" {% if running %}data-poll-while-running{% endif %}>
+{% if running %}<div class="alert info" style="margin-bottom:16px">{{ ui.icon('refresh') }}<span>{{ running|length }} iş çalışıyor. Durum birkaç saniyede bir kendiliğinden güncellenir.</span></div>{% endif %}
 <div class="grid g-3">
   {% for name, (label, fn) in jobs.items() %}{% set l = last.get(name) %}
   <div class="panel"><div class="panel-body">
@@ -25,5 +26,6 @@
         <td class="num">{{ ((r.finished_at - r.started_at).total_seconds())|num(1) ~ ' sn' if r.finished_at else '—' }}</td><td class="num">{{ r.records|num }}</td><td>{{ ui.status_badge(r.status) }}</td>
         <td class="small ink-2">{% if r.status == 'failed' %}<details><summary>{{ (r.message or '')|truncate(60) }}</summary><pre class="mono" style="white-space:pre-wrap;max-width:60ch">{{ r.message }}</pre></details>{% else %}{{ r.message }}{% endif %}</td></tr>
     {% else %}<tr><td colspan="7">{{ ui.empty("Henüz çalışma yok", "Yukarıdan 'Günlük veri hattı' işini çalıştırarak ilk kaydı oluşturun.") }}</td></tr>{% endfor %}</tbody></table></div></div>
+</div>
 </div>
 {% endblock %}

@@ -146,9 +146,22 @@
       });
     }
 
-    // Çalışan iş varsa veri hattı sayfasını kısa aralıklarla yenile
-    if (document.querySelector("[data-refresh-while-running]")) {
-      setTimeout(function () { window.location.reload(); }, 4000);
-    }
+    // Çalışan iş varsa veri hattı bölgesini yokla: sayfa yenilenmez, odak ve kaydırma korunur
+    (function poll() {
+      var live = document.querySelector("[data-poll-while-running]");
+      if (!live || !window.fetch || !window.DOMParser) return;
+      setTimeout(function () {
+        fetch(window.location.href, { headers: { "X-Requested-With": "fetch" }, credentials: "same-origin" })
+          .then(function (r) { return r.ok ? r.text() : null; })
+          .then(function (html) {
+            if (!html) return;
+            var fresh = new DOMParser().parseFromString(html, "text/html").getElementById(live.id);
+            if (!fresh) return;
+            live.innerHTML = fresh.innerHTML;
+            if (fresh.hasAttribute("data-poll-while-running")) poll(); else live.removeAttribute("data-poll-while-running");
+          })
+          .catch(function () { /* ağ hatası: bir sonraki ziyarette güncellenir */ });
+      }, 4000);
+    })();
   });
 })();

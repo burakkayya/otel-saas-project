@@ -1,6 +1,6 @@
 {% extends "partials/app_layout.html" %}
-{% block title %}Backtest{% endblock %}
-{% block page_title %}Backtest: geçmiş günlerde öneri nasıl olurdu?{% endblock %}
+{% block title %}Geçmiş test{% endblock %}
+{% block page_title %}Geçmiş test: geçmiş günlerde öneri nasıl olurdu?{% endblock %}
 {% block crumbs %}<div class="crumbs">Geçmiş tarihler için, yalnızca o gün bilinen veriyle öneri üretilir ve gerçekleşen piyasa fiyatıyla karşılaştırılır.</div>{% endblock %}
 {% block content %}
 <form class="filters" method="get" style="margin-bottom:18px">
@@ -14,7 +14,7 @@
   <div class="panel"><div class="panel-body">{{ ui.empty("Backtest için yeterli veri yok", "Seçilen dönemde bu kategori için rakip ve kendi fiyat gözlemleri bulunamadı.") }}</div></div>
 {% else %}
 <div class="grid g-4">
-  {{ ui.stat("Öneri hatası (MAPE)", sm.mape_suggestion|pct(1), "Gerçekleşen piyasa fiyatına uzaklık", "target") }}
+  {{ ui.stat("Ortalama sapma (MAPE)", sm.mape_suggestion|pct(1), "Önerinin gerçekleşen piyasa fiyatına uzaklığı", "target") }}
   {{ ui.stat("Kıyas: bugünkü medyanı kopyalamak", sm.mape_naive|pct(1), ("Öneri " ~ ((sm.improvement_vs_naive_pct|abs)|num(1)) ~ " puan " ~ ("daha iyi" if sm.improvement_vs_naive_pct > 0 else "daha kötü")) if sm.improvement_vs_naive_pct is defined and sm.improvement_vs_naive_pct is not none else "", "chart") }}
   {{ ui.stat("Yön isabeti", sm.direction_hit_rate|pct(0) if sm.direction_hit_rate is not none else "—", "Piyasanın %2+ hareket ettiği " ~ sm.direction_n ~ " günde", "up") }}
   {{ ui.stat("Bant isabeti", sm.band_hit_rate|pct(0), "Gerçekleşen fiyat taban ile tavan arasında", "check") }}

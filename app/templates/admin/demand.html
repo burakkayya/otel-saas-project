@@ -16,14 +16,14 @@
 <div class="grid g-main-side" style="margin-top:18px">
   <div class="panel"><div class="panel-head"><div><h2>Etkinlikler</h2><p>PredictHQ'dan veya elle eklenen</p></div></div>
     <div class="panel-body flush"><div class="table-wrap"><table class="data"><thead><tr><th>Etkinlik</th><th>Tarih</th><th>Kategori</th><th class="num">Etki</th><th>Kaynak</th><th></th></tr></thead><tbody>
-      {% for e in events %}<tr><td><b>{{ e.name }}</b><div class="small muted">{{ e.district or 'Tüm il' }}</div></td><td class="small">{{ e.start_date|dt }} – {{ e.end_date|dt }}</td><td>{{ e.category }}</td><td class="num">{{ e.impact }}</td><td>{{ e.source }}</td>
+      {% for e in events %}<tr><td><b>{{ e.name }}</b><div class="small muted">{{ e.district or 'Tüm il' }}</div></td><td class="small">{{ e.start_date|dt }} – {{ e.end_date|dt }}</td><td>{{ EVENT_CATEGORY_LABELS.get(e.category, e.category) }}</td><td class="num">{{ e.impact }}</td><td>{{ e.source }}</td>
         <td class="num"><form method="post" action="/admin/talep/etkinlik/{{ e.id }}/sil" class="inline" data-confirm="{{ e.name }} silinsin mi?">{{ ui.csrf() }}<button class="btn sm ghost" type="submit" aria-label="Sil">{{ ui.icon('trash') }}</button></form></td></tr>
       {% else %}<tr><td colspan="6" class="muted">Etkinlik yok.</td></tr>{% endfor %}</tbody></table></div></div></div>
   <div class="panel"><div class="panel-head"><div><h2>Etkinlik ekle</h2><p>Kongre, düğün sezonu, yerel festival gibi API'de olmayanlar</p></div></div>
     <div class="panel-body"><form class="form" method="post" action="/admin/talep/etkinlik">{{ ui.csrf() }}<input type="hidden" name="province" value="{{ il }}">
       <div class="field"><label for="ev-name">Ad</label><input id="ev-name" name="name" required></div>
       <div class="two"><div class="field"><label for="ev-start_date">Başlangıç</label><input id="ev-start_date" type="date" name="start_date" required></div><div class="field"><label for="ev-end_date">Bitiş</label><input id="ev-end_date" type="date" name="end_date" required></div></div>
-      <div class="two"><div class="field"><label for="ev-category">Kategori</label><select id="ev-category" name="category">{% for c in ['festivals','concerts','conferences','expos','sports','community'] %}<option>{{ c }}</option>{% endfor %}</select></div>
+      <div class="two"><div class="field"><label for="ev-category">Kategori</label><select id="ev-category" name="category">{% for c in ['festivals','concerts','conferences','expos','sports','community'] %}<option value="{{ c }}">{{ EVENT_CATEGORY_LABELS[c] }}</option>{% endfor %}</select></div>
         <div class="field"><label for="ev-impact">Etki (0-100)</label><input id="ev-impact" type="number" name="impact" min="0" max="100" value="50"></div></div>
       <div class="field"><label for="ev-district">İlçe (isteğe bağlı)</label><input id="ev-district" name="district"></div>
       <button class="btn primary" type="submit">{{ ui.icon('plus') }}Ekle</button></form></div></div>
