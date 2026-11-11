@@ -26,7 +26,7 @@
 {% endif %}
 <div class="app">
   <aside class="sidebar" id="ana-menu" aria-label="Ana menü">
-    <a class="brand" href="{{ '/admin' if admin else '/panel' }}">{{ ui.brand_mark() }}{{ settings.app_name }}</a>
+    <a class="brand" href="{{ '/admin' if admin else '/panel' }}">{{ ui.brand_mark() }}<span class="brand-name">{{ settings.app_name }}</span></a>
     {% if not admin and hotel %}
     <div class="hotel-chip">{{ ui.avatar(hotel.name) }}<div><strong>{{ hotel.name }}</strong><span>{{ hotel.district ~ ', ' if hotel.district }}{{ hotel.province }}{% if hotel.star_rating %}, {{ hotel.star_rating }} yıldız{% endif %}</span></div></div>
     {% elif admin %}

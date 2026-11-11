@@ -38,14 +38,21 @@
     opts = opts || {};
     var ink2 = css("--ink-2"), grid = css("--grid"), axis = css("--axis"), surface = css("--surface"), ink = css("--ink");
     return {
-      responsive: true, maintainAspectRatio: false, animation: reduceMotion && reduceMotion.matches ? false : { duration: 250 },
+      responsive: true, maintainAspectRatio: false,
+      animation: reduceMotion && reduceMotion.matches ? false : {
+        duration: 520, easing: "easeOutQuart",
+        delay: function (c) { return c.type === "data" && c.mode === "default" ? Math.min(c.dataIndex * 9, 420) : 0; }
+      },
       interaction: { mode: opts.mode || "index", intersect: false },
       plugins: {
         legend: { display: false },
         tooltip: {
           backgroundColor: surface, titleColor: ink, bodyColor: ink2, borderColor: css("--line"), borderWidth: 1,
-          padding: 10, boxPadding: 4, usePointStyle: true,
+          padding: 12, boxPadding: 5, usePointStyle: true, cornerRadius: 10, caretSize: 0,
+          titleFont: { family: css("--font-display") || undefined, size: 13, weight: "700" }, bodyFont: { size: 12.5 },
+          footerColor: ink, footerFont: { size: 12, weight: "600" }, footerMarginTop: 8,
           callbacks: {
+            footer: function (items) { return opts.footer ? opts.footer(items) : ""; },
             title: function (items) { return items.length ? dateLabel(items[0].label, true) : ""; },
             label: function (ctx) {
               if (ctx.dataset.hideInTooltip) return null;
@@ -94,7 +101,15 @@
         ds.push({ label: "Taban", data: d.floor, borderColor: alpha(s1, .45), borderWidth: 1, pointRadius: 0, borderDash: [2, 3] });
         ds.push({ label: "Tavan", data: d.ceiling, borderColor: alpha(s1, .45), borderWidth: 1, pointRadius: 0, borderDash: [2, 3] });
       }
-      return { type: "line", data: { labels: d.labels, datasets: ds }, options: baseOptions("eur") };
+      var o = baseOptions("eur", { footer: function (items) {
+        var sug = null, own = null;
+        items.forEach(function (it) { if (it.dataset.label === "Önerilen fiyat") sug = it.parsed.y; if (it.dataset.label === "Mevcut fiyatınız") own = it.parsed.y; });
+        if (sug === null || own === null || !own) return "";
+        var diff = (sug / own - 1) * 100;
+        return "Öneri, fiyatınızın " + (diff >= 0 ? "+" : "−") + "%" + nf0.format(Math.abs(diff)) + (diff >= 0 ? " üstünde" : " altında");
+      } });
+      o.animation = false;
+      return { type: "line", data: { labels: d.labels, datasets: ds }, options: o };
     },
     /* Genel çizgi: {labels, unit, series:[{label, data, color, dash, fill}]} */
     line: function (d) {
@@ -107,8 +122,9 @@
         if (s.fill) ds.backgroundColor = function (cx) { return vgrad(cx.chart, c, .22, 0); };
         return ds;
       });
-      return { type: "line", data: { labels: d.labels, datasets: ds },
-        options: baseOptions(d.unit, { zero: d.zero, max: d.max, hardMax: d.hardMax }) };
+      var lo = baseOptions(d.unit, { zero: d.zero, max: d.max, hardMax: d.hardMax });
+      lo.animation = false;
+      return { type: "line", data: { labels: d.labels, datasets: ds }, options: lo };
     },
     /* Çubuk: {labels, unit, stacked, horizontal, series:[{label,data,color}], sequential:true} */
     bar: function (d) {
@@ -163,6 +179,21 @@
   /* Fareyle üzerine gelindiğinde dikey kılavuz çizgi ve "Bugün" işareti */
   var guidePlugin = {
     id: "orGuides",
+    beforeDatasetsDraw: function (chart) {
+      var area = chart.chartArea, x = chart.scales.x, labels = chart.data.labels || [];
+      if (!area || !x || chart.config.type === "scatter" || chart.options.indexAxis === "y" || labels.length < 10) return;
+      if (typeof labels[0] !== "string" || labels[0].length !== 10 || labels[0][4] !== "-") return;
+      var ctx = chart.ctx, step = labels.length > 1 ? Math.abs(x.getPixelForValue(1) - x.getPixelForValue(0)) : 0;
+      ctx.save();
+      ctx.fillStyle = css("--weekend") || "rgba(31,95,168,.06)";
+      labels.forEach(function (iso, i) {
+        var day = new Date(iso + "T00:00:00").getDay();
+        if (day !== 5 && day !== 6) return;
+        var cx = x.getPixelForValue(i), l = Math.max(area.left, cx - step / 2), r = Math.min(area.right, cx + step / 2);
+        if (r > l) ctx.fillRect(l, area.top, r - l, area.bottom - area.top);
+      });
+      ctx.restore();
+    },
     afterDatasetsDraw: function (chart, args, opts) {
       var ctx = chart.ctx, area = chart.chartArea, x = chart.scales.x;
       if (!area || !x) return;

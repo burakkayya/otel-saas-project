@@ -1,32 +1,48 @@
 {% extends "base.html" %}
 {% import "partials/ui.html" as ui with context %}
+{% block head %}<link rel="stylesheet" href="/static/css/site.css?v=1">{% endblock %}
 {% block body %}
-{{ ui.demo_banner() }}
-<header class="site-head">
-  <a class="brand" href="/">{{ ui.brand_mark() }}{{ settings.app_name }}</a>
-  <nav aria-label="Site menüsü">
-    <a href="/#nasil">Nasıl çalışır</a>
-    <a href="/#olcum">Ölçüm</a>
-    <a href="/fiyatlar">Paketler</a>
-    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Açık/koyu tema">{{ ui.icon('moon') }}</button>
-    {% if user %}
-      <a class="btn primary" href="{{ '/admin' if user.role == 'admin' else '/panel' }}">Panele git</a>
-    {% else %}
-      <a class="btn" href="/giris">Giriş yap</a>
-      <a class="btn primary" href="/kayit"><span class="cta-long">14 gün ücretsiz dene</span><span class="cta-short">Ücretsiz dene</span></a>
-    {% endif %}
-  </nav>
-</header>
-<main class="site" id="icerik">
+<div class="site-top {% block top_class %}{% endblock %}">
+  {{ ui.demo_banner() }}
+  <header class="site-head">
+    <a class="brand" href="/">{{ ui.brand_mark() }}<span class="brand-name">{{ settings.app_name }}</span></a>
+    <nav aria-label="Site menüsü">
+      <a href="/#urun">Ürün</a>
+      <a href="/#nasil">Nasıl çalışır</a>
+      <a href="/#olcum">Ölçüm</a>
+      <a href="/fiyatlar">Paketler</a>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Açık/koyu tema">{{ ui.icon('moon') }}</button>
+      {% if user %}
+        <a class="btn primary" href="{{ '/admin' if user.role == 'admin' else '/panel' }}">Panele git</a>
+      {% else %}
+        <a class="btn" href="/giris">Giriş yap</a>
+        <a class="btn primary" href="/kayit"><span class="cta-long">14 gün ücretsiz dene</span><span class="cta-short">Ücretsiz dene</span></a>
+      {% endif %}
+    </nav>
+  </header>
+</div>
+<main class="{% block main_class %}site{% endblock %}" id="icerik">
   {{ ui.flashes(flashes) }}
   {% block content %}{% endblock %}
-  <footer class="site-foot">
-    <span>{{ settings.app_name }}, Muğla ve Antalya pilot bölgeleri</span>
-    <a href="/fiyatlar">Paketler</a>
-    <a href="/yasal/gizlilik">Gizlilik</a>
-    <a href="/yasal/kvkk">KVKK</a>
-    <a href="/yasal/kullanim-kosullari">Kullanım koşulları</a>
-    <a href="/api/docs">API</a>
-  </footer>
 </main>
+<footer class="site-foot-band">
+  <div class="wrap site-foot">
+    <div class="foot-brand">
+      <a class="brand" href="/">{{ ui.brand_mark() }}<span class="brand-name">{{ settings.app_name }}</span></a>
+      <p>Otel fiyat kararını her sabah veriye bağlayan fiyat istihbaratı. Muğla ve Antalya.</p>
+    </div>
+    <nav aria-label="Alt menü">
+      <a href="/#urun">Ürün</a>
+      <a href="/fiyatlar">Paketler</a>
+      <a href="/giris">Giriş yap</a>
+      <a href="/kayit">Ücretsiz dene</a>
+    </nav>
+    <nav aria-label="Yasal">
+      <a href="/yasal/gizlilik">Gizlilik</a>
+      <a href="/yasal/kvkk">KVKK</a>
+      <a href="/yasal/kullanim-kosullari">Kullanım koşulları</a>
+      <a href="/api/docs">API</a>
+    </nav>
+  </div>
+</footer>
 {% endblock %}

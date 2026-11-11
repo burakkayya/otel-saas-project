@@ -50,10 +50,13 @@
 {%- endmacro %}
 
 {% macro brand_mark() -%}
+{# Logo işareti: radar halkası (Otel'in O'su), tarama dilimi ve dilimin bulduğu otel. scripts/make_brand_assets.py ile aynı çizim. #}
 <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
-  <circle cx="16" cy="13" r="6.5" fill="#f2b84b"/>
-  <path d="M3 21c3.2-2.4 6.4-2.4 9.6 0s6.4 2.4 9.6 0 6.4-2.4 6.8-1.6" fill="none" stroke="#5fb4ee" stroke-width="2.4" stroke-linecap="round"/>
-  <path d="M3 26.5c3.2-2.4 6.4-2.4 9.6 0s6.4 2.4 9.6 0 6.4-2.4 6.8-1.6" fill="none" stroke="#2a78d6" stroke-width="2.4" stroke-linecap="round"/>
+  <circle cx="16" cy="16" r="12.3" fill="none" stroke="currentColor" stroke-width="2.6"/>
+  <circle cx="16" cy="16" r="6.2" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".38"/>
+  <path class="bm-sweep" d="M16 16V3.7A12.3 12.3 0 0 1 26.65 9.85Z"/>
+  <circle class="bm-dot" cx="20.6" cy="10.4" r="2.25"/>
+  <circle cx="16" cy="16" r="1.9" fill="currentColor"/>
 </svg>
 {%- endmacro %}
 
@@ -239,6 +242,22 @@
     {% endfor %}
     <g class="radar-self"><title>{{ hotel_name }} (siz)</title><rect x="47.2" y="47.2" width="5.6" height="5.6" rx="1" transform="rotate(45 50 50)"/></g>
   </svg>
+</div>
+{%- endmacro %}
+
+{# Paket kartları: tanıtım ve paketler sayfasında ortak #}
+{% macro plan_cards(plans) -%}
+<div class="plans">
+  {% for p in plans %}
+  <article class="plan {{ 'featured' if loop.index == 2 }}">
+    {% if loop.index == 2 %}<p class="plan-flag">Önerimiz</p>{% endif %}
+    <h3 class="p-name">{{ p.name }}</h3>
+    <p class="p-target">{{ p.target }}</p>
+    <p class="p-price">€{{ p.monthly_price_eur|num }}<small> / ay</small></p>
+    <ul>{% for f in p.features or [] %}<li>{{ icon('check') }}<span>{{ f }}</span></li>{% endfor %}</ul>
+    <a class="btn lg {{ 'primary' if loop.index == 2 }}" href="/kayit?paket={{ p.code }}">14 gün ücretsiz başla</a>
+  </article>
+  {% endfor %}
 </div>
 {%- endmacro %}
 

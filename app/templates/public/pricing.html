@@ -1,45 +1,54 @@
 {% extends "partials/public_layout.html" %}
 {% block title %}Paketler{% endblock %}
+{% block main_class %}site-full{% endblock %}
+{% macro yes() %}<span class="yes">{{ ui.icon('check') }}<span class="sr-only">Var</span></span>{% endmacro %}
 {% block content %}
-<section style="padding:40px 0 20px">
-  <h1 style="font-size:clamp(2rem,4vw,3rem);max-width:18ch">Tesisinizin büyüklüğüne göre aylık paket.</h1>
-  <p class="ink-2" style="max-width:56ch;margin-top:12px;font-size:1.05rem">Tüm paketler 14 gün ücretsiz denemeyle başlar. Kredi kartı istenmez. Paketi istediğiniz zaman panelden değiştirebilirsiniz.</p>
-  <div class="plans">
-    {% for p in plans %}
-    <div class="plan {{ 'featured' if loop.index == 2 }}">
-      <div class="p-name">{{ p.name }}</div>
-      <div class="p-target">{{ p.target }}</div>
-      <div class="p-price">€{{ p.monthly_price_eur|num }}<small> / ay</small></div>
-      <ul>{% for f in p.features or [] %}<li>{{ f }}</li>{% endfor %}</ul>
-      <a class="btn {{ 'primary' if loop.index == 2 }}" href="/kayit?paket={{ p.code }}">{{ p.name }} ile başla</a>
-    </div>
-    {% endfor %}
+<section class="wrap page-head">
+  <h1>Bir gecelik oda fiyatına, bir ay boyunca doğru fiyat.</h1>
+  <p>Her paket 14 gün ücretsiz başlar, kredi kartı istenmez. Sözleşme yok: paketinizi panelden istediğiniz gün değiştirir ya da bırakırsınız.</p>
+  {{ ui.plan_cards(plans) }}
+  <p class="fineprint">Fiyatlar aylıktır, KDV dahil değildir.</p>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <h2 class="band-title">Paketleri karşılaştırın.</h2>
+    <div class="panel compare"><div class="table-wrap">
+      <table class="data">
+        <thead><tr><th>Özellik</th>{% for p in plans %}<th class="num">{{ p.name }}</th>{% endfor %}</tr></thead>
+        <tbody>
+          <tr><td>Rakip seti büyüklüğü</td>{% for p in plans %}<td class="num">{{ p.max_competitors }} otel</td>{% endfor %}</tr>
+          <tr><td>Oda kategorisi</td>{% for p in plans %}<td class="num">{{ p.max_room_types }}</td>{% endfor %}</tr>
+          <tr><td>İleriye dönük öneri ufku</td>{% for p in plans %}<td class="num">{{ p.horizon_days }} gün</td>{% endfor %}</tr>
+          <tr><td>Günlük fiyat önerisi, taban, tavan ve gerekçe</td>{% for p in plans %}<td class="num">{{ yes() }}</td>{% endfor %}</tr>
+          <tr><td>Pazar fiyat ızgarası ve CSV raporlar</td>{% for p in plans %}<td class="num">{{ yes() }}</td>{% endfor %}</tr>
+          <tr><td>Geriye dönük test (backtest)</td>{% for p in plans %}<td class="num">{{ yes() }}</td>{% endfor %}</tr>
+          <tr><td>Talep sinyalleri: uçuş, etkinlik, tatil</td>{% for p in plans %}<td class="num">{% if p.monthly_price_eur >= 100 %}{{ yes() }}{% else %}Özet{% endif %}</td>{% endfor %}</tr>
+          <tr><td>Kontrol grubuyla etki ölçümü</td>{% for p in plans %}<td class="num">{% if p.monthly_price_eur >= 300 %}{{ yes() }}{% else %}Uyum oranı{% endif %}</td>{% endfor %}</tr>
+        </tbody>
+      </table>
+    </div></div>
   </div>
 </section>
-<section class="section">
-  <h2>Paket karşılaştırması</h2>
-  <div class="panel" style="margin-top:20px"><div class="table-wrap">
-    <table class="data">
-      <thead><tr><th>Özellik</th>{% for p in plans %}<th class="num">{{ p.name }}</th>{% endfor %}</tr></thead>
-      <tbody>
-        <tr><td>Rakip seti büyüklüğü</td>{% for p in plans %}<td class="num">{{ p.max_competitors }}</td>{% endfor %}</tr>
-        <tr><td>Oda kategorisi</td>{% for p in plans %}<td class="num">{{ p.max_room_types }}</td>{% endfor %}</tr>
-        <tr><td>Öneri ufku (gün)</td>{% for p in plans %}<td class="num">{{ p.horizon_days }}</td>{% endfor %}</tr>
-        <tr><td>Günlük fiyat önerisi, taban ve tavan</td>{% for p in plans %}<td class="num">Var</td>{% endfor %}</tr>
-        <tr><td>Pazar fiyat ızgarası ve CSV raporlar</td>{% for p in plans %}<td class="num">Var</td>{% endfor %}</tr>
-        <tr><td>Talep sinyalleri (uçuş, etkinlik, tatil)</td>{% for p in plans %}<td class="num">{{ 'Var' if p.monthly_price_eur >= 100 else 'Özet' }}</td>{% endfor %}</tr>
-        <tr><td>Kontrol grubuna göre etki ölçümü</td>{% for p in plans %}<td class="num">{{ 'Var' if p.monthly_price_eur >= 300 else 'Uyum oranı' }}</td>{% endfor %}</tr>
-      </tbody>
-    </table>
-  </div></div>
+
+<section class="band band-tint">
+  <div class="wrap">
+    <h2 class="band-title">Karar vermeden önce.</h2>
+    <div class="faq">
+      <details open><summary>Otelimin sistemine bağlanıyor musunuz?</summary><p>Hayır, gerek de yok. {{ settings.app_name }} yalnızca halka açık fiyat ve envanter verisiyle çalışır. Önerilen fiyatı kendi PMS'inize ya da kanal yöneticinize siz girersiniz; kontrol her zaman sizdedir.</p></details>
+      <details><summary>Kurulum ne kadar sürer?</summary><p>Beş dakika. Otelinizin adını ve adresini yazar, önerdiğimiz rakip setini onaylarsınız. İlk önerileriniz aynı gün panelinizde olur.</p></details>
+      <details><summary>Öneriler neye dayanıyor?</summary><p>Rakip setinizin aynı oda kategorisindeki fiyat dağılımına, rakiplerde kalan oda sayısına, bölgenizdeki talep skoruna ve mevsime. Her önerinin yanında onu oluşturan etkenler açıkça yazar.</p></details>
+      <details><summary>İşe yaradığını nasıl bileceğim?</summary><p>Panelinizde üç ayrı ölçüm bulunur: geriye dönük test, öneriye uyum oranı ve aynı bölgedeki benzer otellerden oluşan kontrol grubuyla karşılaştırma. Etki rakamları tahmini olarak, güven düzeyiyle birlikte raporlanır.</p></details>
+      <details><summary>Hangi bölgelerde çalışıyor?</summary><p>Muğla ve Antalya'da. Bodrum, Marmaris, Fethiye, Kaş, Belek ve çevresindeki tesisler bugün kullanabilir.</p></details>
+      <details><summary>Otelim listede yoksa?</summary><p>Yeni kayıt açarız. Konumunuzu adresinizden bulur, önerileri bölgenizdeki rakip dağılımına göre üretiriz.</p></details>
+    </div>
+  </div>
 </section>
-<section class="section">
-  <h2>Sık sorulanlar</h2>
-  <div class="honest">
-    <div><h3>Otelimin sistemine bağlanıyor musunuz?</h3><p class="ink-2">Hayır. Yalnızca halka açık fiyat ve envanter verisini kullanırız. Önerilen fiyatı kendi PMS'inize veya kanal yöneticinize siz girersiniz.</p></div>
-    <div><h3>Otelim listede yoksa?</h3><p class="ink-2">Yalnızca OTA'larda listelenen tesisleri otomatik izleyebiliyoruz. Listede olmayan tesisler için öneriler rakip dağılımına göre üretilir.</p></div>
-    <div><h3>Sonuçları nasıl ölçüyorsunuz?</h3><p class="ink-2">Backtest, öneriye uyum oranı ve aynı bölgedeki benzer otellerden oluşan kontrol grubuyla. Tüm etki rakamları tahmini olarak gösterilir.</p></div>
-    <div><h3>Hangi bölgelerde çalışıyorsunuz?</h3><p class="ink-2">Pilot dönemde Muğla ve Antalya. Türkiye geneline açılım yol haritamızda.</p></div>
+
+<section class="band band-deep closing">
+  <div class="wrap closing-grid">
+    <div><h2 class="band-title">İlk 14 gün bizden. Fiyat kararı sizden.</h2></div>
+    <div><a class="btn lg primary closing-btn" href="/kayit">Ücretsiz denemeyi başlat</a></div>
   </div>
 </section>
 {% endblock %}

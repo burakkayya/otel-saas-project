@@ -2,7 +2,7 @@
 {% block title %}Giriş{% endblock %}
 {% block content %}
 <h1>Tekrar hoş geldiniz</h1>
-<p class="sub">Panelinize giriş yapın.</p>
+<p class="sub">Bugünün fiyat önerileri panelinizde hazır.</p>
 {% if error %}<div class="alert error" role="alert" style="margin-bottom:16px">{{ ui.icon('alert') }}<span>{{ error }}</span></div>{% endif %}
 <form class="form" method="post" action="/giris">
   {{ ui.csrf() }}

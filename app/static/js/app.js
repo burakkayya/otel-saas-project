@@ -95,15 +95,51 @@
     document.querySelectorAll("[data-count]").forEach(function (el) {
       var target = parseFloat(el.getAttribute("data-count"));
       if (isNaN(target) || reduce) return;
-      var start = performance.now(), dur = 700, from = target * 0.82;
+      var dur = 900, from = target * 0.82, delay = parseInt(el.getAttribute("data-count-delay") || "0", 10);
       var fmt = new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 0 });
-      function step(now) {
-        var k = Math.min(1, (now - start) / dur), e = 1 - Math.pow(1 - k, 3);
-        el.textContent = "€" + fmt.format(from + (target - from) * e);
-        if (k < 1) requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
+      setTimeout(function () {
+        var start = performance.now();
+        function step(now) {
+          var k = Math.min(1, (now - start) / dur), e = 1 - Math.pow(2, -10 * k);
+          el.textContent = "€" + fmt.format(k < 1 ? from + (target - from) * e : target);
+          if (k < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }, delay);
     });
+
+    // Görünür olunca açılan öğeler (ürün görüntüleri). JS ya da IntersectionObserver yoksa içerik zaten görünür kalır.
+    var reveals = document.querySelectorAll(".reveal");
+    if (reveals.length && !reduce) {
+      if ("IntersectionObserver" in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
+        }, { rootMargin: "0px 0px -12% 0px", threshold: 0.12 });
+        reveals.forEach(function (el) { io.observe(el); });
+      } else {
+        reveals.forEach(function (el) { el.classList.add("in"); });
+      }
+    }
+
+    // Sade / ayrıntılı görünüm (panel): tercih tarayıcıda saklanır
+    var dens = document.querySelectorAll("[data-density]");
+    if (dens.length) {
+      var applyDensity = function (v) {
+        document.body.setAttribute("data-view", v);
+        dens.forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-density") === v ? "true" : "false"); });
+      };
+      var saved = null;
+      try { saved = localStorage.getItem("or-view"); } catch (e) { /* depolama kapalı */ }
+      applyDensity(saved === "sade" ? "sade" : "ayrinti");
+      dens.forEach(function (b) {
+        b.addEventListener("click", function () {
+          var v = b.getAttribute("data-density");
+          applyDensity(v);
+          try { localStorage.setItem("or-view", v); } catch (e) { /* depolama kapalı */ }
+          if (v === "ayrinti" && window.ORCharts) window.ORCharts.render();
+        });
+      });
+    }
 
     // Çalışan iş varsa veri hattı sayfasını kısa aralıklarla yenile
     if (document.querySelector("[data-refresh-while-running]")) {
