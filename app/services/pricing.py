@@ -1,6 +1,7 @@
 """Fiyat öneri motoru. Doküman 5.4.
 
-Girdiler: rakip medyanı ve dağılımı, kalan oda sinyali, talep skoru, mevsim katsayısı.
+Girdiler: rakip medyanı ve dağılımı, abone ve rakiplerin tahmini doluluğu, kalan oda hızı,
+talep skoru, mevsim katsayısı.
 Çıktılar: önerilen fiyat, taban, tavan, gerekçe (JSON). Öneri taban/tavan dışına çıkamaz.
 
 "Maksimum kâr" hedefi, ödeme istekliliği üst sınırı tahmini olarak uygulanır. Bu üst
@@ -20,6 +21,7 @@ from app.models import AppSetting, Hotel, HotelSettings, PriceSuggestion, RoomTy
 from app.services.compset import build_compset
 from app.services.demand import demand_level, demand_map
 from app.services.market import category_price_by_hotel, compset_ids, latest_observations
+from app.services.occupancy import compset_occupancy
 from app.services.seasonality import coefficient_for, monthly_coefficients, season_label
 
 MODEL_VERSION = "v1.0-rules"
@@ -28,6 +30,8 @@ DEFAULT_WEIGHTS = {
     "demand": 0.05,      # talep skoru 100 iken +%5, 0 iken -%5
     "inventory": 0.06,   # rakiplerin hızla dolması
     "season": 0.04,      # medyanın ötesindeki mevsim etkisi (küçük; medyan zaten mevsimi yansıtır)
+    "occupancy": 0.08,   # abone rakiplerden 25 puan daha doluysa +%8, geride ise -%8
+    "compression": 0.05, # pazar sıkışması (rakipler %85+ dolu) ya da son dakika boşluğu
     "max_up": 0.30,
     "max_down": 0.25,
 }
@@ -54,6 +58,25 @@ class PricingInputs:
     ceiling_margin_pct: float = 5.0
     fallback_price: float | None = None  # rakip verisi yoksa (bölge medyanı)
     position_index: float = 1.0  # otelin tarihsel fiyatı / rakip medyanı (konumlama)
+    own_occ: float | None = None   # abone otelin tahmini doluluğu (0..1)
+    comp_occ: float | None = None  # rakiplerin medyan tahmini doluluğu (0..1)
+    own_occ_7d: float | None = None
+    comp_occ_7d: float | None = None
+
+
+def occupancy_adjustment(own: float | None, comp: float | None, lead_days: int, w_occ: float,
+                         w_comp: float) -> tuple[float, float]:
+    """(göreli doluluk ayarı, sıkışma ayarı). Veri yoksa (0, 0)."""
+    adj_rel = 0.0
+    if own is not None and comp is not None:
+        adj_rel = w_occ * max(-1.0, min(1.0, (own - comp) / 0.25))
+    adj_comp = 0.0
+    if comp is not None:
+        if comp >= 0.85:
+            adj_comp = w_comp * min(1.0, (comp - 0.85) / 0.15)
+        elif comp < 0.35 and lead_days <= 14:
+            adj_comp = -w_comp * (0.35 - comp) / 0.35
+    return adj_rel, adj_comp
 
 
 @dataclass
@@ -112,7 +135,9 @@ def compute(inp: PricingInputs, weights: dict | None = None) -> PricingResult:
     adj_demand = w["demand"] * (inp.demand_score - 50) / 50
     adj_inv = w["inventory"] * pressure
     adj_season = w["season"] * (inp.season_coef - 1)
-    total = max(-w["max_down"], min(w["max_up"], mult * (adj_demand + adj_inv + adj_season)))
+    adj_occ, adj_compress = occupancy_adjustment(inp.own_occ, inp.comp_occ, inp.lead_days,
+                                                 w.get("occupancy", 0.0), w.get("compression", 0.0))
+    total = max(-w["max_down"], min(w["max_up"], mult * (adj_demand + adj_inv + adj_season + adj_occ + adj_compress)))
     raw = median * (1 + total)
 
     floor = p25 * (1 - inp.floor_below_p25_pct / 100)
@@ -141,6 +166,12 @@ def compute(inp: PricingInputs, weights: dict | None = None) -> PricingResult:
         parts.append(f"Rakip medyan fiyat son 7 günde %{abs(median_change):.0f} {'arttı' if median_change > 0 else 'azaldı'}")
     else:
         parts.append("Rakip medyan fiyat son 7 günde yatay")
+    if inp.comp_occ is not None and inp.own_occ is not None:
+        parts.append(f"tahmini doluluk sizde %{inp.own_occ * 100:.0f}, rakiplerde %{inp.comp_occ * 100:.0f}")
+    elif inp.comp_occ is not None:
+        parts.append(f"rakiplerin tahmini doluluğu %{inp.comp_occ * 100:.0f}")
+    if inp.comp_occ is not None and inp.comp_occ >= 0.85:
+        parts.append("pazar sıkışıyor")
     parts.append(f"talep skoru {demand_level(inp.demand_score).lower()} ({inp.demand_score:.0f})")
     if abs(pressure) >= 0.15:
         parts.append("rakiplerde kalan oda hızla azalıyor" if pressure > 0 else "rakiplerde kalan oda artıyor")
@@ -177,8 +208,15 @@ def compute(inp: PricingInputs, weights: dict | None = None) -> PricingResult:
             "demand": round(mult * adj_demand * 100, 2),
             "inventory": round(mult * adj_inv * 100, 2),
             "season": round(mult * adj_season * 100, 2),
+            "occupancy": round(mult * adj_occ * 100, 2),
+            "compression": round(mult * adj_compress * 100, 2),
             "total": round(total * 100, 2),
         },
+        "own_occ": inp.own_occ,
+        "comp_occ": inp.comp_occ,
+        "own_occ_7d": inp.own_occ_7d,
+        "comp_occ_7d": inp.comp_occ_7d,
+        "occ_note": "Doluluk satış kanalındaki açık oda sayısından tahmin edilir; kesin değer değildir.",
         "strategy": inp.strategy,
         "own_price": inp.own_price,
         "change_vs_own_pct": change_vs_own,
@@ -241,6 +279,7 @@ def generate_for_hotel(
         coefs = monthly_coefficients(db, hotel.province, hotel.district, today=as_of)["coef"]
     own_rts = list(db.execute(select(RoomType).where(RoomType.hotel_id == hotel.id)).scalars())
     own_latest = latest_observations(db, [r.id for r in own_rts], start, end, as_of)
+    occ = compset_occupancy(db, hotel.id, comp_ids, start, end, as_of)
 
     cache: dict[str, tuple] = {}
     pi_cache: dict[str, float] = {}
@@ -281,6 +320,10 @@ def generate_for_hotel(
                 floor_below_p25_pct=float(hs.floor_below_p25_pct) if hs else 10.0,
                 ceiling_margin_pct=float(hs.ceiling_margin_pct) if hs else 5.0,
                 position_index=pi_cache[cat],
+                own_occ=(occ.get(d) or {}).get("own"),
+                comp_occ=(occ.get(d) or {}).get("comp"),
+                own_occ_7d=(occ.get(d) or {}).get("own_7d"),
+                comp_occ_7d=(occ.get(d) or {}).get("comp_7d"),
             )
             res = compute(inp, weights)
             res.rationale["as_of"] = as_of.isoformat()

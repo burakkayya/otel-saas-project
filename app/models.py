@@ -169,6 +169,46 @@ class AppliedObservation(Base):
     within_tolerance: Mapped[bool | None] = mapped_column(Boolean)
 
 
+class StayOutcome(Base):
+    """Karar birimi (oda tipi × konaklama tarihi): öneri uygulandı mı (otomatik tespit) ve sonucu ne oldu.
+
+    Doluluk ve gelir alanları satış kanalı envanterinden türetilen TAHMİNLERDİR."""
+
+    __tablename__ = "stay_outcomes"
+    __table_args__ = (
+        UniqueConstraint("room_type_id", "stay_date"),
+        CheckConstraint("status IN ('applied','partial','not_applied','unobserved')", name="ck_outcome_status"),
+    )
+
+    id: Mapped[int] = mapped_column(BigId, primary_key=True, autoincrement=True)
+    hotel_id: Mapped[int] = mapped_column(ForeignKey("hotels.id", ondelete="CASCADE"), nullable=False, index=True)
+    room_type_id: Mapped[int] = mapped_column(ForeignKey("room_types.id", ondelete="CASCADE"), nullable=False)
+    stay_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    suggestion_id: Mapped[int | None] = mapped_column(ForeignKey("price_suggestions.id", ondelete="SET NULL"))
+    status: Mapped[str] = mapped_column(Text, nullable=False, default="unobserved")
+    first_suggested_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    applied_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    suggested_price: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
+    price_before: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
+    observed_price: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
+    own_occ_start: Mapped[Decimal | None] = mapped_column(Numeric(5, 3))
+    own_occ_end: Mapped[Decimal | None] = mapped_column(Numeric(5, 3))
+    comp_occ_start: Mapped[Decimal | None] = mapped_column(Numeric(5, 3))
+    comp_occ_end: Mapped[Decimal | None] = mapped_column(Numeric(5, 3))
+    comp_price: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
+    revpar_index: Mapped[Decimal | None] = mapped_column(Numeric(6, 3))
+    is_final: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    evaluated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
+
+    @property
+    def relative_pickup(self) -> float | None:
+        vals = (self.own_occ_start, self.own_occ_end, self.comp_occ_start, self.comp_occ_end)
+        if any(v is None for v in vals):
+            return None
+        return round((float(self.own_occ_end) - float(self.own_occ_start))
+                     - (float(self.comp_occ_end) - float(self.comp_occ_start)), 3)
+
+
 class InventoryEvent(Base):
     __tablename__ = "inventory_events"
     __table_args__ = (

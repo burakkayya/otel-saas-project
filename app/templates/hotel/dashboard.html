@@ -29,7 +29,8 @@
     <div class="meta">
       <span>Mevcut fiyatınız <b>{{ t.own|eur }}</b></span>
       <span>Rakip medyanı <b>{{ t.median|eur }}</b></span>
-      {% if t.own_available is not none %}<span>Kalan oda <b>{{ t.own_available }}</b></span>{% endif %}
+      {% if occ.tonight.own is not none %}<span>Tahmini doluluğunuz <b>%{{ (occ.tonight.own * 100)|round|int }}</b></span>{% endif %}
+      {% if occ.tonight.comp is not none %}<span>Rakiplerin <b>%{{ (occ.tonight.comp * 100)|round|int }}</b></span>{% endif %}
     </div>
   </div>
   <div>
@@ -37,7 +38,7 @@
       <div class="lbl"><span>Fiyat bandı ve konumunuz</span></div>
       {{ ui.range_bar(t.floor, t.ceiling, t.suggested, t.own, t.median) }}
     </div>
-    <div class="hero-actions">{% if t.action == 'applied' %}<span class="badge good">{{ ui.icon('check') }}Uygulandı</span>{% else %}<form method="post" action="/panel/oneriler/{{ t.id }}/aksiyon" class="inline">{{ ui.csrf() }}<input type="hidden" name="action" value="applied"><input type="hidden" name="next" value="/panel"><button class="btn apply" type="submit" title="Fiyatı kendi sistemimde uyguladım">{{ ui.icon('check') }}Uyguladım</button></form>{% endif %}<a class="btn ghost-light" href="/panel/oneriler/{{ t.id }}">Gerekçeyi incele</a><a class="btn ghost-light" href="/panel/oneriler?gorunum=takvim">Takvim</a></div>
+    <div class="hero-actions">{{ ui.outcome_badge(t.outcome, true) }}<a class="btn ghost-light" href="/panel/oneriler/{{ t.id }}">Gerekçeyi incele</a><a class="btn ghost-light" href="/panel/oneriler?gorunum=takvim">Takvim</a></div>
   </div>
 </section>
 {% if tonight|length > 1 %}
@@ -54,6 +55,26 @@
 <div class="panel"><div class="panel-body">{{ ui.empty("Bugün için öneri yok", "Rakip setiniz hazır olduğunda ilk öneriler oluşturulur.", "/panel/rakipler", "Rakip setine git") }}</div></div>
 {% endif %}
 
+<section class="panel occ-panel" style="margin-top:18px" aria-labelledby="occ-title">
+  <div class="panel-head">
+    <div><h2 id="occ-title">Doluluk: siz ve rakipleriniz</h2><p>Satış kanalındaki açık oda sayısından tahmin edilir; kesin değer değildir. Önümüzdeki 30 gün.</p></div>
+    {% set oe = occ.tonight.own_est %}
+    {% if oe %}<div class="actions">{{ ui.conf_badge(oe.confidence) }}</div>{% endif %}
+  </div>
+  <div class="panel-body">
+    <div class="occ-kpis">
+      <div class="occ-kpi"><span class="lbl">Bu gece, siz</span><b>{{ ('%' ~ (occ.tonight.own * 100)|round|int) if occ.tonight.own is not none else '—' }}</b>{% if oe %}<small>aralık %{{ (oe.low * 100)|round|int }}–{{ (oe.high * 100)|round|int }}{% if oe.closed %} · satışa kapalı{% endif %}</small>{% endif %}</div>
+      <div class="occ-kpi"><span class="lbl">Bu gece, rakip medyanı</span><b>{{ ('%' ~ (occ.tonight.comp * 100)|round|int) if occ.tonight.comp is not none else '—' }}</b>{% if occ.tonight.comp_n %}<small>{{ occ.tonight.comp_n }} rakipten</small>{% endif %}</div>
+      <div class="occ-kpi"><span class="lbl">7 gün ortalaması</span><b>{{ ('%' ~ occ.week_own) if occ.week_own is not none else '—' }} <span class="ink-2">/ {{ ('%' ~ occ.week_comp) if occ.week_comp is not none else '—' }}</span></b><small>siz / rakipler</small></div>
+      <div class="occ-kpi"><span class="lbl">Son 7 günde doluluk artışı</span><b>{{ ('%+d'|format((occ.tonight.own_7d * 100)|round|int) ~ ' puan') if occ.tonight.own_7d is not none else '—' }}</b><small>rakipler {{ ('%+d'|format((occ.tonight.comp_7d * 100)|round|int) ~ ' puan') if occ.tonight.comp_7d is not none else '—' }}</small></div>
+    </div>
+    <div class="legend"><span><i style="background:var(--series-1)"></i>Siz (tahmini)</span><span><i style="background:var(--series-3)"></i>Rakip medyanı (tahmini)</span></div>
+    {{ ui.chart("line", {"labels": occ.labels, "unit": "pct", "hardMax": 100, "series": [
+        {"label": "Siz", "data": occ.own, "color": "series-1"},
+        {"label": "Rakip medyanı", "data": occ.comp, "color": "series-3"}]}, "dash-occ", "short", "Tahmini doluluk, siz ve rakip medyanı", true) }}
+  </div>
+</section>
+
 <div class="grid g-4 detail-only" style="margin-top:18px">
   {{ ui.kpi("Önümüzdeki 30 gün ort. öneri", k.sug_avg|eur, "tag",
             ("Mevcut ortalamanıza göre " ~ (k.sug_vs_own|pct(1, true))) if k.sug_vs_own is not none else "Mevcut fiyat gözlenmedi",
@@ -62,8 +83,8 @@
             data.chart.median[:30], "series-3", "aqua") }}
   {{ ui.kpi("Talep skoru (7 gün ort.)", k.demand_7d|num if k.demand_7d is not none else "—", "activity", "0-100 arası; 55 üzeri yüksek",
             data.chart.demand[:30], "series-4", "warn") }}
-  {{ ui.kpi("Öneriye uyum (60 gün)", uptake.rate|pct(0) if uptake.rate is not none else "—", "check", uptake.total|num ~ " fiyat gözlemi",
-            uptake.weekly|map(attribute='rate')|list, "series-3", "good") }}
+  {{ ui.kpi("Uygulanan öneri (tespit)", outcome.applied_rate|pct(0) if outcome.applied_rate is not none else "—", "check",
+            "Fiyatınızın gözlendiği " ~ outcome.observed|num ~ " günden", uptake.weekly|map(attribute='rate')|list, "series-3", "good") }}
 </div>
 
 <div class="panel detail-only" style="margin-top:18px">

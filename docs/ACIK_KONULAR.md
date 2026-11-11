@@ -15,6 +15,7 @@ Yapılanlar için: [`YAPILANLAR.md`](YAPILANLAR.md).
 | 1.6 | KVKK: aydınlatma metni, gizlilik politikası, kullanım koşulları **taslak**. | K | Hukukçu onayı; VERBİS kaydı gerekip gerekmediği; veri işleme sözleşmesi (LLM ve barındırma sağlayıcıları için). |
 | 1.7 | LLM ile oda eşleme hangi servisle yapılacak (doküman açık soru #6). | O | Kod Anthropic Messages API'si için yazıldı (`LLM_API_KEY`, `LLM_MODEL`); yalnızca oda adı gönderiliyor. Maliyet ve gizlilik değerlendirmesi yapılmalı. Anahtar yoksa belirsiz adlar "Diğer" + inceleme kuyruğu. |
 | 1.8 | Booking.com ve aggregator verisinin ticari kullanımı. | K | Kaynak API'nin hangi OTA'lardan veri sağladığı ve yeniden kullanım hakkı yazılı olarak teyit edilmeli. |
+| 1.9 | **Google Trends API (alfa) — not alındı.** Kaynak pazarlarda (DE, UK, RU, PL, NL) "Antalya/Bodrum otel" arama ilgisi en güçlü erken talep sinyali. Resmi API başvuruyla (sınırlı pilot): https://developers.google.com/search/apis/trends | Y | Başvuru yapılacak. Onaylanana kadar başvurusuz yol: SerpApi veya DataForSEO üzerinden Google Trends (üçüncü taraf, hukuk teyidi gerekir). |
 
 ## 2. Ürün ve iş modeli
 

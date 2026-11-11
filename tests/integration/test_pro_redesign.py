@@ -74,16 +74,9 @@ def test_reveal_hidden_state_requires_running_js():
     assert 'classList.add("reveal-ready")' in js and "@media print { .reveal" in css
 
 
-def test_hero_apply_marks_suggestion_and_returns_to_dashboard(hotel_browser):
-    """Kahraman alandaki 'Uyguladım' öneriyi işaretler, panele döner ve düğme rozetle yer değiştirir."""
-    import re
-
+def test_hero_shows_detected_status_instead_of_manual_button(hotel_browser):
+    """Kahraman alanda elle 'Uyguladım' yok; sistemin tespit ettiği durum rozeti var."""
     html = hotel_browser.get("/panel").text
     hero = html.split('class="hero-rec"', 1)[1].split("</section>", 1)[0]
-    m = re.search(r'action="(/panel/oneriler/(\d+)/aksiyon)"', hero)
-    assert m, "kahraman alanda Uyguladım formu yok"
-    r = hotel_browser.post(m.group(1), {"action": "applied", "next": "/panel"})
-    assert r.status_code == 303 and r.headers["location"] == "/panel"
-    hero = hotel_browser.get("/panel").text.split('class="hero-rec"', 1)[1].split("</section>", 1)[0]
-    assert "Uygulandı" in hero and "/aksiyon" not in hero
-    hotel_browser.post(m.group(1), {"action": "reset", "next": "/panel"})
+    assert "/aksiyon" not in hero and "Uyguladım" not in hero
+    assert any(s in hero for s in ("Uygulandı", "Kısmen uygulandı", "Uygulanmadı", "Henüz gözlenmedi"))

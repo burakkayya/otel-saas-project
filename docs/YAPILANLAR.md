@@ -259,3 +259,20 @@ Instrument Sans, rakip radarı); tanıtım yüzeyleri ve panelin ana anları gü
 - "Backtest" yerine "Geçmiş test", MAPE yerine "Ortalama sapma"; pazar ızgarasında satır başlıkları ve tablo başlığı.
 
 Testler: 304 birim/entegrasyon (yeni `tests/integration/test_open_items.py`), 11 E2E; 180 görünümde 0 sorun.
+
+## 13. Doluluk motoru ve otomatik uygulama tespiti (11 Kasım 2026)
+
+Tasarım: `docs/superpowers/plans/2026-11-11-doluluk-motoru.md`.
+- **Tahmini doluluk** (`app/services/occupancy.py`): abone otel ve her rakip için satış kanalındaki açık oda
+  sayısından; kanal kotası uzak tarihlerdeki en yüksek açık oda toplamının %90'lık dilimi. Aralık ve güven
+  düzeyiyle verilir; tüm oda tipleri kapalıysa "satışa kapalı" işaretlenir.
+- **Motor:** göreli doluluk (abone − rakip medyanı) ve pazar sıkışması iki yeni ağırlık olarak eklendi
+  (`occupancy` 0,08, `compression` 0,05). Gerekçe metni ve şelale grafiği doluluğu gösteriyor.
+- **"Uyguladım" kaldırıldı.** Uygulama satış kanalında gözlenen fiyattan otomatik tespit ediliyor
+  (`stay_outcomes`: uygulandı / kısmen / uygulanmadı / gözlenmedi).
+- **Kârlılık:** her karar biriminde RevPAR endeksi (abone ÷ rakip medyanı); uygulanan ve uygulanmayan günler
+  karşılaştırılıyor (Uyum ve etki ekranı).
+- **Geri besleme:** haftalık `weights_tune` işi, uygulanan artışlar pay kaybettiriyorsa artış ağırlıklarını
+  %10 kısıyor, kaybettirmiyorsa ve pazar doluysa açıyor; sınır varsayılanın 0,5–1,5 katı; denetim kaydına yazılıyor.
+
+Testler: 316 birim/entegrasyon, 11 E2E; değişen 8 ekranın 32 görünümünde 0 sorun.

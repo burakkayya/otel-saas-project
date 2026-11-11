@@ -122,14 +122,14 @@ def test_hotel_navigation_and_charts(page):
     assert not page.errors, page.errors
 
 
-def test_apply_suggestion_from_list(page):
+def test_suggestion_list_shows_detected_status(page):
+    """Öneri listesinde elle işaretleme yok; her satırda sistemin tespit ettiği durum var."""
     page.login("otel@otelradar.local", "Demo1234!")
     page.go("/panel/oneriler")
-    btn = page.page.locator("button:has-text('Uyguladım')").first
-    btn.click()
-    page.page.wait_for_load_state("networkidle")
-    assert page.page.locator(".alert.success").count() == 1
-    assert page.page.locator("text=Uygulandı").count() >= 1
+    assert page.page.locator("button:has-text('Uyguladım')").count() == 0
+    statuses = page.page.locator("td.cell-actions .badge")
+    assert statuses.count() >= 5
+    assert not page.errors, page.errors
 
 
 def test_theme_toggle_persists(page):

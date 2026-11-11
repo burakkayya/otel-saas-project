@@ -16,13 +16,11 @@
       <div class="lbl"><span>Fiyat bandı ve konumunuz</span></div>
       {{ ui.range_bar(s.price_floor, s.price_ceiling, s.suggested_price, own.price_eur if own else None, r.comp_median) }}
     </div>
-    <div class="hero-actions">
-    {% if s.user_action %}
-      <span class="badge {{ 'good' if s.user_action == 'applied' else '' }}">{{ 'Uygulandı' if s.user_action == 'applied' else 'Yok sayıldı' }}</span>
-      <form method="post" action="/panel/oneriler/{{ s.id }}/aksiyon" class="inline">{{ ui.csrf() }}<input type="hidden" name="action" value="reset"><input type="hidden" name="next" value="/panel/oneriler/{{ s.id }}"><button class="btn sm ghost-light" type="submit">İşareti kaldır</button></form>
-    {% else %}
-      <form method="post" action="/panel/oneriler/{{ s.id }}/aksiyon" class="inline">{{ ui.csrf() }}<input type="hidden" name="action" value="applied"><input type="hidden" name="next" value="/panel/oneriler/{{ s.id }}"><button class="btn" type="submit">{{ ui.icon('check') }}Uyguladım</button></form>
-    {% endif %}
+    <div class="hero-actions">{{ ui.outcome_badge(outcome, true) }}</div>
+    <div class="meta" style="margin-top:10px">
+      <span>Tahmini doluluğunuz <b>{{ ('%' ~ (occ.own * 100)|round|int) if occ.own is not none else '—' }}</b></span>
+      <span>Rakip medyanı <b>{{ ('%' ~ (occ.comp * 100)|round|int) if occ.comp is not none else '—' }}</b></span>
+      {% if outcome and outcome.revpar_index is not none %}<span>RevPAR endeksi <b>{{ outcome.revpar_index|num(2) }}</b></span>{% endif %}
     </div>
   </div>
 </section>

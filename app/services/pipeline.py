@@ -28,6 +28,7 @@ from app.services import backtest as backtest_svc
 from app.services.compset import build_compset
 from app.services.demand import refresh_demand
 from app.services.market import compset_ids, latest_observations, subscriber_hotels
+from app.services.outcomes import evaluate_outcomes, tune_weights
 from app.services.pricing import generate_for_hotel
 from app.services.providers import ProviderBundle, UsageTracker, get_providers
 from app.services.providers.base import HotelInfo
@@ -218,6 +219,9 @@ def job_daily(db: Session, today: date | None = None, tracker: UsageTracker | No
         sugg += len(created)
         notify_big_moves(db, h, created)
         record_uptake(db, h, since=observed - timedelta(hours=1))
+        evaluate_outcomes(db, h, today=today)
+    if today.weekday() == 0:  # haftalık: sonuçlardan motor ağırlık ayarı
+        tune_weights(db, today=today)
     tracker.flush(db, today)
     return n + sugg, f"{len(hotels)} otel tarandı, {n} fiyat gözlemi, {sugg} öneri üretildi ({providers.mode} modu)."
 
@@ -255,6 +259,18 @@ def job_uptake(db: Session, **_) -> tuple[int, str]:
     return n, f"{n} yeni uyum gözlemi kaydedildi."
 
 
+def job_outcomes(db: Session, today: date | None = None, **_) -> tuple[int, str]:
+    n = sum(evaluate_outcomes(db, h, today=today) for h in subscriber_hotels(db))
+    return n, f"{n} karar birimi için uygulama tespiti ve sonuç ölçümü güncellendi."
+
+
+def job_tune(db: Session, today: date | None = None, **_) -> tuple[int, str]:
+    res = tune_weights(db, today=today)
+    if res["changed"]:
+        return len(res["changed"]), "Ağırlıklar ayarlandı: " + "; ".join(res["reasons"])
+    return 0, f"Ayar gerekmedi (artış örneği {res['n_up']}, indirim örneği {res['n_down']})."
+
+
 def job_roi(db: Session, today: date | None = None, **_) -> tuple[int, str]:
     n = 0
     for h in subscriber_hotels(db):
@@ -282,6 +298,8 @@ JOBS: dict[str, tuple[str, Callable]] = {
     "suggestions": ("Fiyat önerisi üretimi", job_suggestions),
     "compset_rebuild": ("Rakip setlerini yeniden hesapla", job_compsets),
     "uptake": ("Öneriye uyum hesabı", job_uptake),
+    "outcomes": ("Uygulama tespiti ve sonuç ölçümü", job_outcomes),
+    "weights_tune": ("Motor ağırlıklarını sonuçlarla ayarla", job_tune),
     "roi_did": ("Kontrol grubu (DiD) tahmini", job_roi),
     "backtest": ("Backtest özetleri", job_backtest),
 }

@@ -35,20 +35,15 @@ def test_suggestion_detail_and_actions(hotel_browser, db, demo_hotel):
     sid = int(re.search(r"/panel/oneriler/(\d+)\"", html).group(1))
     detail = hotel_browser.get(f"/panel/oneriler/{sid}")
     assert detail.status_code == 200 and "Fiyat nasıl oluştu" in detail.text and "Önerilen fiyat" in detail.text
-    r = hotel_browser.post(f"/panel/oneriler/{sid}/aksiyon", {"action": "applied", "next": f"/panel/oneriler/{sid}"})
-    assert r.status_code == 303
-    db.expire_all()
-    assert db.get(PriceSuggestion, sid).user_action == "applied"
-    hotel_browser.post(f"/panel/oneriler/{sid}/aksiyon", {"action": "reset"})
-    db.expire_all()
-    assert db.get(PriceSuggestion, sid).user_action is None
-    assert hotel_browser.post(f"/panel/oneriler/{sid}/aksiyon", {"action": "hack"}).status_code == 400
+    assert "Tahmini doluluğunuz" in detail.text
+    # Elle işaretleme kaldırıldı; uygulama otomatik tespit edilir
+    assert "Uyguladım" not in detail.text and "/aksiyon" not in detail.text
+    assert hotel_browser.post(f"/panel/oneriler/{sid}/aksiyon", {"action": "applied"}).status_code in (404, 405)
 
 
 def test_cannot_access_other_hotels_suggestion(hotel_browser, db, demo_hotel):
     other = db.execute(select(PriceSuggestion).join(RoomType).where(RoomType.hotel_id != demo_hotel.id)).scalars().first()
     assert hotel_browser.get(f"/panel/oneriler/{other.id}").status_code == 404
-    assert hotel_browser.post(f"/panel/oneriler/{other.id}/aksiyon", {"action": "applied"}).status_code == 404
 
 
 def test_regenerate_suggestions(hotel_browser):

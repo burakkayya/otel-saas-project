@@ -9,9 +9,24 @@
     <div><div class="kpi-label">Öneriye uyum (90 gün)</div><div class="kpi-foot" style="margin-top:6px">Fiyatınızın önerinin ±%{{ tolerance|num(0) }} bandında olduğu gözlemler</div></div>
   </div></div>
   {{ ui.kpi("Değerlendirilen gözlem", uptake.total|num, "eye", uptake.within|num ~ " tanesi bant içinde", uptake.weekly|map(attribute='total')|list, "series-1") }}
-  {{ ui.kpi("Uyguladım işaretleri", (feedback.get('applied', 0))|num, "tag", (feedback.get('ignored', 0))|num ~ " öneri yok sayıldı", None, "series-1", "hot") }}
+  {{ ui.kpi("Uygulanan öneri (tespit)", outcome.applied_rate|pct(0) if outcome.applied_rate is not none else "—", "check",
+            (outcome.counts.applied|num) ~ " uygulandı, " ~ (outcome.counts.partial|num) ~ " kısmen, " ~ (outcome.counts.not_applied|num) ~ " uygulanmadı", None, "series-1", "hot") }}
   {{ ui.kpi("Kontrol grubu", (roi.control_group_size if roi else 0)|num ~ " otel", "users", "Bölge başına en az 10-15 gerekli", None, "series-1", "aqua") }}
 </div>
+
+<section class="panel" style="margin-top:18px" aria-labelledby="rgi-title">
+  <div class="panel-head"><div><h2 id="rgi-title">Uyguladığınız günler kazandırdı mı?</h2><p>Geçmiş konaklama günlerinde RevPAR endeksiniz: sizin gelir/odanız ÷ rakiplerin gelir/odası. 1,00 üzeri rakiplerden iyi demektir.</p></div>{{ ui.conf_badge(outcome.confidence) }}</div>
+  <div class="panel-body">
+    {% if outcome.index_applied is not none or outcome.index_other is not none %}
+    <div class="occ-kpis">
+      <div class="occ-kpi"><span class="lbl">Öneriyi uyguladığınız günler</span><b>{{ outcome.index_applied|num(2) if outcome.index_applied is not none else '—' }}</b><small>{{ outcome.n_applied|num }} gün{% if outcome.pickup_applied is not none %} · rakiplere göre doluluk {{ outcome.pickup_applied|pct(1, true) }}{% endif %}</small></div>
+      <div class="occ-kpi"><span class="lbl">Uygulamadığınız günler</span><b>{{ outcome.index_other|num(2) if outcome.index_other is not none else '—' }}</b><small>{{ outcome.n_other|num }} gün{% if outcome.pickup_other is not none %} · rakiplere göre doluluk {{ outcome.pickup_other|pct(1, true) }}{% endif %}</small></div>
+      <div class="occ-kpi"><span class="lbl">Tahmini fark</span><b>{{ outcome.uplift_pct|pct(1, true) if outcome.uplift_pct is not none else '—' }}</b><small>uygulanan günlerin endeks üstünlüğü</small></div>
+    </div>
+    <p class="small ink-2" style="margin-top:12px">Gelir/oda, gözlenen fiyatınız ile satış kanalı envanterinden tahmin edilen doluluğun çarpımıdır. Uygulanan ve uygulanmayan günler farklı talep koşullarında olabilir; fark nedensellik kanıtı değildir. Sistem bu sonuçlarla motor ağırlıklarını haftalık olarak ayarlar.</p>
+    {% else %}{{ ui.empty("Henüz sonuçlanmış gün yok", "Öneri verilen konaklama günleri geçtikçe sonuçları burada görürsünüz.") }}{% endif %}
+  </div>
+</section>
 
 <div class="grid g-2" style="margin-top:18px">
   <div class="panel">
@@ -54,7 +69,7 @@
 
 <div class="panel soft" style="margin-top:18px"><div class="panel-body small ink-2">
   <h3 style="margin-bottom:8px">Bu rakamları nasıl okumalı?</h3>
-  <p>Uyum oranı bir davranış ölçüsüdür: önerileri ne kadar uyguladığınızı gösterir, gelir etkisini göstermez. Fiyatınızın öneriyle eşleşmesi tesadüf de olabilir.</p>
+  <p>Uygulama sizin işaretlemenize bağlı değildir: sistem satış kanalındaki fiyatınızı her taramada öneriyle karşılaştırır. Fiyatınızın öneriyle eşleşmesi tesadüf de olabilir.</p>
   <p style="margin:0">Etki tahmini, otelinizin fiyat ve doluluk vekilindeki değişimi aynı bölgedeki benzer otellerin değişimiyle karşılaştırır. Doluluk vekili OTA'daki kalan oda değişiminden türetildiği için kesin doluluk değildir. Kendi satış verinizi paylaşmayı seçerseniz ileride kesin ölçüm yapılabilir.</p>
 </div></div>
 {% endblock %}

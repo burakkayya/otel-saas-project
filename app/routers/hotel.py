@@ -32,6 +32,8 @@ from app.services.calendar_tr import holidays_between
 from app.services.compset import add_manual_competitor, build_compset, rank_candidates, remove_competitor, set_feedback
 from app.services.demand import demand_map
 from app.services.market import category_price_by_hotel, latest_observations
+from app.services.occupancy import compset_occupancy
+from app.services.outcomes import STATUS_LABELS, outcome_summary, status_map
 from app.services.pipeline import ensure_hotel_settings, get_setting
 from app.services.pricing import STRATEGY_LABEL, generate_for_hotel
 from app.services.seasonality import MONTHS_TR, monthly_coefficients
@@ -72,8 +74,25 @@ def dashboard(request: Request, hc: HotelContext = Depends(require_hotel), db: S
         if r["room_type"].category not in seen:
             seen.add(r["room_type"].category)
             tonight.append(r)
+    today = date.today()
+    occ_days = compset_occupancy(db, hc.hotel.id, [c.competitor_hotel_id for c in comps], today, today + timedelta(days=29))
+    occ = {
+        "tonight": occ_days.get(today) or {},
+        "labels": [d.isoformat() for d in occ_days],
+        "own": [round(v["own"] * 100) if v["own"] is not None else None for v in occ_days.values()],
+        "comp": [round(v["comp"] * 100) if v["comp"] is not None else None for v in occ_days.values()],
+        "week_own": _avg([v["own"] for d, v in occ_days.items() if d < today + timedelta(days=7)]),
+        "week_comp": _avg([v["comp"] for d, v in occ_days.items() if d < today + timedelta(days=7)]),
+    }
+    outcome = outcome_summary(db, hc.hotel.id)
     return render(request, "hotel/dashboard.html", **ctx(request, hc, db, "dashboard", data=data, notes=notes,
-                                                            uptake=up, roi=roi, comps=comps, radar=radar, tonight=tonight))
+                                                            uptake=up, roi=roi, comps=comps, radar=radar, tonight=tonight,
+                                                            occ=occ, outcome=outcome, status_labels=STATUS_LABELS))
+
+
+def _avg(vals: list) -> int | None:
+    vals = [v for v in vals if v is not None]
+    return round(sum(vals) / len(vals) * 100) if vals else None
 
 
 @router.get("/hos-geldiniz")
@@ -114,7 +133,8 @@ def suggestions(request: Request, kategori: str | None = None, gun: int = Query(
         months.setdefault((r["date"].year, r["date"].month), []).append(r)
     return render(request, "hotel/suggestions.html", **ctx(
         request, hc, db, "suggestions", rows=rows, cats=cats, cat=cat, gun=gun, sadece=sadece, gorunum=gorunum,
-        months=months, tolerance=float(hc.hotel.settings.tolerance_pct) if hc.hotel.settings else 5.0))
+        months=months, tolerance=float(hc.hotel.settings.tolerance_pct) if hc.hotel.settings else 5.0,
+        status_labels=STATUS_LABELS))
 
 
 @router.get("/oneriler/{suggestion_id}")
@@ -137,9 +157,11 @@ def suggestion_detail(suggestion_id: int, request: Request, hc: HotelContext = D
     history = list(db.execute(select(PriceSuggestion).where(
         PriceSuggestion.room_type_id == s.room_type_id, PriceSuggestion.stay_date == s.stay_date)
         .order_by(PriceSuggestion.created_at)).scalars())
+    outcome = status_map(db, [s.room_type_id], s.stay_date, s.stay_date).get((s.room_type_id, s.stay_date))
+    occ = compset_occupancy(db, hc.hotel.id, comp_ids, s.stay_date, s.stay_date).get(s.stay_date) or {}
     return render(request, "hotel/suggestion_detail.html", **ctx(
         request, hc, db, "suggestions", s=s, r=s.rationale or {}, comp_prices=comp_prices, own=own, history=history,
-        steps=waterfall_steps(s)))
+        steps=waterfall_steps(s), outcome=outcome, status_labels=STATUS_LABELS, occ=occ))
 
 
 def waterfall_steps(s: PriceSuggestion) -> list[dict]:
@@ -153,7 +175,8 @@ def waterfall_steps(s: PriceSuggestion) -> list[dict]:
     if abs(anchor - median) >= 0.5:
         steps.append({"label": "Konumlama endeksi", "start": cur, "end": anchor, "kind": "delta"})
         cur = anchor
-    for key, label in (("demand", "Talep etkisi"), ("inventory", "Kalan oda sinyali"), ("season", "Sezon etkisi")):
+    for key, label in (("occupancy", "Doluluk farkı"), ("compression", "Pazar sıkışması"), ("demand", "Talep etkisi"),
+                       ("inventory", "Kalan oda hızı"), ("season", "Sezon etkisi")):
         delta = anchor * float(adj.get(key) or 0) / 100
         if abs(delta) >= 0.5:
             steps.append({"label": label, "start": cur, "end": cur + delta, "kind": "delta"})
@@ -169,22 +192,6 @@ def waterfall_steps(s: PriceSuggestion) -> list[dict]:
         st["left"], st["width"] = lo / top * 100, max(0.8, (hi - lo) / top * 100)
         st["delta"] = st["end"] - st["start"]
     return steps
-
-
-@router.post("/oneriler/{suggestion_id}/aksiyon", dependencies=[Depends(csrf_protect)])
-def suggestion_action(suggestion_id: int, request: Request, action: str = Form(...), next: str = Form("/panel/oneriler"),
-                      hc: HotelContext = Depends(require_hotel), db: Session = Depends(get_db)):
-    s = db.get(PriceSuggestion, suggestion_id)
-    if s is None or s.room_type.hotel_id != hc.hotel.id:
-        raise HTTPException(404)
-    if action not in ("applied", "ignored", "reset"):
-        raise HTTPException(400, "Geçersiz işlem")
-    s.user_action = None if action == "reset" else action
-    audit(db, request, hc.user, f"suggestion_{action}", "price_suggestion", s.id)
-    db.commit()
-    msg = {"applied": "Öneri 'uygulandı' olarak işaretlendi.", "ignored": "Öneri yok sayıldı.",
-           "reset": "İşaret kaldırıldı."}[action]
-    return redirect(next if next.startswith("/panel") else "/panel/oneriler", request, msg)
 
 
 @router.post("/oneriler/yenile", dependencies=[Depends(csrf_protect)])
@@ -328,11 +335,9 @@ def performance(request: Request, hc: HotelContext = Depends(require_hotel), db:
         PriceSuggestion.id.in_([a.suggestion_id for a, _ in recent if a.suggestion_id] or [0]))).scalars()}
     roi = db.execute(select(RoiEstimate).where(RoiEstimate.hotel_id == hc.hotel.id, RoiEstimate.method == "control_group_did")
                      .order_by(RoiEstimate.created_at.desc())).scalars().first()
-    feedback = dict(db.execute(select(PriceSuggestion.user_action, func.count()).where(
-        PriceSuggestion.room_type_id.in_(rt_ids or [0]), PriceSuggestion.user_action.is_not(None))
-        .group_by(PriceSuggestion.user_action)).all())
+    outcome = outcome_summary(db, hc.hotel.id)
     return render(request, "hotel/performance.html", **ctx(
-        request, hc, db, "performance", uptake=up, recent=recent, sugg_prices=sugg_prices, roi=roi, feedback=feedback,
+        request, hc, db, "performance", uptake=up, recent=recent, sugg_prices=sugg_prices, roi=roi, outcome=outcome,
         tolerance=float(hc.hotel.settings.tolerance_pct) if hc.hotel.settings else 5.0))
 
 

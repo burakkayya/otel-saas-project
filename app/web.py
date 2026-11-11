@@ -77,6 +77,7 @@ AUDIT_LABELS = {
     "room_type_bulk_approve": "Oda eşlemeleri toplu onaylandı", "room_type_mapped": "Oda tipi eşlendi",
     "subscription_canceled": "Abonelik iptal edildi", "subscription_updated": "Abonelik güncellendi",
     "suggestion_applied": "Öneri uygulandı", "suggestion_ignored": "Öneri yok sayıldı", "suggestion_reset": "Öneri işareti kaldırıldı",
+    "weights_tuned": "Motor ağırlıkları sonuçlara göre ayarlandı",
     "suggestions_regenerated": "Öneriler yeniden hesaplandı", "system_settings": "Sistem ayarları değişti",
     "user_created": "Kullanıcı oluşturuldu", "user_toggled": "Kullanıcı durumu değişti",
 }
@@ -109,6 +110,14 @@ def rationale_drivers(r: dict | None, limit: int = 3) -> list[dict]:
         d = float(adj.get("demand") or 0)
         out.append((abs(d) + 0.4, {"dir": "up" if d > 0 else "down" if d < 0 else "flat",
                     "text": f"Talep {str(r['demand_level']).lower()} ({float(r.get('demand_score') or 0):.0f}/100)"}))
+    own_o, comp_o = r.get("own_occ"), r.get("comp_occ")
+    if comp_o is not None:
+        a = float(adj.get("occupancy") or 0) + float(adj.get("compression") or 0)
+        if own_o is not None:
+            text = f"Tahmini doluluk: sizde %{float(own_o) * 100:.0f}, rakiplerde %{float(comp_o) * 100:.0f}"
+        else:
+            text = f"Rakiplerin tahmini doluluğu %{float(comp_o) * 100:.0f}"
+        out.append((abs(a) + 0.45, {"dir": "up" if a > 0 else "down" if a < 0 else "flat", "text": text}))
     inv = float(r.get("inventory_pressure") or 0)
     if abs(inv) >= 0.15:
         out.append((abs(float(adj.get("inventory") or 0)) + 0.3, {"dir": "up" if inv > 0 else "down",

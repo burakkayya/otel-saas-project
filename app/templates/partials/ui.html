@@ -104,6 +104,15 @@
 {% else %}<span class="badge warn">{{ icon('alert') }}Düşük güven</span>{% endif %}
 {%- endmacro %}
 
+{% macro outcome_badge(o, long=False) -%}
+{# Otomatik uygulama tespiti: satış kanalında gözlenen fiyat öneriyle karşılaştırılır #}
+{% set st = o.status if o else 'unobserved' %}
+{% set m = {"applied": ("good", "check", "Uygulandı"), "partial": ("info", "activity", "Kısmen uygulandı"),
+            "not_applied": ("warn", "alert", "Uygulanmadı"), "unobserved": ("", "info", "Henüz gözlenmedi")} %}
+{% set v = m[st] %}
+<span class="badge {{ v[0] }}" title="Sistem, satış kanalındaki fiyatınızı öneriyle karşılaştırarak tespit eder.">{{ icon(v[1]) }}{{ v[2] }}{% if long and o and o.status == 'applied' and o.applied_at %} · {{ o.applied_at|dt('day') }}{% elif long and o and o.observed_price and st in ('partial', 'not_applied') %} · gözlenen {{ o.observed_price|eur }}{% endif %}</span>
+{%- endmacro %}
+
 {% macro status_badge(s) -%}
 {% set m = {"active": ("good", "Aktif"), "trial": ("info", "Deneme"), "past_due": ("warn", "Ödeme gecikti"),
             "canceled": ("", "İptal"), "paid": ("good", "Ödendi"), "open": ("info", "Açık"), "failed": ("bad", "Başarısız"),
