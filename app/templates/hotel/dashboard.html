@@ -25,7 +25,8 @@
     <p class="hero-do">{% if t.change <= -2 %}Bu gece için fiyatınızı {{ t.own|eur }} düzeyinden <b>{{ t.suggested|eur }}</b> düzeyine indirin.{% elif t.change >= 2 %}Bu gece için fiyatınızı {{ t.own|eur }} düzeyinden <b>{{ t.suggested|eur }}</b> düzeyine yükseltin.{% else %}Fiyatınız yerinde. Bu gece için <b>{{ t.own|eur }}</b> düzeyini koruyun.{% endif %}</p>
     {% endif %}
     <p class="why-lead">Neden bu fiyat?</p>
-    <ul class="drivers">{% for d in rationale_drivers(t.rationale) %}<li class="{{ d.dir }}">{{ ui.icon({'up': 'up', 'down': 'down'}.get(d.dir, 'activity')) }}<span>{{ d.text }}</span></li>{% endfor %}</ul>
+    {% if t.headline %}<p class="hero-headline">{{ t.headline }}</p>{% endif %}
+    <ul class="drivers">{% for d in rationale_drivers(t.rationale, 3, t.headline is not none) %}<li class="{{ d.dir }}">{{ ui.icon({'up': 'up', 'down': 'down'}.get(d.dir, 'activity')) }}<span>{{ d.text }}</span></li>{% endfor %}</ul>
     <div class="meta">
       <span>Mevcut fiyatınız <b>{{ t.own|eur }}</b></span>
       <span>Rakip medyanı <b>{{ t.median|eur }}</b></span>
@@ -55,7 +56,31 @@
 <div class="panel"><div class="panel-body">{{ ui.empty("Bugün için öneri yok", "Rakip setiniz hazır olduğunda ilk öneriler oluşturulur.", "/panel/rakipler", "Rakip setine git") }}</div></div>
 {% endif %}
 
-<section class="panel occ-panel" style="margin-top:18px" aria-labelledby="occ-title">
+{% set ac = data.action_counts %}
+<section class="panel focus-panel" style="margin-top:18px" aria-labelledby="focus-title">
+  <div class="panel-head">
+    <div><h2 id="focus-title">Önce bunlara bakın</h2>
+      <p>Önümüzdeki 30 günde <b>{{ ac.raise }} gün yükseltin</b>, <b>{{ ac.lower }} gün indirin</b>, {{ ac.hold }} gün fiyatınız yerinde.</p></div>
+    <div class="actions"><a class="btn sm" href="/panel/oneriler?sadece=onemli">Değişiklik gereken tüm günler</a></div>
+  </div>
+  <div class="panel-body flush">
+    {% if data.focus %}
+    <ol class="focus-list">
+      {% for r in data.focus %}
+      <li><a href="/panel/oneriler/{{ r.id }}">
+        <span class="f-date"><b>{{ r.date|dt('day') }}</b><small>{{ (r.date - today()).days }} gün sonra</small></span>
+        <span class="f-act">{{ ui.action_chip(r.action, r.change) }}</span>
+        <span class="f-price"><s>{{ r.own|eur }}</s>{{ ui.icon('arrow-right') }}<b>{{ r.suggested|eur }}</b></span>
+        <span class="f-why">{{ r.headline or (rationale_drivers(r.rationale, 1)|map(attribute='text')|first) }}</span>
+        {{ ui.icon('chevron-right', 'ico f-go') }}
+      </a></li>
+      {% endfor %}
+    </ol>
+    {% else %}<div class="panel-body">{{ ui.empty("Fiyatlarınız yerinde", "Önümüzdeki 3 haftada değişiklik gerektiren bir gün görünmüyor.") }}</div>{% endif %}
+  </div>
+</section>
+
+<section class="panel occ-panel detail-only" style="margin-top:18px" aria-labelledby="occ-title">
   <div class="panel-head">
     <div><h2 id="occ-title">Doluluk: siz ve rakipleriniz</h2><p>Satış kanalındaki açık oda sayısından tahmin edilir; kesin değer değildir. Önümüzdeki 30 gün.</p></div>
     {% set oe = occ.tonight.own_est %}
@@ -65,13 +90,15 @@
     <div class="occ-kpis">
       <div class="occ-kpi"><span class="lbl">Bu gece, siz</span><b>{{ ('%' ~ (occ.tonight.own * 100)|round|int) if occ.tonight.own is not none else '—' }}</b>{% if oe %}<small>aralık %{{ (oe.low * 100)|round|int }}–{{ (oe.high * 100)|round|int }}{% if oe.closed %} · satışa kapalı{% endif %}</small>{% endif %}</div>
       <div class="occ-kpi"><span class="lbl">Bu gece, rakip medyanı</span><b>{{ ('%' ~ (occ.tonight.comp * 100)|round|int) if occ.tonight.comp is not none else '—' }}</b>{% if occ.tonight.comp_n %}<small>{{ occ.tonight.comp_n }} rakipten</small>{% endif %}</div>
-      <div class="occ-kpi"><span class="lbl">7 gün ortalaması</span><b>{{ ('%' ~ occ.week_own) if occ.week_own is not none else '—' }} <span class="ink-2">/ {{ ('%' ~ occ.week_comp) if occ.week_comp is not none else '—' }}</span></b><small>siz / rakipler</small></div>
+      {% set ex = t.expected_occ if t else none %}
+      <div class="occ-kpi"><span class="lbl">Bu gece, normalde beklenen</span><b>{{ ('%' ~ (ex * 100)|round|int) if ex is not none else '—' }}</b>{% if ex is not none and occ.tonight.own is not none %}{% set gap = ((occ.tonight.own - ex) * 100)|round|int %}<small>{{ 'beklenenle aynı' if gap == 0 else ('beklenenin ' ~ (gap|abs) ~ ' puan ' ~ ('önündesiniz' if gap > 0 else 'gerisindesiniz')) }}</small>{% else %}<small>geçmişiniz biriktikçe hesaplanır</small>{% endif %}</div>
       <div class="occ-kpi"><span class="lbl">Son 7 günde doluluk artışı</span><b>{{ ('%+d'|format((occ.tonight.own_7d * 100)|round|int) ~ ' puan') if occ.tonight.own_7d is not none else '—' }}</b><small>rakipler {{ ('%+d'|format((occ.tonight.comp_7d * 100)|round|int) ~ ' puan') if occ.tonight.comp_7d is not none else '—' }}</small></div>
     </div>
-    <div class="legend"><span><i style="background:var(--series-1)"></i>Siz (tahmini)</span><span><i style="background:var(--series-3)"></i>Rakip medyanı (tahmini)</span></div>
+    <div class="legend"><span><i style="background:var(--series-1)"></i>Siz (tahmini)</span><span><i style="background:var(--series-3)"></i>Rakip medyanı (tahmini)</span><span style="color:var(--series-2)"><i class="dash" style="background:var(--series-2)"></i><span class="ink-2">Normalde beklenen</span></span></div>
     {{ ui.chart("line", {"labels": occ.labels, "unit": "pct", "hardMax": 100, "series": [
         {"label": "Siz", "data": occ.own, "color": "series-1"},
-        {"label": "Rakip medyanı", "data": occ.comp, "color": "series-3"}]}, "dash-occ", "short", "Tahmini doluluk, siz ve rakip medyanı", true) }}
+        {"label": "Rakip medyanı", "data": occ.comp, "color": "series-3"},
+        {"label": "Normalde beklenen", "data": occ.expected, "color": "series-2", "dash": true}]}, "dash-occ", "short", "Tahmini doluluk, siz ve rakip medyanı", true) }}
   </div>
 </section>
 
@@ -120,13 +147,13 @@
     <div class="panel-head"><div><h2>Bu hafta</h2><p>Önümüzdeki 7 günün önerileri ve fiyat bantları</p></div><div class="actions"><a class="btn sm" href="/panel/oneriler">Tümü</a></div></div>
     <div class="panel-body" style="padding-bottom:6px">{{ ui.range_legend() }}</div>
     <div class="panel-body flush"><div class="table-wrap"><table class="data stack-sm">
-      <thead><tr><th>Tarih</th><th>Talep</th><th class="num">Mevcut</th><th class="num">Öneri</th><th>Bant</th><th class="num">Fark</th><th><span class="sr-only">Ayrıntı</span></th></tr></thead>
+      <thead><tr><th>Tarih</th><th>Ne yapmalı</th><th class="num">Mevcut</th><th class="num">Öneri</th><th>Bant</th><th>Talep</th><th><span class="sr-only">Ayrıntı</span></th></tr></thead>
       <tbody>
       {% for r in data.next7 %}
-        <tr><td class="nowrap cell-head"><b>{{ r.date|dt("day") }}</b></td><td class="nowrap" data-label="Talep">{{ ui.demand_badge(r.demand) }}</td><td class="num" data-label="Mevcut">{{ r.own|eur }}</td>
+        <tr><td class="nowrap cell-head"><b>{{ r.date|dt("day") }}</b></td><td class="nowrap" data-label="Ne yapmalı">{{ ui.action_chip(r.action, r.change) }}</td><td class="num" data-label="Mevcut">{{ r.own|eur }}</td>
           <td class="num cell-strong cell-key" data-label="Öneri">{{ r.suggested|eur }}</td>
           <td class="band-cell cell-wide" data-label="Bant">{{ ui.range_bar(r.floor, r.ceiling, r.suggested, r.own, r.median, true) }}</td>
-          <td class="num" data-label="Fark">{{ ui.change_badge(r.change) }}</td>
+          <td class="nowrap" data-label="Talep">{{ ui.demand_badge(r.demand) }}</td>
           <td class="num cell-actions"><a class="btn sm ghost" href="/panel/oneriler/{{ r.id }}" aria-label="Detay">{{ ui.icon('eye') }}</a></td></tr>
       {% else %}<tr><td colspan="7" class="muted">Öneri bulunamadı.</td></tr>{% endfor %}
       </tbody></table></div></div>

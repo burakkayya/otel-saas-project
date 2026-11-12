@@ -81,6 +81,7 @@ def dashboard(request: Request, hc: HotelContext = Depends(require_hotel), db: S
         "labels": [d.isoformat() for d in occ_days],
         "own": [round(v["own"] * 100) if v["own"] is not None else None for v in occ_days.values()],
         "comp": [round(v["comp"] * 100) if v["comp"] is not None else None for v in occ_days.values()],
+        "expected": data["expected_occ"][:30],
         "week_own": _avg([v["own"] for d, v in occ_days.items() if d < today + timedelta(days=7)]),
         "week_comp": _avg([v["comp"] for d, v in occ_days.items() if d < today + timedelta(days=7)]),
     }
@@ -125,8 +126,9 @@ def suggestions(request: Request, kategori: str | None = None, gun: int = Query(
     cat = kategori if kategori in cats else (cats[0] if cats else None)
     today = date.today()
     rows = analytics.suggestion_rows(db, hc.hotel, today, today + timedelta(days=gun - 1), category=cat)
+    counts = {a: sum(1 for r in rows if r["action"] == a) for a in ("raise", "lower", "hold")}
     if sadece == "onemli":
-        rows = [r for r in rows if r["change"] is not None and abs(r["change"]) >= 8]
+        rows = [r for r in rows if r["action"] in ("raise", "lower")]
     # takvim görünümü için aylara böl
     months: dict[tuple[int, int], list] = {}
     for r in rows:
@@ -134,7 +136,7 @@ def suggestions(request: Request, kategori: str | None = None, gun: int = Query(
     return render(request, "hotel/suggestions.html", **ctx(
         request, hc, db, "suggestions", rows=rows, cats=cats, cat=cat, gun=gun, sadece=sadece, gorunum=gorunum,
         months=months, tolerance=float(hc.hotel.settings.tolerance_pct) if hc.hotel.settings else 5.0,
-        status_labels=STATUS_LABELS))
+        status_labels=STATUS_LABELS, counts=counts))
 
 
 @router.get("/oneriler/{suggestion_id}")
@@ -159,9 +161,12 @@ def suggestion_detail(suggestion_id: int, request: Request, hc: HotelContext = D
         .order_by(PriceSuggestion.created_at)).scalars())
     outcome = status_map(db, [s.room_type_id], s.stay_date, s.stay_date).get((s.room_type_id, s.stay_date))
     occ = compset_occupancy(db, hc.hotel.id, comp_ids, s.stay_date, s.stay_date).get(s.stay_date) or {}
+    own_price = own.price_eur if own else None
+    action = analytics.row_action(float(s.suggested_price), own_price)
+    change = round((float(s.suggested_price) / own_price - 1) * 100, 1) if own_price else None
     return render(request, "hotel/suggestion_detail.html", **ctx(
         request, hc, db, "suggestions", s=s, r=s.rationale or {}, comp_prices=comp_prices, own=own, history=history,
-        steps=waterfall_steps(s), outcome=outcome, status_labels=STATUS_LABELS, occ=occ))
+        steps=waterfall_steps(s), outcome=outcome, status_labels=STATUS_LABELS, occ=occ, action=action, change=change))
 
 
 def waterfall_steps(s: PriceSuggestion) -> list[dict]:
@@ -175,7 +180,7 @@ def waterfall_steps(s: PriceSuggestion) -> list[dict]:
     if abs(anchor - median) >= 0.5:
         steps.append({"label": "Konumlama endeksi", "start": cur, "end": anchor, "kind": "delta"})
         cur = anchor
-    for key, label in (("occupancy", "Doluluk farkı"), ("compression", "Pazar sıkışması"), ("demand", "Talep etkisi"),
+    for key, label in (("pace", "Rezervasyon hızı"), ("occupancy", "Doluluk farkı"), ("compression", "Pazar sıkışması"), ("demand", "Talep etkisi"),
                        ("inventory", "Kalan oda hızı"), ("season", "Sezon etkisi")):
         delta = anchor * float(adj.get(key) or 0) / 100
         if abs(delta) >= 0.5:

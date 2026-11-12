@@ -927,3 +927,34 @@ table.data tbody tr { transition: background .12s; }
 .occ-kpi b { font: 700 1.5rem/1.15 var(--font-display); font-variant-numeric: tabular-nums; color: var(--ink); }
 .occ-kpi b .ink-2 { font-size: 1.05rem; font-weight: 600; }
 .occ-kpi small { color: var(--ink-2); font-size: .82rem; }
+
+/* tek fiil rozetleri ve ana neden */
+.badge.act { font-weight: 700; padding: 5px 10px; font-size: .84rem; }
+.hero-rec .hero-headline { font: 600 1.02rem/1.4 var(--font-ui); color: #fff; margin: 0 0 10px; max-width: 46ch; text-wrap: balance; }
+.why-cell { display: flex; flex-direction: column; gap: 2px; max-width: 46ch; }
+.why-cell b { font-weight: 600; color: var(--ink); line-height: 1.35; }
+.why-cell span { color: var(--ink-2); font-size: .84rem; line-height: 1.35; }
+tr.is-hold td { color: var(--ink-2); }
+tr.is-hold .why-cell b { color: var(--ink-2); font-weight: 500; }
+
+/* önce bunlara bakın */
+.focus-panel .panel-head p b { color: var(--ink); }
+.focus-list { list-style: none; margin: 0; padding: 0; }
+.focus-list li + li { border-top: 1px solid var(--line); }
+.focus-list a { display: grid; grid-template-columns: 150px 150px 150px minmax(0, 1fr) 20px; gap: 16px; align-items: center;
+  padding: 14px 20px; color: var(--ink); transition: background .15s; }
+.focus-list a:hover { background: var(--surface-2, var(--surface)); text-decoration: none; }
+.focus-list .f-date { display: flex; flex-direction: column; }
+.focus-list .f-date small { color: var(--ink-2); font-size: .8rem; }
+.focus-list .f-price { display: inline-flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.focus-list .f-price s { color: var(--ink-2); text-decoration-thickness: 1px; }
+.focus-list .f-price b { font: 700 1.15rem/1 var(--font-display); }
+.focus-list .f-price .ico { width: 14px; height: 14px; color: var(--muted); }
+.focus-list .f-why { color: var(--ink); font-weight: 500; line-height: 1.35; }
+.focus-list .f-go { width: 16px; height: 16px; color: var(--muted); }
+@media (max-width: 860px) {
+  .focus-list a { grid-template-columns: 1fr auto; gap: 8px 12px; padding: 14px 16px; }
+  .focus-list .f-why { grid-column: 1 / -1; }
+  .focus-list .f-go { display: none; }
+  .focus-list .f-price { justify-self: end; }
+}

@@ -168,3 +168,79 @@ def compset_occupancy(db: Session, hotel_id: int, comp_ids: list[int], start: da
         }
         d += timedelta(days=1)
     return out
+
+
+# --------------------------------------------------------------------------- rezervasyon hızı (pace)
+LEAD_BUCKETS = ((0, 1), (2, 4), (5, 10), (11, 20), (21, 45), (46, 400))
+MIN_CURVE_POINTS = 12
+
+
+def occupancy_history(db: Session, hotel_id: int, start: date, end: date, as_of: date) -> list[tuple[date, int, float]]:
+    """Geçmiş konaklama tarihleri için (konaklama, kalan gün, tahmini doluluk) gözlemleri."""
+    rt_ids = list(db.execute(select(RoomType.id).where(RoomType.hotel_id == hotel_id)).scalars())
+    if not rt_ids:
+        return []
+    q = select(RateSnapshot.room_type_id, RateSnapshot.stay_date, RateSnapshot.observed_at, RateSnapshot.price_eur,
+               RateSnapshot.available_rooms).where(
+        RateSnapshot.room_type_id.in_(rt_ids), RateSnapshot.stay_date >= start, RateSnapshot.stay_date <= end,
+        RateSnapshot.observed_at <= end_of_day(as_of))
+    cells: dict[tuple[date, date], dict[int, int]] = defaultdict(dict)  # (konaklama, gözlem günü) -> oda tipi -> açık oda
+    peak: dict[date, dict[int, int]] = defaultdict(dict)
+    for rt, stay, obs_at, price, avail in db.execute(q):
+        a = int(avail or 0) if price is not None else 0
+        cells[(stay, obs_at.date())][rt] = a
+        peak[stay][rt] = max(peak[stay].get(rt, 0), a)
+    sums = [sum(v.values()) for v in peak.values() if sum(v.values()) > 0]
+    if not sums:
+        return []
+    base = _quantile([float(s) for s in sums], 0.9)
+    out = []
+    for (stay, obs_day), per_rt in cells.items():
+        allot = max(base, float(sum(peak[stay].values())))
+        if allot <= 0 or obs_day > stay:
+            continue
+        out.append((stay, (stay - obs_day).days, max(0.0, min(1.0, 1 - sum(per_rt.values()) / allot))))
+    return out
+
+
+def build_pace_curve(points: list[tuple[date, int, float]]) -> dict[str, list[tuple[float, float]]]:
+    """Kalan güne göre beklenen doluluk eğrisi (hafta içi ve hafta sonu ayrı, kova medyanları)."""
+    curves: dict[str, list[tuple[float, float]]] = {}
+    for key, pred in (("weekend", lambda d: d.weekday() in (4, 5)), ("weekday", lambda d: d.weekday() not in (4, 5)),
+                      ("all", lambda d: True)):
+        pts = [(lead, occ) for stay, lead, occ in points if pred(stay)]
+        if len(pts) < MIN_CURVE_POINTS:
+            continue
+        curve = []
+        for lo, hi in LEAD_BUCKETS:
+            vals = [o for lead, o in pts if lo <= lead <= hi]
+            if len(vals) >= 3:
+                curve.append((statistics.fmean(lead for lead, _ in pts if lo <= lead <= hi), statistics.median(vals)))
+        if len(curve) >= 2:
+            curves[key] = sorted(curve)
+    return curves
+
+
+def expected_occupancy(curves: dict[str, list[tuple[float, float]]], stay: date, lead: int,
+                       season_ratio: float = 1.0) -> float | None:
+    """Bu konaklama tarihi için, kalan gün sayısına göre normalde beklenen doluluk (0..1)."""
+    curve = curves.get("weekend" if stay.weekday() in (4, 5) else "weekday") or curves.get("all")
+    if not curve:
+        return None
+    if lead <= curve[0][0]:
+        val = curve[0][1]
+    elif lead >= curve[-1][0]:
+        val = curve[-1][1]
+    else:
+        val = curve[-1][1]
+        for (l0, v0), (l1, v1) in zip(curve, curve[1:]):
+            if l0 <= lead <= l1:
+                val = v0 + (v1 - v0) * (lead - l0) / (l1 - l0) if l1 > l0 else v0
+                break
+    return round(max(0.0, min(1.0, val * max(0.5, min(1.6, season_ratio)))), 3)
+
+
+def pace_curve(db: Session, hotel_id: int, as_of: date, lookback: int = 90) -> tuple[dict, list[date]]:
+    """(eğriler, eğrinin dayandığı konaklama tarihleri). Yalnızca as_of öncesi sonuçlanmış günler kullanılır."""
+    pts = occupancy_history(db, hotel_id, as_of - timedelta(days=lookback), as_of - timedelta(days=1), as_of)
+    return build_pace_curve(pts), sorted({p[0] for p in pts})

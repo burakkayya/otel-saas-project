@@ -51,6 +51,21 @@ def primary_room_type(hotel: Hotel, category: str | None = None) -> RoomType | N
     return rts[0] if rts else None
 
 
+def row_action(suggested: float, own_price: float | None) -> str:
+    """Güncel gözlenen fiyata göre tek fiil: raise / lower / hold / set."""
+    from app.services.pricing import decide_action
+
+    return decide_action(suggested, own_price)
+
+
+def row_priority(change: float | None, own_occ: float | None, lead: int) -> float:
+    """Hangi güne önce bakılmalı: fark büyük, satılacak oda çok ve tarih yakınsa öncelik yüksek."""
+    if change is None:
+        return 0.0
+    rooms_left = 1 - own_occ if own_occ is not None else 0.5
+    return round(abs(change) * (0.3 + rooms_left) / (1 + max(lead, 0) / 14), 2)
+
+
 def suggestion_rows(db: Session, hotel: Hotel, start: date, end: date, category: str | None = None) -> list[dict]:
     rts = [r for r in hotel.room_types if not category or r.category == category]
     rt_ids = [r.id for r in rts]
@@ -79,6 +94,9 @@ def suggestion_rows(db: Session, hotel: Hotel, start: date, end: date, category:
                     "demand_level": r.get("demand_level"), "text": r.get("text"), "confidence": r.get("confidence"), "rationale": r,
                     "created_at": s.created_at, "season": r.get("season_label"),
                     "outcome": outcomes.get((rt.id, d)), "own_occ": r.get("own_occ"), "comp_occ": r.get("comp_occ"),
+                    "expected_occ": r.get("expected_occ"), "scenario": r.get("scenario"),
+                    "headline": r.get("headline"), "action": row_action(float(s.suggested_price), own_price),
+                    "priority": row_priority(change, r.get("own_occ"), (d - date.today()).days),
                 })
             d += timedelta(days=1)
     return rows
@@ -157,6 +175,13 @@ def hotel_dashboard(db: Session, hotel: Hotel, today: date | None = None) -> dic
             "demand": [float(dm[d].demand_score) if d in dm else None for d in grid["dates"]],
         },
         "next7": [by_date[d] for d in sorted(by_date) if d <= today + timedelta(days=6)],
+        # Önce bunlara bakın: önümüzdeki 21 günde fiyat değişikliği gereken, önceliği en yüksek 5 gün
+        "focus": sorted(sorted((r for r in rows if today < r["date"] <= today + timedelta(days=21)
+                                and r["action"] in ("raise", "lower")), key=lambda r: -r["priority"])[:5],
+                        key=lambda r: r["date"]),
+        "action_counts": {a: sum(1 for r in next30 if r["action"] == a) for a in ("raise", "lower", "hold")},
+        "expected_occ": [round(by_date[d]["expected_occ"] * 100) if d in by_date and by_date[d]["expected_occ"] is not None
+                         else None for d in grid["dates"]],
         "grid": grid,
     }
 

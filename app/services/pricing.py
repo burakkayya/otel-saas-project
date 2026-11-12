@@ -17,20 +17,22 @@ from datetime import date, timedelta
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models import AppSetting, Hotel, HotelSettings, PriceSuggestion, RoomType
+from app.models import AppSetting, CompetitorSet, Hotel, HotelSettings, PriceSuggestion, RoomType
 from app.services.compset import build_compset
 from app.services.demand import demand_level, demand_map
 from app.services.market import category_price_by_hotel, compset_ids, latest_observations
-from app.services.occupancy import compset_occupancy
+from app.services.occupancy import compset_occupancy, expected_occupancy, pace_curve
 from app.services.seasonality import coefficient_for, monthly_coefficients, season_label
 
-MODEL_VERSION = "v1.0-rules"
+MODEL_VERSION = "v1.2-pace"
+HOLD_BAND_PCT = 3.0  # öneri mevcut fiyata bu kadar yakınsa "fiyatınızı koruyun"
 
 DEFAULT_WEIGHTS = {
     "demand": 0.05,      # talep skoru 100 iken +%5, 0 iken -%5
     "inventory": 0.06,   # rakiplerin hızla dolması
     "season": 0.04,      # medyanın ötesindeki mevsim etkisi (küçük; medyan zaten mevsimi yansıtır)
-    "occupancy": 0.08,   # abone rakiplerden 25 puan daha doluysa +%8, geride ise -%8
+    "occupancy": 0.05,   # abone rakiplerden 25 puan daha doluysa +%5, geride ise -%5
+    "pace": 0.07,        # bu tarihe kalan güne göre beklenen doluluğun 20 puan önünde/gerisinde ±%7
     "compression": 0.05, # pazar sıkışması (rakipler %85+ dolu) ya da son dakika boşluğu
     "max_up": 0.30,
     "max_down": 0.25,
@@ -62,6 +64,92 @@ class PricingInputs:
     comp_occ: float | None = None  # rakiplerin medyan tahmini doluluğu (0..1)
     own_occ_7d: float | None = None
     comp_occ_7d: float | None = None
+    expected_occ: float | None = None  # bu tarihe kalan güne göre normalde beklenen doluluk (kendi geçmişinden)
+    comp_weights: list[float] = field(default_factory=list)  # comp_prices ile aynı sırada benzerlik ağırlıkları
+
+
+def weighted_quantile(values: list[float], weights: list[float], q: float) -> float:
+    """Ağırlıklı yüzdelik (doğrusal ara değerli). Ağırlık yoksa ya da uyumsuzsa düz yüzdelik."""
+    if not weights or len(weights) != len(values) or len(values) == 1:
+        return _quantile(values, q)
+    pairs = sorted(zip(values, weights))
+    total = sum(w for _, w in pairs)
+    if total <= 0:
+        return _quantile(values, q)
+    # her gözlemin orta nokta kümülatif konumu
+    pos, acc = [], 0.0
+    for _, w in pairs:
+        pos.append((acc + w / 2) / total)
+        acc += w
+    if q <= pos[0]:
+        return pairs[0][0]
+    if q >= pos[-1]:
+        return pairs[-1][0]
+    for i in range(1, len(pairs)):
+        if pos[i - 1] <= q <= pos[i]:
+            span = pos[i] - pos[i - 1]
+            t = (q - pos[i - 1]) / span if span else 0.0
+            return pairs[i - 1][0] + (pairs[i][0] - pairs[i - 1][0]) * t
+    return pairs[-1][0]
+
+
+def pace_adjustment(own: float | None, expected: float | None, w_pace: float) -> float:
+    """Rezervasyon hızı: doluluk, kalan güne göre beklenenin önündeyse artı, gerisindeyse eksi."""
+    if own is None or expected is None:
+        return 0.0
+    return w_pace * max(-1.0, min(1.0, (own - expected) / 0.20))
+
+
+def decide_action(price: float, own_price: float | None) -> str:
+    """raise / lower / hold / set: otelciye söylenecek tek fiil."""
+    if not own_price:
+        return "set"
+    change = (price / own_price - 1) * 100
+    return "raise" if change >= HOLD_BAND_PCT else "lower" if change <= -HOLD_BAND_PCT else "hold"
+
+
+def pick_scenario(*, action: str, limited_by: str | None, unconstrained: float, own_occ: float | None,
+                  comp_occ: float | None, expected_occ: float | None, median_change: float | None,
+                  demand_score: float, anchor: float) -> tuple[str, str]:
+    """Önerinin arkasındaki TEK ana neden: (senaryo kodu, otelcinin okuyacağı başlık).
+
+    Başlık her zaman fiille aynı yöndedir: "İndir" diyen bir önerinin başlığı fiyatı aşağı çeken
+    nedeni söyler. Yönü uyan bir sinyal yoksa fiyatın pazara göre konumu söylenir."""
+    if limited_by == "min_price":
+        return "limit_min", f"Minimum fiyatınız öneriyi tutuyor: sınır olmasa €{unconstrained:.0f}"
+    if limited_by == "max_price":
+        return "limit_max", f"Maksimum fiyatınız öneriyi tutuyor: sınır olmasa €{unconstrained:.0f}"
+    if action == "hold":
+        return "on_track", "Fiyatınız yerinde: pazarla uyumlu"
+    up: list[tuple[str, str]] = []
+    down: list[tuple[str, str]] = []
+    if comp_occ is not None and comp_occ >= 0.85:
+        up.append(("compression", f"Pazar doluyor: rakiplerin tahmini doluluğu %{comp_occ * 100:.0f}"))
+    if own_occ is not None and expected_occ is not None and abs(own_occ - expected_occ) >= 0.10:
+        if own_occ > expected_occ:
+            up.append(("ahead", f"Beklenenden hızlı doluyorsunuz: %{own_occ * 100:.0f}, bu tarihte beklenen %{expected_occ * 100:.0f}"))
+        else:
+            down.append(("behind", f"Beklenenin gerisindesiniz: %{own_occ * 100:.0f}, bu tarihte beklenen %{expected_occ * 100:.0f}"))
+    if own_occ is not None and comp_occ is not None and abs(own_occ - comp_occ) >= 0.12:
+        if own_occ > comp_occ:
+            up.append(("ahead_market", f"Rakiplerden daha dolusunuz: sizde %{own_occ * 100:.0f}, onlarda %{comp_occ * 100:.0f}"))
+        else:
+            down.append(("behind_market", f"Rakipler sizden hızlı doluyor: onlarda %{comp_occ * 100:.0f}, sizde %{own_occ * 100:.0f}"))
+    if median_change is not None and abs(median_change) >= 5:
+        if median_change > 0:
+            up.append(("market_up", f"Rakipler fiyat yükseltti: 7 günde +%{median_change:.0f}"))
+        else:
+            down.append(("market_down", f"Rakipler fiyat indirdi: 7 günde −%{abs(median_change):.0f}"))
+    if demand_score >= 70:
+        up.append(("high_demand", f"Talep {demand_level(demand_score).lower()} ({demand_score:.0f}/100)"))
+    if demand_score <= 25:
+        down.append(("low_demand", f"Talep {demand_level(demand_score).lower()} ({demand_score:.0f}/100)"))
+    if action == "raise":
+        return up[0] if up else ("price_low", f"Fiyatınız bu tarih için düşük: benzer oteller €{anchor:.0f} civarında")
+    if action == "lower":
+        return down[0] if down else ("price_high", f"Fiyatınız bu tarih için yüksek: benzer oteller €{anchor:.0f} civarında")
+    both = up + down
+    return both[0] if both else ("on_track", "Fiyat pazarla uyumlu")
 
 
 def occupancy_adjustment(own: float | None, comp: float | None, lead_days: int, w_occ: float,
@@ -112,13 +200,17 @@ def inventory_pressure(now: list[int], prev: list[int], closed: int = 0, total: 
 
 def compute(inp: PricingInputs, weights: dict | None = None) -> PricingResult:
     w = {**DEFAULT_WEIGHTS, **(weights or {})}
-    prices = [p for p in inp.comp_prices if p and p > 0]
+    use_w = len(inp.comp_weights) == len(inp.comp_prices) and bool(inp.comp_weights)
+    kept = [(p, (inp.comp_weights[i] if use_w else 1.0)) for i, p in enumerate(inp.comp_prices) if p and p > 0]
+    prices = [p for p, _ in kept]
+    cw = [w_ for _, w_ in kept] if use_w else []
     confidence = "high" if len(prices) >= 4 else "medium" if len(prices) >= 2 else "low"
     pi = max(0.5, min(1.8, inp.position_index or 1.0))
     if prices:
-        # Rakip dağılımı otelin konumlama endeksiyle ölçeklenir (ör. pansiyon ile resort aynı fiyatlanmaz)
-        median = statistics.median(prices) * pi
-        p25, p75, p90 = (_quantile(prices, q) * pi for q in (0.25, 0.75, 0.9))
+        # Rakip dağılımı otelin konumlama endeksiyle ölçeklenir (ör. pansiyon ile resort aynı fiyatlanmaz).
+        # Size daha çok benzeyen rakip (benzerlik skoru, onayınız) dağılımda daha ağır basar.
+        median = weighted_quantile(prices, cw, 0.5) * pi
+        p25, p75, p90 = (weighted_quantile(prices, cw, q) * pi for q in (0.25, 0.75, 0.9))
     else:
         median = inp.fallback_price or inp.own_price or 80.0
         p25, p75, p90 = median * 0.85, median * 1.15, median * 1.3
@@ -137,7 +229,9 @@ def compute(inp: PricingInputs, weights: dict | None = None) -> PricingResult:
     adj_season = w["season"] * (inp.season_coef - 1)
     adj_occ, adj_compress = occupancy_adjustment(inp.own_occ, inp.comp_occ, inp.lead_days,
                                                  w.get("occupancy", 0.0), w.get("compression", 0.0))
-    total = max(-w["max_down"], min(w["max_up"], mult * (adj_demand + adj_inv + adj_season + adj_occ + adj_compress)))
+    adj_pace = pace_adjustment(inp.own_occ, inp.expected_occ, w.get("pace", 0.0))
+    total = max(-w["max_down"], min(w["max_up"],
+                                    mult * (adj_demand + adj_inv + adj_season + adj_occ + adj_compress + adj_pace)))
     raw = median * (1 + total)
 
     floor = p25 * (1 - inp.floor_below_p25_pct / 100)
@@ -147,6 +241,13 @@ def compute(inp: PricingInputs, weights: dict | None = None) -> PricingResult:
     margin = inp.ceiling_margin_pct / 100 + max(0.0, inp.season_coef - 1) * 0.20  # yüksek sezonda marj artar
     wtp_upper = p90
     ceiling = wtp_upper * (1 + margin)
+    # Otelin kendi sınırları olmasaydı çıkacak fiyat (sınır öneriyi tutuyorsa otelciye söylenir)
+    unconstrained = round(max(floor, min(max(ceiling, floor), raw)))
+    limited_by = None
+    if inp.min_price and unconstrained < inp.min_price * 0.99:
+        limited_by = "min_price"
+    elif inp.max_price and unconstrained > inp.max_price * 1.01:
+        limited_by = "max_price"
     if inp.min_price:
         floor = max(floor, inp.min_price)
     if inp.max_price:
@@ -160,6 +261,10 @@ def compute(inp: PricingInputs, weights: dict | None = None) -> PricingResult:
 
     change_vs_own = round((price / inp.own_price - 1) * 100, 1) if inp.own_price else None
     change_vs_median = round((price / (median / pi) - 1) * 100, 1)
+    action = decide_action(price, inp.own_price)
+    scenario, headline = pick_scenario(
+        action=action, anchor=median, limited_by=limited_by, unconstrained=unconstrained, own_occ=inp.own_occ, comp_occ=inp.comp_occ,
+        expected_occ=inp.expected_occ, median_change=median_change, demand_score=inp.demand_score)
 
     parts = []
     if median_change is not None and abs(median_change) >= 1:
@@ -210,8 +315,17 @@ def compute(inp: PricingInputs, weights: dict | None = None) -> PricingResult:
             "season": round(mult * adj_season * 100, 2),
             "occupancy": round(mult * adj_occ * 100, 2),
             "compression": round(mult * adj_compress * 100, 2),
+            "pace": round(mult * adj_pace * 100, 2),
             "total": round(total * 100, 2),
         },
+        "action": action,
+        "scenario": scenario,
+        "headline": headline,
+        "expected_occ": inp.expected_occ,
+        "pace_gap": round(inp.own_occ - inp.expected_occ, 3) if inp.own_occ is not None and inp.expected_occ is not None else None,
+        "limited_by": limited_by,
+        "unconstrained_price": unconstrained,
+        "weighted_comps": bool(cw),
         "own_occ": inp.own_occ,
         "comp_occ": inp.comp_occ,
         "own_occ_7d": inp.own_occ_7d,
@@ -280,6 +394,16 @@ def generate_for_hotel(
     own_rts = list(db.execute(select(RoomType).where(RoomType.hotel_id == hotel.id)).scalars())
     own_latest = latest_observations(db, [r.id for r in own_rts], start, end, as_of)
     occ = compset_occupancy(db, hotel.id, comp_ids, start, end, as_of)
+    # Rezervasyon hızı: otelin kendi geçmişinden, kalan güne göre beklenen doluluk eğrisi
+    curves, curve_days = pace_curve(db, hotel.id, as_of)
+    hist_coef = statistics.fmean(coefficient_for(coefs, x) for x in curve_days) if curve_days else 1.0
+    # Rakip ağırlığı: benzerlik skoru + otelin onayı (elle eklenen ve onaylanan rakip daha ağır basar)
+    comp_w: dict[int, float] = {}
+    for c in db.execute(select(CompetitorSet).where(CompetitorSet.hotel_id == hotel.id)).scalars():
+        w_c = 0.5 + float(c.similarity_score) if c.similarity_score is not None else 1.0
+        if c.is_manual or c.feedback == "confirmed":
+            w_c *= 1.25
+        comp_w[c.competitor_hotel_id] = round(w_c, 3)
 
     cache: dict[str, tuple] = {}
     pi_cache: dict[str, float] = {}
@@ -324,6 +448,9 @@ def generate_for_hotel(
                 comp_occ=(occ.get(d) or {}).get("comp"),
                 own_occ_7d=(occ.get(d) or {}).get("own_7d"),
                 comp_occ_7d=(occ.get(d) or {}).get("comp_7d"),
+                expected_occ=expected_occupancy(curves, d, (d - as_of).days,
+                                                coefficient_for(coefs, d) / hist_coef if hist_coef else 1.0),
+                comp_weights=[comp_w.get(c, 1.0) for c, o in zip(comp_ids, comp_now) if o and o.price_eur],
             )
             res = compute(inp, weights)
             res.rationale["as_of"] = as_of.isoformat()

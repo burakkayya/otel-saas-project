@@ -86,7 +86,7 @@ EVENT_CATEGORY_LABELS = {"festivals": "Festival", "concerts": "Konser", "confere
                          "school-holidays": "Okul tatili", "performing-arts": "Sahne sanatları"}
 
 
-def rationale_drivers(r: dict | None, limit: int = 3) -> list[dict]:
+def rationale_drivers(r: dict | None, limit: int = 3, brief: bool = False) -> list[dict]:
     """Öneri gerekçesini (price_suggestions.rationale) sade Türkçe etkenlere ayırır, en etkili olan başta.
 
     Her etken: {"text": ..., "dir": "up" | "down" | "flat"}. Sunum katmanıdır; motorun gerekçe metnine dokunmaz.
@@ -118,6 +118,13 @@ def rationale_drivers(r: dict | None, limit: int = 3) -> list[dict]:
         else:
             text = f"Rakiplerin tahmini doluluğu %{float(comp_o) * 100:.0f}"
         out.append((abs(a) + 0.45, {"dir": "up" if a > 0 else "down" if a < 0 else "flat", "text": text}))
+    exp_o = r.get("expected_occ")
+    if own_o is not None and exp_o is not None:
+        p = float(adj.get("pace") or 0)
+        gap = (float(own_o) - float(exp_o)) * 100
+        if abs(gap) >= 5:
+            out.append((abs(p) + 0.5, {"dir": "up" if gap > 0 else "down",
+                        "text": f"Rezervasyon hızı: beklenenin {abs(gap):.0f} puan {'önündesiniz' if gap > 0 else 'gerisindesiniz'}"}))
     inv = float(r.get("inventory_pressure") or 0)
     if abs(inv) >= 0.15:
         out.append((abs(float(adj.get("inventory") or 0)) + 0.3, {"dir": "up" if inv > 0 else "down",
@@ -130,6 +137,14 @@ def rationale_drivers(r: dict | None, limit: int = 3) -> list[dict]:
     elif r.get("clamped") == "ceiling":
         out.append((100.0, {"dir": "flat", "text": "Öneri tavan fiyatınıza dayandı"}))
     out.sort(key=lambda x: x[0], reverse=True)
+    if brief:
+        # Başlığın yanında gösterilen kısa liste: başlığın zaten söylediğini, yatay etkenleri ve
+        # her satırda aynı olan fiyat konumunu tekrar etme.
+        said = {"high_demand": "Talep ", "low_demand": "Talep ", "ahead": "Rezervasyon hızı", "behind": "Rezervasyon hızı",
+                "ahead_market": "Tahmini doluluk", "behind_market": "Tahmini doluluk", "compression": "Tahmini doluluk",
+                "market_up": "Rakip fiyatları", "market_down": "Rakip fiyatları"}.get(r.get("scenario") or "")
+        out = [(w, d) for w, d in out if d["dir"] != "flat" and not d["text"].startswith("Fiyat konumunuz")
+               and not (said and d["text"].startswith(said))]
     return [d for _, d in out[:limit]]
 
 
