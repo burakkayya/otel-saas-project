@@ -64,7 +64,7 @@ denetimi kapatıldı.
 
 | # | Konu | Öncelik | Durum / ne yapılmalı |
 |---|---|---|---|
-| 4b.1 | Alan bazlı form hataları | — | **Kapandı (11 Kasım).** Fiyat kuralları ve hesap formunda hatalı alan `aria-invalid` ve altında Türkçe mesaj taşıyor; 422'de girilen değerler korunuyor. Yönetim formları hâlâ özet kutusu + yönlendirme kullanıyor. |
+| 4b.1 | Alan bazlı form hataları | O | **Kısmen açık.** Fiyat kuralları ve hesap formunda hatalı alan `aria-invalid` ve altında Türkçe mesaj taşıyor; 422'de girilen değerler korunuyor. Yönetim formları hâlâ özet kutusu + yönlendirme kullanıyor; alan bazlı hata onlara da eklenmeli. |
 | 4b.2 | Veri hattı sayfası yenilemesi | — | **Kapandı.** Sayfa yenilenmiyor; çalışan iş varsa canlı bölge (`aria-live`) 4 sn'de bir yoklanıyor, odak ve kaydırma korunuyor. |
 | 4b.3 | Ham kodlar | — | **Kapandı.** Denetim kaydı işlemleri ve etkinlik kategorileri Türkçe etiketle gösteriliyor (`AUDIT_LABELS`, `EVENT_CATEGORY_LABELS`). |
 | 4b.4 | İlk kurulum adımları | — | **Kapandı.** Adımlar gerçek işaretlere bağlı (rakip onayı/elle ekleme, oda tipi düzeltme, fiyat sınırı); ilerleme çubuğu eklendi. |

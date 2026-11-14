@@ -229,7 +229,7 @@ Instrument Sans, rakip radarı); tanıtım yüzeyleri ve panelin ana anları gü
 
 **Panel:**
 - Kahraman alan önce ne yapılacağını söylüyor ("fiyatınızı €79 düzeyinden €71 düzeyine indirin"), sonra nedenini;
-  "Uyguladım" düğmesi orada.
+  "Uyguladım" düğmesi orada (§13'te kaldırıldı; uygulama otomatik tespit ediliyor).
 - "Sade / Ayrıntılı" görünüm seçimi: sade görünüm öneri, hafta ve radarı gösterir; tercih tarayıcıda saklanır.
 - Öneri ayrıntısında da sade etkenler ve güven rozeti var.
 
