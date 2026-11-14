@@ -39,7 +39,7 @@ Her rakam gerekçesiyle ve belirsizliğiyle birlikte gösterilir; ürün gelir v
 
 - Pilot bölgeler Muğla ve Antalya; MVP demo veri modunda çalışır (`DATA_PROVIDER=demo`), otel adları ve etkinlikler kurgusal.
 - Günlük veri hattı sabah çalışır; öneriler 7–90 günlük ufukta, oda kategorisi bazında (Standart, Deluxe, Suit, Aile).
-- Otel öneriyi kendi PMS/kanal yöneticisine elle girer, isterse panelde "Uyguladım" diye işaretler; CSV dışa aktarım vardır.
+- Otel öneriyi kendi PMS/kanal yöneticisine elle girer, uygulamayı işaretlemesi gerekmez: uygulama, satış kanalında gözlenen fiyattan otomatik tespit edilir (`stay_outcomes`); CSV dışa aktarım vardır.
 - Yönetim paneli aynı uygulamadadır; yönetici bir otelin panelini "yönetici görünümü" ile görebilir.
 
 ## Capabilities and Constraints
@@ -71,7 +71,7 @@ Her rakam gerekçesiyle ve belirsizliğiyle birlikte gösterilir; ürün gelir v
    etiketli ve güven düzeyiyle; kalan oda düşüşü satış olarak sunulmaz; demo veri uyarısı her ekranda kalır.
 2. **Önce cevap, sonra gerekçe.** Her ekran önce "ne yapmalıyım" sorusunu, ardından "neden" sorusunu cevaplar.
 3. **Sakin yoğunluk.** Gelir yöneticisi için veri yoğun, butik otel sahibi için okunur; ikisi aynı ekranda katmanlanır.
-4. **Uygulamayı kolaylaştır.** Öneri uygulanmazsa sonuç oluşmaz; uygulama ve işaretleme adımları sürtünmesiz olmalı.
+4. **Uygulamayı kolaylaştır.** Öneri uygulanmazsa sonuç oluşmaz; uygulama adımı sürtünmesiz olmalı, uygulandığı da otelden işaret istenmeden tespit edilmeli.
 
 ## Accessibility & Inclusion
 

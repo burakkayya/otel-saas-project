@@ -294,7 +294,7 @@ Lacivert yüzeylerde (açılış, kapanış bandı, kahraman kart, giriş yan pa
 - Hepsi `prefers-reduced-motion` tercihinde kapalıdır; varsayılan durum her şeyin görünür olduğu durumdur.
 
 ### Güneş sarısı
-`--sun` yalnızca lacivert zemin üzerindeki birincil çağrıda (açılış düğmesi, "Uyguladım", önerilen paket etiketi) ve
+`--sun` yalnızca lacivert zemin üzerindeki birincil çağrıda (açılış düğmesi, önerilen paket etiketi) ve
 logodaki otel noktasında kullanılır. Açık zeminde birincil renk Ege mavisidir.
 
 ## Do's and Don'ts
