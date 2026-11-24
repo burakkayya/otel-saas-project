@@ -373,6 +373,8 @@ class PredictHQClient(_Base):
             "within": f"{radius}@{lat},{lng}",
             "active.gte": start.isoformat(), "active.lte": end.isoformat(),
             "category": self.CATEGORIES, "limit": 200, "sort": "start",
+            # Muğla çemberi Rodos'u (Yunanistan) da kapsıyor: yalnızca Türkiye'deki etkinlikler
+            "country": "TR",
         }
         pages = 0
         while url and pages < 10:
@@ -383,7 +385,8 @@ class PredictHQClient(_Base):
                     e = date.fromisoformat((ev.get("end") or ev["start"])[:10])
                 except (KeyError, ValueError):
                     continue
-                rank = ev.get("local_rank") or ev.get("rank") or 50
+                # Genel önem sırası: local_rank küçük yerel maçları bile 70+ yapıp talebi şişiriyordu
+                rank = ev.get("rank") if ev.get("rank") is not None else 50
                 out.append(EventInfo(
                     external_id=f"phq-{ev.get('id')}", name=ev.get("title", "Etkinlik"),
                     category=ev.get("category", "other"), start_date=s, end_date=e,

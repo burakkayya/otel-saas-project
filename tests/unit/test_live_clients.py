@@ -114,9 +114,11 @@ def test_amadeus_token_and_search_volume():
 
 def test_predicthq_pagination():
     def handler(req: httpx.Request):
+        if "page=2" not in str(req.url):
+            assert req.url.params["country"] == "TR"  # Rodos (Yunanistan) etkinlikleri gelmesin
         if "page=2" in str(req.url):
             return httpx.Response(200, json={"results": [{"id": "b", "title": "B", "start": "2026-07-02T00:00:00Z",
-                                                          "category": "sports", "local_rank": 40}], "next": None})
+                                                          "category": "sports", "rank": 40, "local_rank": 90}], "next": None})
         return httpx.Response(200, json={"results": [{"id": "a", "title": "A", "start": "2026-07-01T00:00:00Z",
                                                       "end": "2026-07-03T00:00:00Z", "category": "concerts", "rank": 80}],
                                          "next": "https://api.predicthq.com/v1/events/?page=2"})
