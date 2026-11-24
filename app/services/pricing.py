@@ -453,6 +453,10 @@ def generate_for_hotel(
                                                 coefficient_for(coefs, d) / hist_coef if hist_coef else 1.0),
                 comp_weights=[comp_w.get(c, 1.0) for c, o in zip(comp_ids, comp_now) if o and o.price_eur],
             )
+            if not inp.comp_prices and inp.own_price is None:
+                # Ne rakip fiyatı ne kendi fiyatınız var: uydurma bir sayı önermek yerine o gün boş kalır.
+                d += timedelta(days=1)
+                continue
             res = compute(inp, weights)
             res.rationale["as_of"] = as_of.isoformat()
             res.rationale["demand_components"] = ds.components if ds else None

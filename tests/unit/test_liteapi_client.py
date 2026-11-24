@@ -117,3 +117,4 @@ def test_requires_key_and_reports_http_errors():
     c = make(lambda req: httpx.Response(401, json={"error": "bad key"}))
     with pytest.raises(ProviderError):
         c.list_hotels("Muğla")
+

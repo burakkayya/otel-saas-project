@@ -87,7 +87,8 @@ def rank_candidates(db: Session, hotel: Hotel, today: date | None = None, limit:
         score, comps = _score(hotel, o, dists[o.id], radius, base_cats, set(cats.get(o.id, {}).keys()),
                               base_price, _median_price(prices.get(o.id, {})))
         cands.append(Candidate(o, round(dists[o.id], 2), score, comps))
-    cands.sort(key=lambda c: c.score, reverse=True)
+    # Satış kanalında hiç fiyatı gözlenmemiş otel (ör. kışın kapalı) kıyas veremez: veri olanlar önce gelir.
+    cands.sort(key=lambda c: (bool(cats.get(c.hotel.id)), c.score), reverse=True)
     return cands[:limit], radius
 
 
