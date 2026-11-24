@@ -104,7 +104,8 @@ def decide_action(price: float, own_price: float | None) -> str:
     """raise / lower / hold / set: otelciye söylenecek tek fiil."""
     if not own_price:
         return "set"
-    change = (price / own_price - 1) * 100
+    # Ekranda gösterilen yuvarlanmış yüzdeyle aynı karar verilsin (−2,996 "−%3,0 Koru" görünmesin)
+    change = round((price / own_price - 1) * 100, 1)
     return "raise" if change >= HOLD_BAND_PCT else "lower" if change <= -HOLD_BAND_PCT else "hold"
 
 
