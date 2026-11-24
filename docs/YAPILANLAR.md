@@ -284,3 +284,18 @@ Ayrıntı: `docs/superpowers/plans/2026-11-11-netlik-ve-isabet.md`.
 - Ekranlar: panelde "Önce bunlara bakın" listesi, öneri listesinde 9 yerine 7 sütun ("Ne yapmalı", "Neden"), öneri ayrıntısında fiil ve beklenen doluluk.
 
 Testler: 328 birim/entegrasyon, 11 E2E; 180 görünümde 0 sorun.
+
+## 15. İlk canlı veri testi (24–25 Kasım 2026)
+
+Ayrıntı: `docs/CANLI_TEST_2026-11-24.md`.
+- **LiteAPI (Nuitee) rakip fiyat istemcisi** (`LiteApiHotelClient`): bir konaklama tarihi için 40 oteli tek istekte
+  sorgular; oda adından pansiyon ve iade koşulu ayıklanır; oda adı başına en ucuz, vergiler dahil gecelik fiyat.
+  `LITEAPI_KEY` varsa RapidAPI yerine kullanılır. Kalan oda bilgisi vermez.
+- Bodrum'da 25 otel, 21 günlük ufukla uçtan uca çalıştı: kayıt, eşleştirme, rakip seti, öneri, panel.
+- Testte bulunup düzeltilenler: veri yokken sabit €80 tabanlı öneri; rakip fiyatı yokken "Rakip medyanı €X" yazılması;
+  fiyatı hiç gözlenmemiş otellerin rakip setinde öne geçmesi; PredictHQ'nun Rodos (Yunanistan) etkinliklerini ve küçük
+  yerel maçları yüksek etkiyle getirmesi; ±%3 sınırında fiil ile gösterilen yüzdenin çelişmesi.
+- Testler artık yerel `.env`'deki gerçek anahtarları görmüyor.
+
+Testler: 338 birim/entegrasyon, 11 E2E.
+
