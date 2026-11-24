@@ -15,6 +15,8 @@ from app.models import ApiUsage, Plan, ProviderCost
 
 DEFAULT_PROVIDER_COSTS = [
     # provider, etiket, birim €, aylık sabit €, dahil istek, not
+    ("liteapi", "LiteAPI (rakip fiyatı)", 0.0, 0.0, 0,
+     "Arama ücretsiz, ancak arama/rezervasyon oranı 5000:1 aşılırsa faturalanabilir; kullanım koşulları teyit edilmeli."),
     ("rapidapi", "RapidAPI (Makcorps / Caviar)", 0.0010, 0.0, 0, "Yer tutucu. Seçilen RapidAPI planının fiyatıyla güncelleyin."),
     ("amadeus", "Amadeus (uçuş arama analitiği)", 0.0025, 0.0, 2000, "Yer tutucu. Self-service ücretsiz kota + aşım ücreti doğrulanmalı."),
     ("predicthq", "PredictHQ (etkinlikler)", 0.0, 0.0, 0, "Developer Plan; ticari kullanım kapsamı doğrulanmalı."),
@@ -50,8 +52,13 @@ def estimate_monthly_requests(inp: EconomicsInput) -> dict[str, int]:
     tracked = max(tracked, inp.subscribers)
     rate_calls = tracked * inp.horizon_days * inp.scans_per_day * 30 / max(1, inp.dates_per_request)
     months_ahead = max(1, round(inp.horizon_days / 30) + 1)
+    # LiteAPI bir tarih için 40 oteli tek istekte sorgular
+    lite_calls = inp.horizon_days * inp.scans_per_day * 30 * -(-round(tracked) // 40) + inp.provinces * 8 * 30
+    from app.config import settings
+
     return {
-        "rapidapi": round(rate_calls),
+        "liteapi": round(lite_calls) if settings.liteapi_key else 0,
+        "rapidapi": 0 if settings.liteapi_key else round(rate_calls),
         "amadeus": inp.provinces * 5 * months_ahead * 30 + 30,  # 5 kaynak pazar, günlük yenileme + token
         "predicthq": inp.provinces * 30 * 2,
         "google_places": inp.new_hotels_per_month,

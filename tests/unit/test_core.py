@@ -124,3 +124,12 @@ def test_usage_tracker_counts_demo_calls():
     prov.rates(date(2026, 1, 1))
     assert tracker.counts[("rapidapi", "city")][0] == 1
     assert tracker.counts[("fixer", "historical")][0] == 1
+
+
+def test_unit_economics_uses_liteapi_when_key_present(monkeypatch):
+    from app.config import settings
+
+    monkeypatch.setattr(settings, "liteapi_key", "sand_x")
+    r = estimate_monthly_requests(EconomicsInput(subscribers=10, horizon_days=60))
+    # 10 abone × 6 otel × %70 = 42 otel -> tarih başına 2 istek; 60 gün × 30 gün + ilçe listeleri
+    assert r["rapidapi"] == 0 and r["liteapi"] == 60 * 30 * 2 + 2 * 8 * 30
