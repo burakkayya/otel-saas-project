@@ -111,7 +111,7 @@ def decide_action(price: float, own_price: float | None) -> str:
 
 def pick_scenario(*, action: str, limited_by: str | None, unconstrained: float, own_occ: float | None,
                   comp_occ: float | None, expected_occ: float | None, median_change: float | None,
-                  demand_score: float, anchor: float) -> tuple[str, str]:
+                  demand_score: float, anchor: float | None) -> tuple[str, str]:
     """Önerinin arkasındaki TEK ana neden: (senaryo kodu, otelcinin okuyacağı başlık).
 
     Başlık her zaman fiille aynı yöndedir: "İndir" diyen bir önerinin başlığı fiyatı aşağı çeken
@@ -145,6 +145,8 @@ def pick_scenario(*, action: str, limited_by: str | None, unconstrained: float, 
         up.append(("high_demand", f"Talep {demand_level(demand_score).lower()} ({demand_score:.0f}/100)"))
     if demand_score <= 25:
         down.append(("low_demand", f"Talep {demand_level(demand_score).lower()} ({demand_score:.0f}/100)"))
+    if anchor is None and not (up or down):
+        return ("no_comp", "Bu kategoride rakip fiyatı yok; öneri kendi fiyatınız, talep ve sezona dayanıyor")
     if action == "raise":
         return up[0] if up else ("price_low", f"Fiyatınız bu tarih için düşük: benzer oteller €{anchor:.0f} civarında")
     if action == "lower":
@@ -261,14 +263,16 @@ def compute(inp: PricingInputs, weights: dict | None = None) -> PricingResult:
     clamped = "floor" if price == floor and raw < floor else "ceiling" if price == ceiling and raw > ceiling else None
 
     change_vs_own = round((price / inp.own_price - 1) * 100, 1) if inp.own_price else None
-    change_vs_median = round((price / (median / pi) - 1) * 100, 1)
+    change_vs_median = round((price / (median / pi) - 1) * 100, 1) if prices else None
     action = decide_action(price, inp.own_price)
     scenario, headline = pick_scenario(
-        action=action, anchor=median, limited_by=limited_by, unconstrained=unconstrained, own_occ=inp.own_occ, comp_occ=inp.comp_occ,
+        action=action, anchor=median if prices else None, limited_by=limited_by, unconstrained=unconstrained, own_occ=inp.own_occ, comp_occ=inp.comp_occ,
         expected_occ=inp.expected_occ, median_change=median_change, demand_score=inp.demand_score)
 
     parts = []
-    if median_change is not None and abs(median_change) >= 1:
+    if not prices:
+        parts.append("Bu kategoride rakip fiyatı yok; öneri kendi fiyatınız, talep ve sezona dayanıyor")
+    elif median_change is not None and abs(median_change) >= 1:
         parts.append(f"Rakip medyan fiyat son 7 günde %{abs(median_change):.0f} {'arttı' if median_change > 0 else 'azaldı'}")
     else:
         parts.append("Rakip medyan fiyat son 7 günde yatay")
@@ -286,7 +290,7 @@ def compute(inp: PricingInputs, weights: dict | None = None) -> PricingResult:
         parts.append(f"konumlama endeksi {pi:.2f} (fiyatınız tarihsel olarak rakip medyanının %{pi * 100:.0f} düzeyinde)".replace(".", ",", 1))
     if change_vs_own is not None:
         parts.append(f"öneri mevcut fiyatınıza göre {'+' if change_vs_own >= 0 else '−'}\u2060%{abs(change_vs_own):.0f}")
-    else:
+    elif change_vs_median is not None:
         parts.append(f"öneri rakip medyanına göre {'+' if change_vs_median >= 0 else '−'}\u2060%{abs(change_vs_median):.0f}")
     parts.append(f"taban €{floor:.0f}, tavan €{ceiling:.0f}")
     text = ", ".join(parts) + "."
@@ -295,12 +299,12 @@ def compute(inp: PricingInputs, weights: dict | None = None) -> PricingResult:
     rationale = {
         "text": text,
         "comp_count": len(prices),
-        "comp_median": round(median / pi, 2),
+        "comp_median": round(median / pi, 2) if prices else None,  # rakip yoksa uydurma medyan gösterilmez
         "anchor_price": round(median, 2),
         "position_index": round(pi, 3),
-        "comp_p25": round(p25 / pi, 2),
-        "comp_p75": round(p75 / pi, 2),
-        "comp_p90": round(p90 / pi, 2),
+        "comp_p25": round(p25 / pi, 2) if prices else None,
+        "comp_p75": round(p75 / pi, 2) if prices else None,
+        "comp_p90": round(p90 / pi, 2) if prices else None,
         "comp_min": round(min(prices), 2) if prices else None,
         "comp_max": round(max(prices), 2) if prices else None,
         "comp_median_change_7d_pct": median_change,
