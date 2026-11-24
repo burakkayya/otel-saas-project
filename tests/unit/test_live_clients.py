@@ -150,6 +150,7 @@ def test_live_mode_falls_back_per_component(monkeypatch):
 
     cfg = Settings()
     cfg.data_provider = "live"
+    cfg.liteapi_key = ""  # yerel .env'deki anahtardan bağımsız
     cfg.rapidapi_key = "K"
     for attr in ("amadeus_client_id", "predicthq_token", "google_maps_key", "fx_api_key"):
         setattr(cfg, attr, "")
@@ -169,6 +170,7 @@ def test_live_mode_without_rate_key_fails_loudly():
 
     cfg = Settings()
     cfg.data_provider = "live"
+    cfg.liteapi_key = ""  # yerel .env'deki anahtardan bağımsız
     cfg.rapidapi_key = ""
     bundle = get_providers(cfg=cfg)
     with pytest.raises(ProviderError):

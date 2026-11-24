@@ -104,10 +104,14 @@ def get_providers(tracker: UsageTracker | None = None, cfg: Settings | None = No
     # fiyat -> açık hata, uçuş/etkinlik -> nötr, konum -> boş, kur -> ECB (anahtarsız).
     missing: list[str] = []
     try:
-        rates = live.RapidApiHotelClient(cfg.rapidapi_key, cfg.rapidapi_hotel_provider, cfg.rapidapi_host,
-                                         recorder=tracker.record)
+        if cfg.liteapi_key:
+            rates = live.LiteApiHotelClient(cfg.liteapi_key, live.parse_city_map(cfg.liteapi_cities) or None,
+                                            cfg.liteapi_max_hotels_per_city, recorder=tracker.record)
+        else:
+            rates = live.RapidApiHotelClient(cfg.rapidapi_key, cfg.rapidapi_hotel_provider, cfg.rapidapi_host,
+                                             recorder=tracker.record)
     except ProviderError:
-        rates, _ = live.MissingRates(), missing.append("otel fiyatları (RAPIDAPI_KEY)")
+        rates, _ = live.MissingRates(), missing.append("otel fiyatları (LITEAPI_KEY / RAPIDAPI_KEY)")
     try:
         flights = live.AmadeusClient(cfg.amadeus_client_id, cfg.amadeus_client_secret, cfg.amadeus_base_url,
                                      recorder=tracker.record)

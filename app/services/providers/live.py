@@ -172,6 +172,121 @@ class RapidApiHotelClient(_Base):
         return parse_rate_response(data)
 
 
+# --------------------------------------------------------------------------- LiteAPI (Nuitee)
+LITEAPI_DEFAULT_CITIES = {
+    "Muğla": ["Bodrum", "Marmaris", "Fethiye", "Dalaman", "Datça", "Köyceğiz", "Milas", "Ortaca"],
+    "Antalya": ["Antalya", "Alanya", "Kemer", "Belek", "Side", "Manavgat", "Kaş", "Kalkan"],
+}
+
+
+def parse_city_map(raw: str) -> dict[str, list[str]]:
+    """'Muğla:Bodrum,Marmaris;Antalya:Kemer' -> {"Muğla": ["Bodrum", "Marmaris"], "Antalya": ["Kemer"]}"""
+    out: dict[str, list[str]] = {}
+    for part in (raw or "").split(";"):
+        if ":" not in part:
+            continue
+        prov, cities = part.split(":", 1)
+        out[prov.strip()] = [c.strip() for c in cities.split(",") if c.strip()]
+    return out
+
+
+def parse_liteapi_rates(hotel_entry: dict) -> list[RateItem]:
+    """Bir otelin teklifleri -> oda adı başına en ucuz gecelik fiyat (vergiler dahil toplam).
+
+    LiteAPI kalan oda sayısı vermez; available_rooms her zaman None."""
+    best: dict[str, tuple[float, str]] = {}
+    for offer in hotel_entry.get("roomTypes") or []:
+        for rate in offer.get("rates") or []:
+            if rate.get("occupancyNumber", 1) != 1:
+                continue
+            name = " ".join(str(rate.get("name") or "").split())
+            totals = ((rate.get("retailRate") or {}).get("total") or [])
+            if not name or not totals:
+                continue
+            try:
+                amount = float(totals[0].get("amount"))
+            except (TypeError, ValueError):
+                continue
+            cur = str(totals[0].get("currency") or "EUR").upper()[:3]
+            if name not in best or amount < best[name][0]:
+                best[name] = (amount, cur)
+    return [RateItem(name, round(p, 2), cur, None) for name, (p, cur) in best.items()]
+
+
+class LiteApiHotelClient(_Base):
+    """LiteAPI /hotels/rates: bir konaklama tarihi için tüm otelleri tek istekte (40'lık parçalar) sorgular.
+
+    Arama/rezervasyon oranı sınırı (5000:1) nedeniyle istek sayısı bilinçli olarak düşük tutulur:
+    günlük tarama = ufuk günü × ceil(otel / 40) istek."""
+
+    provider_key = "liteapi"
+    name = "liteapi"
+    BASE = "https://api.liteapi.travel/v3.0"
+    CHUNK = 40
+
+    def __init__(self, api_key: str, cities: dict[str, list[str]] | None = None, max_per_city: int = 40, **kw):
+        super().__init__(**kw)
+        if not api_key:
+            raise ProviderError("LITEAPI_KEY tanımlı değil")
+        self.headers = {"X-API-Key": api_key, "accept": "application/json"}
+        self.sandbox = api_key.startswith("sand")
+        self.cities = cities or LITEAPI_DEFAULT_CITIES
+        self.max_per_city = max_per_city
+        self._known: list[str] = []
+        self._cache: dict[date, dict[str, list[RateItem]]] = {}
+
+    def list_hotels(self, province: str) -> list[HotelInfo]:
+        out: list[HotelInfo] = []
+        for city in self.cities.get(province, []):
+            data = self._request("GET", f"{self.BASE}/data/hotels", "data/hotels", headers=self.headers,
+                                 params={"countryCode": "TR", "cityName": city, "limit": self.max_per_city})
+            for row in data.get("data") or []:
+                if row.get("deletedAt") or not row.get("id") or not row.get("name"):
+                    continue
+                try:
+                    lat, lng = float(row["latitude"]), float(row["longitude"])
+                except (KeyError, TypeError, ValueError):
+                    lat = lng = None
+                try:
+                    stars = int(float(row.get("stars") or 0)) or None
+                except (TypeError, ValueError):
+                    stars = None
+                out.append(HotelInfo(
+                    source_id=f"liteapi-{row['id']}", name=str(row["name"]).strip(), province=province,
+                    district=str(row.get("city") or city), lat=lat, lng=lng, star_rating=stars,
+                    address=row.get("address") or None, currency=str(row.get("currency") or "EUR"),
+                ))
+                if row["id"] not in self._known:
+                    self._known.append(row["id"])
+        return out
+
+    def _fetch(self, ids: list[str], stay_date: date) -> dict[str, list[RateItem]]:
+        out: dict[str, list[RateItem]] = {}
+        for i in range(0, len(ids), self.CHUNK):
+            chunk = ids[i:i + self.CHUNK]
+            data = self._request("POST", f"{self.BASE}/hotels/rates", "hotels/rates", headers=self.headers, json={
+                "hotelIds": chunk, "occupancies": [{"adults": 2}], "currency": "EUR", "guestNationality": "DE",
+                "checkin": stay_date.isoformat(), "checkout": (stay_date + timedelta(days=1)).isoformat(),
+                "timeout": 10,
+            })
+            for entry in data.get("data") or []:
+                out[str(entry.get("hotelId"))] = parse_liteapi_rates(entry)
+            for hid in chunk:
+                out.setdefault(hid, [])  # teklif yok = o gece satışta değil (ya da kaynakta yok)
+        return out
+
+    def get_rates(self, hotel: HotelInfo | str, stay_date: date, observed: date) -> list[RateItem]:
+        sid = hotel if isinstance(hotel, str) else hotel.source_id
+        ext = sid.split("-", 1)[1] if sid.startswith("liteapi-") else sid
+        if ext not in self._known:
+            self._known.append(ext)
+        day = self._cache.setdefault(stay_date, {})
+        if ext not in day:
+            missing = [h for h in self._known if h not in day]
+            day.update(self._fetch(missing, stay_date))
+        return day.get(ext, [])
+
+
 # --------------------------------------------------------------------------- Amadeus
 class AmadeusClient(_Base):
     provider_key = "amadeus"

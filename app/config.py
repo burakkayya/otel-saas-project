@@ -59,6 +59,13 @@ class Settings:
     rapidapi_key: str = field(default_factory=lambda: os.getenv("RAPIDAPI_KEY", ""))
     rapidapi_hotel_provider: str = field(default_factory=lambda: os.getenv("RAPIDAPI_HOTEL_PROVIDER", "makcorps"))
     rapidapi_host: str = field(default_factory=lambda: os.getenv("RAPIDAPI_HOST", ""))
+    # LiteAPI (Nuitee): rakip fiyatı. Anahtar varsa RapidAPI yerine kullanılır.
+    liteapi_key: str = field(default_factory=lambda: os.getenv("LITEAPI_KEY", ""))
+    # İl -> taranacak ilçe/şehir adları ("Muğla:Bodrum,Marmaris;Antalya:Kemer"); boşsa varsayılan liste
+    liteapi_cities: str = field(default_factory=lambda: os.getenv("LITEAPI_CITIES", ""))
+    liteapi_max_hotels_per_city: int = field(default_factory=lambda: int(os.getenv("LITEAPI_MAX_HOTELS_PER_CITY", "40")))
+    dataforseo_login: str = field(default_factory=lambda: os.getenv("DATAFORSEO_LOGIN", ""))
+    dataforseo_password: str = field(default_factory=lambda: os.getenv("DATAFORSEO_PASSWORD", ""))
     amadeus_client_id: str = field(default_factory=lambda: os.getenv("AMADEUS_CLIENT_ID", ""))
     amadeus_client_secret: str = field(default_factory=lambda: os.getenv("AMADEUS_CLIENT_SECRET", ""))
     amadeus_base_url: str = field(default_factory=lambda: os.getenv("AMADEUS_BASE_URL", "https://test.api.amadeus.com"))
@@ -82,6 +89,8 @@ class Settings:
 
     def configured_keys(self) -> dict[str, bool]:
         return {
+            "LiteAPI (rakip fiyatı)": bool(self.liteapi_key),
+            "DataForSEO (Google Hotels)": bool(self.dataforseo_login and self.dataforseo_password),
             "RapidAPI (Makcorps/Caviar)": bool(self.rapidapi_key),
             "Amadeus": bool(self.amadeus_client_id and self.amadeus_client_secret),
             "PredictHQ": bool(self.predicthq_token),
