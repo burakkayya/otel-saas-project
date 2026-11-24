@@ -203,10 +203,25 @@ def clean_room_name(name: str) -> str:
     return " - ".join(kept)
 
 
+def full_room_types(hotel_entry: dict, n: int) -> set[str]:
+    """n odalık sorguda, n odanın HEPSİNİ aynı oda tipinden karşılayan teklifler -> o oda tipleri.
+
+    Bu tipte satış kanalında en az n oda açık demektir (kalan oda alt sınırı)."""
+    out: set[str] = set()
+    for offer in hotel_entry.get("roomTypes") or []:
+        rates = offer.get("rates") or []
+        names = {clean_room_name(r.get("name") or "") for r in rates}
+        occ = {r.get("occupancyNumber") for r in rates}
+        if len(names) == 1 and occ >= set(range(1, n + 1)):
+            out |= names
+    out.discard("")
+    return out
+
+
 def parse_liteapi_rates(hotel_entry: dict) -> list[RateItem]:
     """Bir otelin teklifleri -> oda adı başına en ucuz gecelik fiyat (vergiler dahil toplam).
 
-    LiteAPI kalan oda sayısı vermez; available_rooms her zaman None."""
+    LiteAPI kalan oda sayısı vermez; available_rooms burada None, oda merdiveniyle sonradan doldurulur."""
     best: dict[str, tuple[float, str]] = {}
     for offer in hotel_entry.get("roomTypes") or []:
         for rate in offer.get("rates") or []:
@@ -237,7 +252,8 @@ class LiteApiHotelClient(_Base):
     BASE = "https://api.liteapi.travel/v3.0"
     CHUNK = 40
 
-    def __init__(self, api_key: str, cities: dict[str, list[str]] | None = None, max_per_city: int = 40, **kw):
+    def __init__(self, api_key: str, cities: dict[str, list[str]] | None = None, max_per_city: int = 40,
+                 room_ladder: tuple[int, ...] = (2, 3, 5, 8), hotel_ids: list[str] | None = None, **kw):
         super().__init__(**kw)
         if not api_key:
             raise ProviderError("LITEAPI_KEY tanımlı değil")
@@ -245,16 +261,23 @@ class LiteApiHotelClient(_Base):
         self.sandbox = api_key.startswith("sand")
         self.cities = cities or LITEAPI_DEFAULT_CITIES
         self.max_per_city = max_per_city
+        # Kalan oda merdiveni: aynı oda tipinden 2, 3, 5, 8 oda istenir; teklifin kesildiği yer kalan oda alt sınırıdır.
+        self.room_ladder = tuple(sorted(n for n in room_ladder if n > 1))
+        # Boş değilse yalnızca bu LiteAPI otelleri taranır (ör. bir butik otel ve çevresi)
+        self.hotel_ids = set(hotel_ids or [])
         self._known: list[str] = []
         self._cache: dict[date, dict[str, list[RateItem]]] = {}
 
     def list_hotels(self, province: str) -> list[HotelInfo]:
         out: list[HotelInfo] = []
         for city in self.cities.get(province, []):
+            limit = 1000 if self.hotel_ids else self.max_per_city
             data = self._request("GET", f"{self.BASE}/data/hotels", "data/hotels", headers=self.headers,
-                                 params={"countryCode": "TR", "cityName": city, "limit": self.max_per_city})
+                                 params={"countryCode": "TR", "cityName": city, "limit": limit})
             for row in data.get("data") or []:
                 if row.get("deletedAt") or not row.get("id") or not row.get("name"):
+                    continue
+                if self.hotel_ids and row["id"] not in self.hotel_ids:
                     continue
                 try:
                     lat, lng = float(row["latitude"]), float(row["longitude"])
@@ -273,17 +296,42 @@ class LiteApiHotelClient(_Base):
                     self._known.append(row["id"])
         return out
 
+    def _rates_call(self, ids: list[str], stay_date: date, rooms: int) -> dict[str, dict]:
+        data = self._request("POST", f"{self.BASE}/hotels/rates", "hotels/rates", headers=self.headers, json={
+            "hotelIds": ids, "occupancies": [{"adults": 2}] * rooms, "currency": "EUR", "guestNationality": "DE",
+            "checkin": stay_date.isoformat(), "checkout": (stay_date + timedelta(days=1)).isoformat(),
+            "timeout": 10,
+        })
+        return {str(e.get("hotelId")): e for e in data.get("data") or []}
+
     def _fetch(self, ids: list[str], stay_date: date) -> dict[str, list[RateItem]]:
         out: dict[str, list[RateItem]] = {}
         for i in range(0, len(ids), self.CHUNK):
             chunk = ids[i:i + self.CHUNK]
-            data = self._request("POST", f"{self.BASE}/hotels/rates", "hotels/rates", headers=self.headers, json={
-                "hotelIds": chunk, "occupancies": [{"adults": 2}], "currency": "EUR", "guestNationality": "DE",
-                "checkin": stay_date.isoformat(), "checkout": (stay_date + timedelta(days=1)).isoformat(),
-                "timeout": 10,
-            })
-            for entry in data.get("data") or []:
-                out[str(entry.get("hotelId"))] = parse_liteapi_rates(entry)
+            entries = self._rates_call(chunk, stay_date, 1)
+            items = {hid: parse_liteapi_rates(e) for hid, e in entries.items()}
+            if self.room_ladder:
+                # En az 1 oda açık olan her tip için kalan oda alt sınırı; merdivende yukarı çıkıldıkça
+                # yalnızca hâlâ oda veren otellere sorulur (istek sayısı düşük kalır).
+                avail = {hid: {it.raw_room_name: 1 for it in its} for hid, its in items.items()}
+                alive = [h for h in chunk if avail.get(h)]
+                for n in self.room_ladder:
+                    if not alive:
+                        break
+                    got = self._rates_call(alive, stay_date, n)
+                    nxt = []
+                    for hid in alive:
+                        full = full_room_types(got[hid], n) if hid in got else set()
+                        for name in full:
+                            if name in avail[hid]:
+                                avail[hid][name] = n
+                        if full:
+                            nxt.append(hid)
+                    alive = nxt
+                for hid, its in items.items():
+                    for it in its:
+                        it.available_rooms = avail[hid].get(it.raw_room_name, 1)
+            out.update(items)
             for hid in chunk:
                 out.setdefault(hid, [])  # teklif yok = o gece satışta değil (ya da kaynakta yok)
         return out

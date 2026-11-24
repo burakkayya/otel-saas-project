@@ -37,6 +37,7 @@ def _no_sleep(monkeypatch):
 
 
 def make(handler, **kw):
+    kw.setdefault("room_ladder", ())
     return live.LiteApiHotelClient("sand_test", {"Muğla": ["Bodrum"]}, client=httpx.Client(
         transport=httpx.MockTransport(handler)), **kw)
 
@@ -118,3 +119,38 @@ def test_requires_key_and_reports_http_errors():
     with pytest.raises(ProviderError):
         c.list_hotels("Muğla")
 
+
+
+def _offer(name, n, amount=100.0):
+    return {"rates": [{"name": name, "occupancyNumber": i, "retailRate": {"total": [{"amount": amount}]}}
+                      for i in range(1, n + 1)]}
+
+
+def test_full_room_types_requires_all_rooms_same_type():
+    entry = {"roomTypes": [_offer("Economy", 3), _offer("Deluxe", 2),
+                           {"rates": [{"name": "Economy", "occupancyNumber": 1}, {"name": "Deluxe", "occupancyNumber": 2},
+                                      {"name": "Deluxe", "occupancyNumber": 3}]}]}
+    assert live.full_room_types(entry, 3) == {"Economy"}
+
+
+def test_room_ladder_gives_remaining_rooms_lower_bound():
+    """Gerçek gözlem (Dinc Pansiyon, 5 Ara 2026): 2 odada 2 tip, 3 odada yalnızca Economy, 5 odada hiç."""
+    calls = []
+
+    def handler(req):
+        body = json.loads(req.content)
+        n = len(body["occupancies"])
+        calls.append((n, body["hotelIds"]))
+        offers = {1: [_offer("Economy", 1, 98), _offer("Deluxe", 1, 126), _offer("Triple", 1, 153)],
+                  2: [_offer("Economy", 2), _offer("Deluxe", 2)],
+                  3: [_offer("Economy", 3)]}.get(n, [])
+        data = [{"hotelId": "lpaeb3e", "roomTypes": offers}] if offers else []
+        return httpx.Response(200, json={"data": data})
+
+    c = make(handler, room_ladder=(2, 3, 5, 8))
+    c._known = ["lpaeb3e", "lpbos"]
+    got = {i.raw_room_name: i.available_rooms for i in c.get_rates("liteapi-lpaeb3e", date(2026, 12, 5), date(2026, 11, 25))}
+    assert got == {"Economy": 3, "Deluxe": 2, "Triple": 1}
+    # 8'e sorulmaz: 5 odada kimse kalmadı; teklifsiz otel merdivene hiç girmez
+    assert [n for n, _ in calls] == [1, 2, 3, 5]
+    assert all(ids == ["lpaeb3e"] for n, ids in calls if n > 1)

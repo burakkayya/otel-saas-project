@@ -64,6 +64,10 @@ class Settings:
     # İl -> taranacak ilçe/şehir adları ("Muğla:Bodrum,Marmaris;Antalya:Kemer"); boşsa varsayılan liste
     liteapi_cities: str = field(default_factory=lambda: os.getenv("LITEAPI_CITIES", ""))
     liteapi_max_hotels_per_city: int = field(default_factory=lambda: int(os.getenv("LITEAPI_MAX_HOTELS_PER_CITY", "40")))
+    # Kalan oda merdiveni ("2,3,5,8"); boş bırakılırsa kalan oda sorgulanmaz
+    liteapi_room_ladder: str = field(default_factory=lambda: os.getenv("LITEAPI_ROOM_LADDER", "2,3,5,8"))
+    # Boş değilse yalnızca bu LiteAPI otel kimlikleri taranır (virgülle)
+    liteapi_hotel_ids: str = field(default_factory=lambda: os.getenv("LITEAPI_HOTEL_IDS", ""))
     dataforseo_login: str = field(default_factory=lambda: os.getenv("DATAFORSEO_LOGIN", ""))
     dataforseo_password: str = field(default_factory=lambda: os.getenv("DATAFORSEO_PASSWORD", ""))
     amadeus_client_id: str = field(default_factory=lambda: os.getenv("AMADEUS_CLIENT_ID", ""))

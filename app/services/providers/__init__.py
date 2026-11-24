@@ -105,8 +105,11 @@ def get_providers(tracker: UsageTracker | None = None, cfg: Settings | None = No
     missing: list[str] = []
     try:
         if cfg.liteapi_key:
-            rates = live.LiteApiHotelClient(cfg.liteapi_key, live.parse_city_map(cfg.liteapi_cities) or None,
-                                            cfg.liteapi_max_hotels_per_city, recorder=tracker.record)
+            rates = live.LiteApiHotelClient(
+                cfg.liteapi_key, live.parse_city_map(cfg.liteapi_cities) or None, cfg.liteapi_max_hotels_per_city,
+                room_ladder=tuple(int(x) for x in cfg.liteapi_room_ladder.split(",") if x.strip().isdigit()),
+                hotel_ids=[x.strip() for x in cfg.liteapi_hotel_ids.split(",") if x.strip()],
+                recorder=tracker.record)
         else:
             rates = live.RapidApiHotelClient(cfg.rapidapi_key, cfg.rapidapi_hotel_provider, cfg.rapidapi_host,
                                              recorder=tracker.record)
