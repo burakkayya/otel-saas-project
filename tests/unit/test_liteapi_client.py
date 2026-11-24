@@ -54,6 +54,13 @@ def test_parse_rates_cheapest_per_room_name_first_room_only():
     assert all(i.available_rooms is None and i.currency == "EUR" for i in items)
 
 
+def test_clean_room_name_drops_board_and_refund_parts():
+    assert live.clean_room_name("Studio Oda - Bed & breakfast - İade Edilemez") == "Studio Oda"
+    assert live.clean_room_name("1+1 Lux Oda - Half board/modified American plan - İade Edilebilir") == "1+1 Lux Oda"
+    assert live.clean_room_name("Room - Garden view") == "Room - Garden view"
+    assert live.clean_room_name("  Deluxe   Room ") == "Deluxe Room"
+
+
 def test_list_hotels_maps_fields_and_skips_deleted():
     seen = {}
 

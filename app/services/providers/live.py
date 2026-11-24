@@ -8,6 +8,7 @@ güncellenmeli ve ayrıştırıcı netleştirilmelidir.
 """
 from __future__ import annotations
 
+import re
 import time
 from collections.abc import Callable
 from datetime import date, timedelta
@@ -190,6 +191,18 @@ def parse_city_map(raw: str) -> dict[str, list[str]]:
     return out
 
 
+_RATE_PLAN_WORDS = re.compile(
+    r"breakfast|board|plan|inclusive|room only|refund|iade|kahvalt|pansiyon|her şey dahil|yarım|tam ", re.I)
+
+
+def clean_room_name(name: str) -> str:
+    """Oda adından pansiyon ve iade koşulu parçalarını atar:
+    'Studio Oda - Bed & breakfast - İade Edilemez' -> 'Studio Oda'."""
+    parts = [p.strip() for p in " ".join(str(name).split()).split(" - ")]
+    kept = [p for i, p in enumerate(parts) if i == 0 or not _RATE_PLAN_WORDS.search(p)]
+    return " - ".join(kept)
+
+
 def parse_liteapi_rates(hotel_entry: dict) -> list[RateItem]:
     """Bir otelin teklifleri -> oda adı başına en ucuz gecelik fiyat (vergiler dahil toplam).
 
@@ -199,7 +212,7 @@ def parse_liteapi_rates(hotel_entry: dict) -> list[RateItem]:
         for rate in offer.get("rates") or []:
             if rate.get("occupancyNumber", 1) != 1:
                 continue
-            name = " ".join(str(rate.get("name") or "").split())
+            name = clean_room_name(rate.get("name") or "")
             totals = ((rate.get("retailRate") or {}).get("total") or [])
             if not name or not totals:
                 continue
