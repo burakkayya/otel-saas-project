@@ -123,11 +123,11 @@ def test_trigger_job_runs_in_background(admin_browser, db):
 
 
 def test_provider_cost_update(admin_browser, db):
-    r = admin_browser.post("/admin/api-maliyet/rapidapi", {"unit_cost_eur": "0,002", "monthly_fee_eur": "25",
+    r = admin_browser.post("/admin/api-maliyet/dataforseo", {"unit_cost_eur": "0,002", "monthly_fee_eur": "25",
                                                            "included_requests": "1000", "notes": "Pro plan", "enabled": "1"})
     assert r.status_code == 303
     db.expire_all()
-    pc = db.get(ProviderCost, "rapidapi")
+    pc = db.get(ProviderCost, "dataforseo")
     assert float(pc.unit_cost_eur) == 0.002 and float(pc.monthly_fee_eur) == 25
     assert admin_browser.post("/admin/api-maliyet/yok", {"unit_cost_eur": "1", "monthly_fee_eur": "1"}).status_code == 404
 

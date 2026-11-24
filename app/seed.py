@@ -56,9 +56,9 @@ PLANS = [
 ]
 
 COMPLIANCE = [
-    ("data_source_terms", "Veri kaynağı (Makcorps / Caviar) kullanım koşulları yazılı olarak kaydedildi", "high"),
+    ("data_source_terms", "Veri kaynakları (LiteAPI, DataForSEO) kullanım koşulları ve izleme amaçlı kullanım yazılı olarak teyit edildi", "high"),
     ("ota_commercial_use", "Booking.com ve aggregator verilerinin ticari kullanım durumu teyit edildi", "high"),
-    ("amadeus_terms", "Amadeus self-service, Flight Search Volume erişimi ve ticari kullanım koşulları teyit edildi", "medium"),
+    ("amadeus_terms", "Travelpayouts Data API verisinin satış ortaklığı dışında talep sinyali olarak kullanımı teyit edildi", "medium"),
     ("predicthq_terms", "PredictHQ Developer Plan ticari kullanım kapsamı teyit edildi", "medium"),
     ("google_caching", "Google Places ve Distance Matrix önbellekleme ve saklama kısıtları kontrol edildi", "medium"),
     ("kvkk", "Kişisel veri (otel yetkilisi iletişim bilgisi) için KVKK uyumu değerlendirildi", "high"),

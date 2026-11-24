@@ -87,9 +87,9 @@ def test_inventory_event_classification():
 def test_unit_economics_scaling():
     small = estimate_monthly_requests(EconomicsInput(subscribers=10))
     big = estimate_monthly_requests(EconomicsInput(subscribers=100))
-    assert big["rapidapi"] == small["rapidapi"] * 10
-    batched = estimate_monthly_requests(EconomicsInput(subscribers=10, dates_per_request=30))
-    assert batched["rapidapi"] == small["rapidapi"] // 30
+    assert big["dataforseo"] > small["dataforseo"] * 9
+    assert big["liteapi"] > small["liteapi"]  # 40'lık parçalar: doğrusal değil
+    assert "rapidapi" not in small and "amadeus" not in small and "fixer" not in small
 
 
 def test_provider_cost_with_included_quota():
@@ -122,8 +122,8 @@ def test_usage_tracker_counts_demo_calls():
     prov = _Counting(DemoProvider(scale=0.2), tracker)
     prov.list_hotels("Antalya")
     prov.rates(date(2026, 1, 1))
-    assert tracker.counts[("rapidapi", "city")][0] == 1
-    assert tracker.counts[("fixer", "historical")][0] == 1
+    assert tracker.counts[("liteapi", "data/hotels")][0] == 1
+    assert tracker.counts[("ecb", "daily")][0] == 1
 
 
 def test_unit_economics_uses_liteapi_when_key_present(monkeypatch):
@@ -131,5 +131,5 @@ def test_unit_economics_uses_liteapi_when_key_present(monkeypatch):
 
     monkeypatch.setattr(settings, "liteapi_key", "sand_x")
     r = estimate_monthly_requests(EconomicsInput(subscribers=10, horizon_days=60))
-    # 10 abone × 6 otel × %70 = 42 otel -> tarih başına 2 istek; 60 gün × 30 gün + ilçe listeleri
-    assert r["rapidapi"] == 0 and r["liteapi"] == 60 * 30 * 2 + 2 * 8 * 30
+    # 10 abone × 6 otel × %70 = 42 otel -> tarih başına 2 parça × (1 fiyat + ~2 merdiven); + ilçe listeleri
+    assert r["liteapi"] == 60 * 30 * 2 * 3 + 2 * 8 * 30
