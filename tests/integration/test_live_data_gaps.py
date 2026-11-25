@@ -29,3 +29,51 @@ def test_no_competitor_price_is_said_plainly():
     assert r["change_vs_median_pct"] is None
     assert "rakip fiyatı yok" in r["text"] and "benzer oteller" not in r["headline"]
     assert "Rakip medyan fiyat" not in r["text"]
+
+
+def _isolated_market(db):
+    """İzmir'de yalıtılmış küçük pazar: pansiyon (standart €100, deluxe €180), 3 rakip standart €50,
+    yalnızca 1 rakipte deluxe €45 (canlı testteki Dinc Pansiyon / Kale Hotel durumu)."""
+    from datetime import datetime, time, timezone
+
+    from app.models import CompetitorSet, RateSnapshot
+
+    today = date.today()
+    obs = datetime.combine(today, time(6, 0), tzinfo=timezone.utc)
+    own = Hotel(source_id="t-own", name="Test Pansiyon", province="İzmir", district="Çeşme", lat=38.3, lng=26.3)
+    comps = [Hotel(source_id=f"t-c{i}", name=f"Rakip {i}", province="İzmir", district="Çeşme", lat=38.3, lng=26.3 + i / 1000)
+             for i in range(3)]
+    db.add_all([own, *comps])
+    db.flush()
+
+    def rt(h, name, cat):
+        r = RoomType(hotel_id=h.id, raw_name=name, category=cat, mapped_by="rule", confidence=1.0, reviewed=True)
+        db.add(r)
+        db.flush()
+        return r
+
+    rows = [(rt(own, "Standart", "standard"), 100.0), (rt(own, "Deluxe", "deluxe"), 180.0)]
+    for i, c in enumerate(comps):
+        rows.append((rt(c, "Standart", "standard"), 50.0))
+        if i == 0:
+            rows.append((rt(c, "Deluxe", "deluxe"), 45.0))
+        db.add(CompetitorSet(hotel_id=own.id, competitor_hotel_id=c.id, rank=i + 1, similarity_score=0.8,
+                             distance_km=0.1, is_manual=False))
+    for r, p in rows:
+        for k in range(10):
+            db.add(RateSnapshot(room_type_id=r.id, stay_date=today + timedelta(days=k), observed_at=obs,
+                                price_original=p, currency="EUR", price_eur=p, available_rooms=2, source="test"))
+    db.flush()
+    return own, rows[1][0]
+
+
+def test_single_competitor_is_not_a_market_and_positioning_falls_back(db):
+    own, deluxe = _isolated_market(db)
+    out = generate_for_hotel(db, own, date.today(), date.today() + timedelta(days=6), persist=False)
+    dlx = [s for s in out if s.room_type_id == deluxe.id]
+    assert dlx
+    for s in dlx:
+        r = s.rationale
+        assert r["comp_count"] == 0, "tek rakip piyasa sayılmamalı"
+        assert r["position_index"] > 1.5, "deluxe için standart odadaki konumlama (≈2) kullanılmalı"
+        assert float(s.suggested_price) > 120, "pansiyonun €180'lik odasına tek ucuz rakibin €45'i önerilmemeli"
