@@ -59,6 +59,7 @@ class PricingInputs:
     max_price: float | None = None
     floor_below_p25_pct: float = 10.0
     ceiling_margin_pct: float = 5.0
+    room_premium: float = 1.0  # oda tipinin otelin aynı kategorideki en ucuz odasına oranı
     fallback_price: float | None = None  # rakip verisi yoksa (bölge medyanı)
     position_index: float = 1.0  # otelin tarihsel fiyatı / rakip medyanı (konumlama)
     own_occ: float | None = None   # abone otelin tahmini doluluğu (0..1)
@@ -212,7 +213,10 @@ def compute(inp: PricingInputs, weights: dict | None = None) -> PricingResult:
     prices = [p for p, _ in kept]
     cw = [w_ for _, w_ in kept] if use_w else []
     confidence = "high" if len(prices) >= 4 else "medium" if len(prices) >= 2 else "low"
-    pi = max(0.5, min(1.8, inp.position_index or 1.0))
+    # Kategori konumlaması (0,5–1,8) × oda tipinin kategorideki en ucuz odaya göre primi (1–3)
+    pi_cat = max(0.5, min(1.8, inp.position_index or 1.0))
+    premium = max(1.0, min(3.0, inp.room_premium or 1.0))
+    pi = pi_cat * premium
     if prices:
         # Rakip dağılımı otelin konumlama endeksiyle ölçeklenir (ör. pansiyon ile resort aynı fiyatlanmaz).
         # Size daha çok benzeyen rakip (benzerlik skoru, onayınız) dağılımda daha ağır basar.
@@ -290,8 +294,10 @@ def compute(inp: PricingInputs, weights: dict | None = None) -> PricingResult:
     if abs(pressure) >= 0.15:
         parts.append("rakiplerde kalan oda hızla azalıyor" if pressure > 0 else "rakiplerde kalan oda artıyor")
     parts.append(season_label(inp.season_coef).lower())
-    if abs(pi - 1) >= 0.05:
-        parts.append(f"konumlama endeksi {pi:.2f} (fiyatınız tarihsel olarak rakip medyanının %{pi * 100:.0f} düzeyinde)".replace(".", ",", 1))
+    if abs(pi_cat - 1) >= 0.05:
+        parts.append(f"konumlama endeksi {pi_cat:.2f} (fiyatınız tarihsel olarak rakip medyanının %{pi_cat * 100:.0f} düzeyinde)".replace(".", ",", 1))
+    if premium >= 1.05:
+        parts.append(f"bu oda kategorinizdeki en uygun odadan %{(premium - 1) * 100:.0f} pahalı")
     if change_vs_own is not None:
         parts.append(f"öneri mevcut fiyatınıza göre {'+' if change_vs_own >= 0 else '−'}\u2060%{abs(change_vs_own):.0f}")
     elif change_vs_median is not None:
@@ -305,7 +311,8 @@ def compute(inp: PricingInputs, weights: dict | None = None) -> PricingResult:
         "comp_count": len(prices),
         "comp_median": round(median / pi, 2) if prices else None,  # rakip yoksa uydurma medyan gösterilmez
         "anchor_price": round(median, 2),
-        "position_index": round(pi, 3),
+        "position_index": round(pi_cat, 3),
+        "room_premium": round(premium, 3),
         "comp_p25": round(p25 / pi, 2) if prices else None,
         "comp_p75": round(p75 / pi, 2) if prices else None,
         "comp_p90": round(p90 / pi, 2) if prices else None,
@@ -351,6 +358,32 @@ def compute(inp: PricingInputs, weights: dict | None = None) -> PricingResult:
         "lead_days": inp.lead_days,
     }
     return PricingResult(float(price), float(floor), float(ceiling), rationale)
+
+
+def room_type_premiums(own_rts: list[RoomType], own_latest: dict) -> dict[int, float]:
+    """Aynı kategorideki oda tipleri tek fiyata indirgenmesin: her oda tipinin, otelin aynı kategorideki en ucuz
+    odasına göre fiyat oranı (gözlenen gecelerin medyanı). Canlı test: €68'lik ve €96'lık iki standart odaya aynı
+    €62 öneriliyordu."""
+    by_cat: dict[str, list[RoomType]] = {}
+    for r in own_rts:
+        by_cat.setdefault(r.category or "other", []).append(r)
+    out: dict[int, float] = {}
+    for rts in by_cat.values():
+        if len(rts) < 2:
+            continue
+        days = {d for (rid, d) in own_latest if rid in {r.id for r in rts}}
+        ratios: dict[int, list[float]] = {}
+        for d in days:
+            prices = {r.id: own_latest[(r.id, d)].price_eur for r in rts
+                      if (r.id, d) in own_latest and own_latest[(r.id, d)].price_eur}
+            if len(prices) < 2:
+                continue
+            low = min(prices.values())
+            for rid, p in prices.items():
+                ratios.setdefault(rid, []).append(float(p) / float(low))
+        for rid, rs in ratios.items():
+            out[rid] = round(statistics.median(rs), 3)
+    return out
 
 
 def position_index(db: Session, hotel_id: int, comp_ids: list[int], category: str, as_of: date,
@@ -402,6 +435,7 @@ def generate_for_hotel(
         coefs = monthly_coefficients(db, hotel.province, hotel.district, today=as_of)["coef"]
     own_rts = list(db.execute(select(RoomType).where(RoomType.hotel_id == hotel.id)).scalars())
     own_latest = latest_observations(db, [r.id for r in own_rts], start, end, as_of)
+    premium = room_type_premiums(own_rts, own_latest)
     occ = compset_occupancy(db, hotel.id, comp_ids, start, end, as_of)
     # Rezervasyon hızı: otelin kendi geçmişinden, kalan güne göre beklenen doluluk eğrisi
     curves, curve_days = pace_curve(db, hotel.id, as_of)
@@ -460,6 +494,7 @@ def generate_for_hotel(
                 floor_below_p25_pct=float(hs.floor_below_p25_pct) if hs else 10.0,
                 ceiling_margin_pct=float(hs.ceiling_margin_pct) if hs else 5.0,
                 position_index=pi_cache[cat],
+                room_premium=premium.get(rt.id, 1.0),
                 own_occ=(occ.get(d) or {}).get("own"),
                 comp_occ=(occ.get(d) or {}).get("comp"),
                 own_occ_7d=(occ.get(d) or {}).get("own_7d"),

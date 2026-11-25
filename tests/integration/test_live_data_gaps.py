@@ -77,3 +77,28 @@ def test_single_competitor_is_not_a_market_and_positioning_falls_back(db):
         assert r["comp_count"] == 0, "tek rakip piyasa sayılmamalı"
         assert r["position_index"] > 1.5, "deluxe için standart odadaki konumlama (≈2) kullanılmalı"
         assert float(s.suggested_price) > 120, "pansiyonun €180'lik odasına tek ucuz rakibin €45'i önerilmemeli"
+
+
+def test_room_types_keep_their_premium_within_category(db):
+    """Canlı test: €68 ve €96'lık iki standart odaya aynı fiyat öneriliyordu."""
+    from datetime import datetime, time, timezone
+
+    from app.models import RateSnapshot
+
+    own, _ = _isolated_market(db)
+    pricey = RoomType(hotel_id=own.id, raw_name="Standart Deniz Manzaralı", category="standard", mapped_by="rule",
+                      confidence=1.0, reviewed=True)
+    db.add(pricey)
+    db.flush()
+    obs = datetime.combine(date.today(), time(6, 0), tzinfo=timezone.utc)
+    for k in range(10):
+        db.add(RateSnapshot(room_type_id=pricey.id, stay_date=date.today() + timedelta(days=k), observed_at=obs,
+                            price_original=140, currency="EUR", price_eur=140, available_rooms=1, source="test"))
+    db.flush()
+    out = generate_for_hotel(db, own, date.today(), date.today() + timedelta(days=3), persist=False)
+    base = {s.stay_date: float(s.suggested_price) for s in out
+            if s.room_type_id != pricey.id and s.rationale.get("room_premium") == 1.0 and s.rationale["comp_count"] == 3}
+    top = {s.stay_date: (float(s.suggested_price), s.rationale["room_premium"]) for s in out if s.room_type_id == pricey.id}
+    assert top and base
+    for d, (p, prem) in top.items():
+        assert prem == 1.4 and p > base[d] * 1.2, "pahalı oda tipi primini korumalı"
