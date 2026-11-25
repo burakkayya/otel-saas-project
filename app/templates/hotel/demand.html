@@ -1,7 +1,7 @@
 {% extends "partials/app_layout.html" %}
 {% block title %}Talep ve sezon{% endblock %}
 {% block page_title %}Talep ve sezon{% endblock %}
-{% block crumbs %}<div class="crumbs">{{ hotel.province }} için talep skoru: uçuş arama trendi (%45), etkinlikler (%35) ve tatil takvimi (%20).</div>{% endblock %}
+{% block crumbs %}<div class="crumbs">{{ hotel.province }} için talep skoru: uçuş talebi (%45; bilet fiyatlarından türetilen endeks), etkinlikler (%35) ve tatil takvimi (%20).</div>{% endblock %}
 {% block content %}
 {% set labels = days|map('string')|list %}
 {% set fl = [] %}{% set ev = [] %}{% set ho = [] %}
@@ -13,9 +13,9 @@
 <div class="panel">
   <div class="panel-head"><div><h2>Talep skoru: son 30 gün ve önümüzdeki 60 gün</h2><p>Çubuk yüksekliği toplam skoru, renkler bileşenlerin katkısını gösterir.</p></div></div>
   <div class="panel-body">
-    <div class="legend"><span><i style="background:var(--series-1);height:10px"></i>Uçuş arama</span><span><i style="background:var(--series-2);height:10px"></i>Etkinlik</span><span><i style="background:var(--series-3);height:10px"></i>Tatil</span></div>
+    <div class="legend"><span><i style="background:var(--series-1);height:10px"></i>Uçuş talebi</span><span><i style="background:var(--series-2);height:10px"></i>Etkinlik</span><span><i style="background:var(--series-3);height:10px"></i>Tatil</span></div>
     {{ ui.chart("bar", {"labels": labels, "unit": "score", "stacked": true, "max": 100, "todayIndex": 30, "threshold": {"value": 55, "label": "Yüksek talep eşiği (55)"}, "series": [
-        {"label": "Uçuş arama", "data": fl, "color": "series-1"},
+        {"label": "Uçuş talebi", "data": fl, "color": "series-1"},
         {"label": "Etkinlik", "data": ev, "color": "series-2"},
         {"label": "Tatil", "data": ho, "color": "series-3"}]}, "demand-stack", "tall", "Talep skoru bileşenleri", true) }}
   </div>

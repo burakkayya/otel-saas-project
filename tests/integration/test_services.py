@@ -124,7 +124,7 @@ def test_unit_economics(db):
     econ = unit_economics(db, EconomicsInput(subscribers=20))
     assert econ["total"] > 0 and econ["plans"]
     assert all(p["cost_per_sub"] == econ["per_subscriber"] for p in econ["plans"])
-    assert measured_usage(db)["by_provider"].get("rapidapi", 0) > 0
+    assert measured_usage(db)["by_provider"].get("liteapi", 0) > 0
 
 
 def test_daily_pipeline_job(db):

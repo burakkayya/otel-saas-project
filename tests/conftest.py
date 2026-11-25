@@ -18,6 +18,10 @@ os.environ["SCHEDULER_ENABLED"] = "false"
 os.environ["ADMIN_EMAIL"] = "admin@otelradar.local"
 os.environ["ADMIN_PASSWORD"] = "Admin123!"
 os.environ.setdefault("SECRET_KEY", "test-secret")
+# Yerel .env'deki gerçek API anahtarları testlere sızmasın (testler asla gerçek API çağırmaz)
+for _k in ("LITEAPI_KEY", "DATAFORSEO_LOGIN", "DATAFORSEO_PASSWORD", "TRAVELPAYOUTS_TOKEN", "SERPAPI_KEY",
+           "PREDICTHQ_TOKEN", "GOOGLE_MAPS_KEY", "LLM_API_KEY"):
+    os.environ[_k] = ""
 
 import pytest  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402

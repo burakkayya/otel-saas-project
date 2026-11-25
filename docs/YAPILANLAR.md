@@ -284,3 +284,36 @@ Ayrıntı: `docs/superpowers/plans/2026-11-11-netlik-ve-isabet.md`.
 - Ekranlar: panelde "Önce bunlara bakın" listesi, öneri listesinde 9 yerine 7 sütun ("Ne yapmalı", "Neden"), öneri ayrıntısında fiil ve beklenen doluluk.
 
 Testler: 328 birim/entegrasyon, 11 E2E; 180 görünümde 0 sorun.
+
+## 15. İlk canlı veri testi (24–25 Kasım 2026)
+
+Ayrıntı: `docs/CANLI_TEST_2026-11-24.md`.
+- **LiteAPI (Nuitee) rakip fiyat istemcisi** (`LiteApiHotelClient`): bir konaklama tarihi için 40 oteli tek istekte
+  sorgular; oda adından pansiyon ve iade koşulu ayıklanır; oda adı başına en ucuz, vergiler dahil gecelik fiyat.
+  `LITEAPI_KEY` varsa RapidAPI yerine kullanılır. Kalan oda bilgisi vermez.
+- Bodrum'da 25 otel, 21 günlük ufukla uçtan uca çalıştı: kayıt, eşleştirme, rakip seti, öneri, panel.
+- Testte bulunup düzeltilenler: veri yokken sabit €80 tabanlı öneri; rakip fiyatı yokken "Rakip medyanı €X" yazılması;
+  fiyatı hiç gözlenmemiş otellerin rakip setinde öne geçmesi; PredictHQ'nun Rodos (Yunanistan) etkinliklerini ve küçük
+  yerel maçları yüksek etkiyle getirmesi; ±%3 sınırında fiil ile gösterilen yüzdenin çelişmesi.
+- Testler artık yerel `.env`'deki gerçek anahtarları görmüyor.
+
+Testler: 338 birim/entegrasyon, 11 E2E.
+
+## 16. Butik otelle canlı test, kalan oda ve yeni veri kaynakları (25 Kasım 2026)
+
+Ayrıntı: `docs/CANLI_TEST_2026-11-24.md` (2. bölüm).
+- **Kalan oda (alt sınır):** LiteAPI'de aynı oda tipinden 2, 3, 5, 8 oda istenir; teklifin kesildiği yer o tipte açık oda
+  sayısının alt sınırıdır. Tarih başına birden çok otel tek istekte sorulur; merdivende yalnızca hâlâ oda veren oteller
+  kalır. Tahmini doluluk, rezervasyon hızı ve pazar sıkışması sinyalleri canlı veride artık çalışıyor.
+- **DataForSEO (Google Hotels):** LiteAPI'de teklifi olmayan otellere Google'ın en düşük fiyatı, kanal farkı
+  düzeltilerek eklenir (yeterli eşleşme yoksa kullanılmaz). Google otel kimlikleri `data/cache/` altında saklanır.
+- **Travelpayouts:** uçuş bileşeni artık sabit 50 değil; kaynak pazarlardan bölge havalimanlarına günlük bilet fiyatı
+  endeksi.
+- **Kaldırılanlar:** Amadeus, Makcorps/Caviar (RapidAPI), Fixer. Kur ECB'den (anahtarsız).
+- **Motor düzeltmeleri:** tek rakip piyasa sayılmıyor (en az 2); kategoride konumlama hesaplanamıyorsa standart odadaki
+  konumlama kullanılıyor; aynı kategorideki oda tipleri kendi primini koruyor; geçmişi olan rakipler önce seçiliyor;
+  "benzer oteller €X" yerine "konumunuza göre piyasa düzeyi €X".
+- Arayüz etiketleri: "Uçuş arama" yerine "Uçuş talebi".
+
+Testler: 343 birim/entegrasyon, 11 E2E.
+

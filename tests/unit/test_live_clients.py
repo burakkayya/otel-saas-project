@@ -1,7 +1,7 @@
-"""Gerçek API istemcileri — ağ çağrısı yapılmadan (httpx.MockTransport) test edilir.
+"""Gerçek API istemcileri: ağ çağrısı yapılmadan (httpx.MockTransport) test edilir.
 
-NOT: Makcorps/Caviar örnek yanıtları VARSAYIMSALDIR. İlk gerçek yanıt alındığında
-SAMPLE_* sabitleri gerçek yanıtla değiştirilmelidir (docs/ACIK_KONULAR.md #1).
+Örnek yanıtlar 24-25 Kasım 2026'da gerçek isteklerle alınan yanıtların kısaltılmış biçimidir.
+LiteAPI testleri: tests/unit/test_liteapi_client.py.
 """
 from datetime import date
 
@@ -9,14 +9,7 @@ import httpx
 import pytest
 
 from app.services.providers import live
-from app.services.providers.base import ProviderError
-
-SAMPLE_RATES_A = {"rooms": [
-    {"room_name": "Deluxe Double Room", "price": "142.50", "currency": "EUR", "rooms_left": 3},
-    {"room_name": "Family Room", "price": {"amount": 210}, "available_rooms": "1"},
-    {"name": ""},
-]}
-SAMPLE_RATES_B = [{"roomName": "Standart Oda", "pricePerNight": 4100, "currencyCode": "try"}]
+from app.services.providers.base import HotelInfo, ProviderError, RateItem
 
 
 @pytest.fixture(autouse=True)
@@ -28,39 +21,7 @@ def mock(handler):
     return httpx.Client(transport=httpx.MockTransport(handler))
 
 
-def test_parse_rate_variants():
-    a = live.parse_rate_response(SAMPLE_RATES_A)
-    assert [(i.raw_room_name, i.price, i.currency, i.available_rooms) for i in a] == [
-        ("Deluxe Double Room", 142.5, "EUR", 3), ("Family Room", 210.0, "EUR", 1)]
-    b = live.parse_rate_response(SAMPLE_RATES_B)
-    assert b[0].currency == "TRY" and b[0].available_rooms is None
-    assert live.parse_rate_response("bozuk") == []
-
-
-def test_rapidapi_client_sends_headers_and_parses():
-    seen = {}
-
-    def handler(req: httpx.Request):
-        seen["host"] = req.headers["X-RapidAPI-Host"]
-        seen["key"] = req.headers["X-RapidAPI-Key"]
-        seen["params"] = dict(req.url.params)
-        return httpx.Response(200, json=SAMPLE_RATES_A)
-
-    calls = []
-    c = live.RapidApiHotelClient("KEY", "makcorps", client=mock(handler),
-                                 recorder=lambda *a, **k: calls.append(a))
-    items = c.get_rates("makcorps-123", date(2026, 7, 1), date(2026, 6, 1))
-    assert len(items) == 2
-    assert seen["key"] == "KEY" and "makcorps" in seen["host"]
-    assert seen["params"]["hotelid"] == "123" and seen["params"]["checkout"] == "2026-07-02"
-    assert calls and calls[0][0] == "makcorps"
-
-
-def test_rapidapi_requires_key():
-    with pytest.raises(ProviderError):
-        live.RapidApiHotelClient("")
-
-
+# ---------------------------------------------------------------- ortak istek davranışı
 def test_client_error_raises_without_retry():
     n = {"c": 0}
 
@@ -68,9 +29,9 @@ def test_client_error_raises_without_retry():
         n["c"] += 1
         return httpx.Response(401, text="unauthorized")
 
-    c = live.RapidApiHotelClient("K", client=mock(handler), retries=2)
+    c = live.PredictHQClient("T", client=mock(handler), retries=2)
     with pytest.raises(ProviderError):
-        c.get_rates("makcorps-1", date(2026, 7, 1), date(2026, 6, 1))
+        c.events("Muğla", date(2026, 7, 1), date(2026, 7, 2))
     assert n["c"] == 1
 
 
@@ -79,44 +40,138 @@ def test_server_error_is_retried():
 
     def handler(req):
         n["c"] += 1
-        return httpx.Response(503) if n["c"] < 3 else httpx.Response(200, json=SAMPLE_RATES_B)
+        return httpx.Response(503) if n["c"] < 3 else httpx.Response(200, json={"results": [], "next": None})
 
-    c = live.RapidApiHotelClient("K", client=mock(handler), retries=2)
-    assert len(c.get_rates("makcorps-1", date(2026, 7, 1), date(2026, 6, 1))) == 1
+    c = live.PredictHQClient("T", client=mock(handler), retries=2)
+    assert c.events("Muğla", date(2026, 7, 1), date(2026, 7, 2)) == []
     assert n["c"] == 3
 
 
-def test_list_hotels():
+# ---------------------------------------------------------------- Travelpayouts
+def _matrix(prices: dict[str, float]):
+    return {"success": True, "data": [{"depart_date": d, "value": v} for d, v in prices.items()]}
+
+
+def test_travelpayouts_fare_index():
+    base = {f"2026-12-{d:02d}": 100.0 for d in range(1, 11)}
+    seen = []
+
     def handler(req):
-        return httpx.Response(200, json=[{"hotelId": 9, "name": "Test Otel", "geocode": {"latitude": 37.0, "longitude": 27.4}},
-                                         {"name": "kimliksiz"}])
+        seen.append((req.url.params["origin"], req.url.params["destination"], req.url.params["month"]))
+        assert req.headers["x-access-token"] == "TP"
+        prices = dict(base)
+        prices["2026-12-05"] = 130.0  # o gün bilet %30 pahalı -> talep yüksek
+        return httpx.Response(200, json=_matrix(prices))
 
-    hotels = live.RapidApiHotelClient("K", client=mock(handler)).list_hotels("Muğla")
-    assert len(hotels) == 1 and hotels[0].source_id == "makcorps-9" and hotels[0].lat == 37.0
-
-
-def test_amadeus_token_and_search_volume():
-    hits = {"token": 0, "search": 0}
-
-    def handler(req: httpx.Request):
-        if req.url.path.endswith("/oauth2/token"):
-            hits["token"] += 1
-            return httpx.Response(200, json={"access_token": "T", "expires_in": 1799})
-        assert req.headers["Authorization"] == "Bearer T"
-        hits["search"] += 1
-        return httpx.Response(200, json={"data": [{"analytics": {"searches": {"score": 60}}}]})
-
-    c = live.AmadeusClient("id", "secret", "https://test.api.amadeus.com", client=mock(handler))
-    out = c.flight_search_index("Antalya", [date(2026, 7, 1), date(2026, 7, 15), date(2026, 8, 1)])
-    assert out[date(2026, 7, 1)] == 60.0 and len(out) == 3
-    assert hits["token"] == 1 and hits["search"] == 2 * len(c.MARKETS)
+    c = live.TravelpayoutsClient("TP", client=mock(handler))
+    out = c.flight_search_index("Muğla", [date(2026, 12, 4), date(2026, 12, 5), date(2026, 12, 20)])
+    assert out[date(2026, 12, 4)] == 50.0 and out[date(2026, 12, 5)] == 80.0
+    assert out[date(2026, 12, 20)] == 50.0  # veri yok -> nötr
+    assert len(seen) == len(c.ROUTES["Muğla"]) and seen[0][2] == "2026-12-01"
 
 
+def test_travelpayouts_sparse_routes_stay_neutral():
+    c = live.TravelpayoutsClient("TP", client=mock(lambda r: httpx.Response(200, json=_matrix({"2026-12-05": 300.0}))))
+    assert c.flight_search_index("Muğla", [date(2026, 12, 5)]) == {date(2026, 12, 5): 50.0}
+    with pytest.raises(ProviderError):
+        live.TravelpayoutsClient("")
+
+
+# ---------------------------------------------------------------- DataForSEO
+SEARCH = {"status_code": 20000, "tasks": [{"status_code": 20000, "result": [{"items": [
+    {"hotel_identifier": "G-other", "title": "Başka Otel", "location": {"latitude": 37.2, "longitude": 27.6}},
+    {"hotel_identifier": "G-dinc", "title": "Dinç Pansiyon", "location": {"latitude": 37.0345, "longitude": 27.4302}},
+]}]}]}
+CALENDAR = {"status_code": 20000, "tasks": [{"status_code": 20000, "result": [{"prices": {"prices_by_dates": [
+    {"price": 58, "currency": "EUR", "check_in_date": "2026-12-05 00:00:00 +00:00"},
+    {"price": 70, "currency": "EUR", "check_in_date": "2026-12-06 00:00:00 +00:00"},
+]}}]}]}
+
+
+def _dfs_handler(calls):
+    def handler(req):
+        calls.append(req.url.path)
+        assert req.headers["Authorization"].startswith("Basic ")
+        return httpx.Response(200, json=SEARCH if "hotel_searches" in req.url.path else CALENDAR)
+    return handler
+
+
+def test_dataforseo_find_hotel_and_calendar(tmp_path):
+    calls = []
+    cache = tmp_path / "ids.json"
+    c = live.DataForSeoClient("L", "P", cache_path=str(cache), client=mock(_dfs_handler(calls)))
+    info = HotelInfo("liteapi-lpaeb3e", "Dinc Pansiyon", "Muğla", "Bodrum", lat=37.0344, lng=27.4300)
+    assert c.find_hotel(info, date(2026, 12, 5)) == "G-dinc"
+    assert c.find_hotel(info, date(2026, 12, 5)) == "G-dinc" and len(calls) == 1  # önbellekten
+    # Diskteki önbellek yeni süreçte de kullanılır
+    c2 = live.DataForSeoClient("L", "P", cache_path=str(cache), client=mock(_dfs_handler(calls)))
+    assert c2.find_hotel(info, date(2026, 12, 5)) == "G-dinc" and len(calls) == 1
+    assert c.calendar("G-dinc", date(2026, 12, 5), 21) == {date(2026, 12, 5): 58.0, date(2026, 12, 6): 70.0}
+
+
+def test_dataforseo_task_error_is_reported():
+    bad = {"status_code": 20000, "tasks": [{"status_code": 40104, "status_message": "Please verify your account"}]}
+    c = live.DataForSeoClient("L", "P", client=mock(lambda r: httpx.Response(200, json=bad)))
+    with pytest.raises(ProviderError, match="verify"):
+        c.calendar("G", date(2026, 12, 5), 21)
+    with pytest.raises(ProviderError):
+        live.DataForSeoClient("", "")
+
+
+class _FakeLite:
+    """LiteAPI vekili: önbellek yapısı gerçek istemciyle aynı."""
+
+    def __init__(self, day_items):
+        self._cache = {date(2026, 12, 5): day_items}
+
+    def list_hotels(self, province):
+        return [HotelInfo(f"liteapi-{h}", h, province, "Bodrum") for h in self._cache[date(2026, 12, 5)]]
+
+    def get_rates(self, hotel, stay_date, observed):
+        sid = hotel if isinstance(hotel, str) else hotel.source_id
+        return self._cache.get(stay_date, {}).get(sid.split("-", 1)[1], [])
+
+
+class _FakeGoogle:
+    def __init__(self, prices):
+        self.prices = prices
+
+    def find_hotel(self, info, check_in):
+        return info.source_id
+
+    def calendar(self, gid, start, days):
+        p = self.prices.get(gid)
+        return {date(2026, 12, 5): p} if p else {}
+
+
+def test_google_fallback_is_calibrated_to_liteapi_level():
+    lite = _FakeLite({"a": [RateItem("Std", 100.0, "EUR", 2)], "b": [RateItem("Std", 120.0, "EUR", 1)],
+                      "c": [RateItem("Std", 90.0, "EUR", 3)], "x": []})
+    google = _FakeGoogle({"liteapi-a": 60.0, "liteapi-b": 80.0, "liteapi-c": 60.0, "liteapi-x": 50.0})
+    comp = live.LiteApiWithGoogleRates(lite, google, 21)
+    comp.list_hotels("Muğla")
+    assert comp.get_rates("liteapi-a", date(2026, 12, 5), date(2026, 11, 25))[0].price == 100.0  # LiteAPI önce
+    got = comp.get_rates("liteapi-x", date(2026, 12, 5), date(2026, 11, 25))
+    # oranlar 1,667 / 1,5 / 1,5 -> medyan 1,5; Google €50 -> €75, kalan oda bilinmiyor
+    assert [(i.raw_room_name, i.price, i.available_rooms) for i in got] == [(live.GOOGLE_ROOM_NAME, 75.0, None)]
+    assert comp.ratio == 1.5
+
+
+def test_google_fallback_not_used_without_enough_pairs():
+    lite = _FakeLite({"a": [RateItem("Std", 100.0, "EUR", 2)], "x": []})
+    comp = live.LiteApiWithGoogleRates(lite, _FakeGoogle({"liteapi-a": 60.0, "liteapi-x": 50.0}), 21)
+    comp.list_hotels("Muğla")
+    assert comp.get_rates("liteapi-x", date(2026, 12, 5), date(2026, 11, 25)) == []
+
+
+# ---------------------------------------------------------------- PredictHQ, Places, ECB
 def test_predicthq_pagination():
     def handler(req: httpx.Request):
+        if "page=2" not in str(req.url):
+            assert req.url.params["country"] == "TR"  # Rodos (Yunanistan) etkinlikleri gelmesin
         if "page=2" in str(req.url):
             return httpx.Response(200, json={"results": [{"id": "b", "title": "B", "start": "2026-07-02T00:00:00Z",
-                                                          "category": "sports", "local_rank": 40}], "next": None})
+                                                          "category": "sports", "rank": 40, "local_rank": 90}], "next": None})
         return httpx.Response(200, json={"results": [{"id": "a", "title": "A", "start": "2026-07-01T00:00:00Z",
                                                       "end": "2026-07-03T00:00:00Z", "category": "concerts", "rank": 80}],
                                          "next": "https://api.predicthq.com/v1/events/?page=2"})
@@ -136,45 +191,6 @@ def test_google_places():
     assert (p.place_id, p.lat, p.lng) == ("p1", 36.8, 30.7)
 
 
-def test_fixer_rates_and_error():
-    ok = live.FixerClient("F", client=mock(lambda r: httpx.Response(200, json={"success": True, "rates": {"TRY": 49.1}})))
-    assert ok.rates(date(2026, 11, 1)) == {"TRY": 49.1, "EUR": 1.0}
-    bad = live.FixerClient("F", client=mock(lambda r: httpx.Response(200, json={"success": False, "error": {"code": 101}})))
-    with pytest.raises(ProviderError):
-        bad.rates(date(2026, 11, 1))
-
-
-def test_live_mode_falls_back_per_component(monkeypatch):
-    from app.config import Settings
-    from app.services.providers import get_providers
-
-    cfg = Settings()
-    cfg.data_provider = "live"
-    cfg.rapidapi_key = "K"
-    for attr in ("amadeus_client_id", "predicthq_token", "google_maps_key", "fx_api_key"):
-        setattr(cfg, attr, "")
-    bundle = get_providers(cfg=cfg)
-    assert bundle.mode == "mixed"
-    assert isinstance(bundle.rates, live.RapidApiHotelClient)
-    assert bundle.fx.name == "ecb"  # anahtarsız resmi kaynak, sahte kur değil
-    assert bundle.demand.flight_search_index("Muğla", [date(2026, 7, 1)]) == {date(2026, 7, 1): 50.0}
-    assert bundle.demand.events("Muğla", date(2026, 7, 1), date(2026, 7, 2)) == []
-    assert bundle.places.lookup("x", None, "Muğla", None).lat is None
-    assert any("Amadeus" in m for m in bundle.missing)
-
-
-def test_live_mode_without_rate_key_fails_loudly():
-    from app.config import Settings
-    from app.services.providers import get_providers
-
-    cfg = Settings()
-    cfg.data_provider = "live"
-    cfg.rapidapi_key = ""
-    bundle = get_providers(cfg=cfg)
-    with pytest.raises(ProviderError):
-        bundle.rates.list_hotels("Muğla")
-
-
 def test_ecb_fx():
     xml = "<Cube currency='USD' rate='1.16'/><Cube currency='TRY' rate='49.31'/>"
     c = live.EcbFxClient(client=mock(lambda r: httpx.Response(200, text=xml)))
@@ -182,3 +198,48 @@ def test_ecb_fx():
     bad = live.EcbFxClient(client=mock(lambda r: httpx.Response(200, text="<x/>")))
     with pytest.raises(ProviderError):
         bad.rates(date(2026, 11, 1))
+
+
+# ---------------------------------------------------------------- sağlayıcı fabrikası
+def _live_cfg(**keys):
+    from app.config import Settings
+
+    cfg = Settings()
+    cfg.data_provider = "live"
+    for attr in ("liteapi_key", "dataforseo_login", "dataforseo_password", "travelpayouts_token",
+                 "predicthq_token", "google_maps_key"):
+        setattr(cfg, attr, "")
+    for k, v in keys.items():
+        setattr(cfg, k, v)
+    return cfg
+
+
+def test_live_mode_falls_back_per_component():
+    from app.services.providers import get_providers
+
+    bundle = get_providers(cfg=_live_cfg(liteapi_key="sand_x"))
+    assert bundle.mode == "mixed"
+    assert isinstance(bundle.rates, live.LiteApiHotelClient)  # DataForSEO yoksa yalnızca LiteAPI
+    assert bundle.fx.name == "ecb"  # anahtarsız resmi kaynak, sahte kur değil
+    assert bundle.demand.flight_search_index("Muğla", [date(2026, 7, 1)]) == {date(2026, 7, 1): 50.0}
+    assert bundle.demand.events("Muğla", date(2026, 7, 1), date(2026, 7, 2)) == []
+    assert bundle.places.lookup("x", None, "Muğla", None).lat is None
+    assert any("Travelpayouts" in m for m in bundle.missing)
+    assert any("DataForSEO" in m for m in bundle.missing)
+
+
+def test_live_mode_full_bundle():
+    from app.services.providers import get_providers
+
+    bundle = get_providers(cfg=_live_cfg(liteapi_key="sand_x", dataforseo_login="L", dataforseo_password="P",
+                                         travelpayouts_token="T", predicthq_token="P", google_maps_key="G"))
+    assert bundle.mode == "live" and not bundle.missing
+    assert isinstance(bundle.rates, live.LiteApiWithGoogleRates)
+
+
+def test_live_mode_without_rate_key_fails_loudly():
+    from app.services.providers import get_providers
+
+    bundle = get_providers(cfg=_live_cfg())
+    with pytest.raises(ProviderError):
+        bundle.rates.list_hotels("Muğla")

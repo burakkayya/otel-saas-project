@@ -8,7 +8,7 @@ from datetime import date
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.config import Settings
+from app.config import BASE_DIR, Settings
 from app.config import settings as default_settings
 from app.services.providers.base import ProviderBundle, ProviderError
 from app.services.providers.demo import DemoProvider
@@ -54,12 +54,12 @@ class _Counting:
     """Demo sağlayıcı çağrılarını gerçek sağlayıcı adıyla sayan vekil."""
 
     MAP = {
-        "list_hotels": ("rapidapi", "city"),
-        "get_rates": ("rapidapi", "hotel"),
-        "flight_search_index": ("amadeus", "searched-by-destination"),
+        "list_hotels": ("liteapi", "data/hotels"),
+        "get_rates": ("liteapi", "hotels/rates"),
+        "flight_search_index": ("travelpayouts", "month-matrix"),
         "events": ("predicthq", "events"),
         "lookup": ("google_places", "searchText"),
-        "rates": ("fixer", "historical"),
+        "rates": ("ecb", "daily"),
     }
 
     def __init__(self, inner, tracker: UsageTracker):
@@ -104,15 +104,25 @@ def get_providers(tracker: UsageTracker | None = None, cfg: Settings | None = No
     # fiyat -> açık hata, uçuş/etkinlik -> nötr, konum -> boş, kur -> ECB (anahtarsız).
     missing: list[str] = []
     try:
-        rates = live.RapidApiHotelClient(cfg.rapidapi_key, cfg.rapidapi_hotel_provider, cfg.rapidapi_host,
-                                         recorder=tracker.record)
+        lite = live.LiteApiHotelClient(
+            cfg.liteapi_key, live.parse_city_map(cfg.liteapi_cities) or None, cfg.liteapi_max_hotels_per_city,
+            room_ladder=tuple(int(x) for x in cfg.liteapi_room_ladder.split(",") if x.strip().isdigit()),
+            hotel_ids=[x.strip() for x in cfg.liteapi_hotel_ids.split(",") if x.strip()],
+            recorder=tracker.record)
+        rates = lite
+        try:
+            google = live.DataForSeoClient(cfg.dataforseo_login, cfg.dataforseo_password,
+                                           cache_path=str(BASE_DIR / "data" / "cache" / "dataforseo_hotels.json"),
+                                           recorder=tracker.record)
+            rates = live.LiteApiWithGoogleRates(lite, google, cfg.horizon_days)
+        except ProviderError:
+            missing.append("Google fiyat kapsamı (DataForSEO)")
     except ProviderError:
-        rates, _ = live.MissingRates(), missing.append("otel fiyatları (RAPIDAPI_KEY)")
+        rates, _ = live.MissingRates(), missing.append("otel fiyatları (LITEAPI_KEY)")
     try:
-        flights = live.AmadeusClient(cfg.amadeus_client_id, cfg.amadeus_client_secret, cfg.amadeus_base_url,
-                                     recorder=tracker.record)
+        flights = live.TravelpayoutsClient(cfg.travelpayouts_token, recorder=tracker.record)
     except ProviderError:
-        flights, _ = live.NeutralDemand(), missing.append("uçuş arama trendi (Amadeus)")
+        flights, _ = live.NeutralDemand(), missing.append("uçuş talebi (Travelpayouts)")
     try:
         events = live.PredictHQClient(cfg.predicthq_token, recorder=tracker.record)
     except ProviderError:
@@ -121,10 +131,7 @@ def get_providers(tracker: UsageTracker | None = None, cfg: Settings | None = No
         places = live.GooglePlacesClient(cfg.google_maps_key, recorder=tracker.record)
     except ProviderError:
         places, _ = live.NullPlaces(), missing.append("konum (Google Places)")
-    try:
-        fx = live.FixerClient(cfg.fx_api_key, recorder=tracker.record)
-    except ProviderError:
-        fx = live.EcbFxClient(recorder=tracker.record)
+    fx = live.EcbFxClient(recorder=tracker.record)
     bundle = ProviderBundle(rates=rates, demand=_CombinedDemand(flights, events), places=places, fx=fx,
                             mode="live" if not missing else "mixed")
     bundle.missing = missing

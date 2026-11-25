@@ -159,7 +159,7 @@
       </tbody></table></div></div>
   </div>
     <div class="panel detail-only">
-      <div class="panel-head"><div><h2>Talep, 60 gün</h2><p>Uçuş arama, etkinlik ve tatil bileşimi</p></div></div>
+      <div class="panel-head"><div><h2>Talep, 60 gün</h2><p>Uçuş talebi, etkinlik ve tatil bileşimi</p></div></div>
       <div class="panel-body">{{ ui.chart("bar", {"labels": data.chart.labels, "unit": "score", "sequential": true, "max": 100, "threshold": {"value": 55, "label": "Yüksek talep eşiği (55)"}, "series": [{"label": "Talep skoru", "data": data.chart.demand}]}, "dash-demand", "short", "Talep skoru") }}</div>
     </div>
   </div>

@@ -56,15 +56,23 @@ class Settings:
     compset_size: int = 5
 
     # Harici API anahtarları
-    rapidapi_key: str = field(default_factory=lambda: os.getenv("RAPIDAPI_KEY", ""))
-    rapidapi_hotel_provider: str = field(default_factory=lambda: os.getenv("RAPIDAPI_HOTEL_PROVIDER", "makcorps"))
-    rapidapi_host: str = field(default_factory=lambda: os.getenv("RAPIDAPI_HOST", ""))
-    amadeus_client_id: str = field(default_factory=lambda: os.getenv("AMADEUS_CLIENT_ID", ""))
-    amadeus_client_secret: str = field(default_factory=lambda: os.getenv("AMADEUS_CLIENT_SECRET", ""))
-    amadeus_base_url: str = field(default_factory=lambda: os.getenv("AMADEUS_BASE_URL", "https://test.api.amadeus.com"))
+    # LiteAPI (Nuitee): rakip fiyatı ve kalan oda
+    liteapi_key: str = field(default_factory=lambda: os.getenv("LITEAPI_KEY", ""))
+    # İl -> taranacak ilçe/şehir adları ("Muğla:Bodrum,Marmaris;Antalya:Kemer"); boşsa varsayılan liste
+    liteapi_cities: str = field(default_factory=lambda: os.getenv("LITEAPI_CITIES", ""))
+    liteapi_max_hotels_per_city: int = field(default_factory=lambda: int(os.getenv("LITEAPI_MAX_HOTELS_PER_CITY", "40")))
+    # Kalan oda merdiveni ("2,3,5,8"); boş bırakılırsa kalan oda sorgulanmaz
+    liteapi_room_ladder: str = field(default_factory=lambda: os.getenv("LITEAPI_ROOM_LADDER", "2,3,5,8"))
+    # Boş değilse yalnızca bu LiteAPI otel kimlikleri taranır (virgülle)
+    liteapi_hotel_ids: str = field(default_factory=lambda: os.getenv("LITEAPI_HOTEL_IDS", ""))
+    dataforseo_login: str = field(default_factory=lambda: os.getenv("DATAFORSEO_LOGIN", ""))
+    dataforseo_password: str = field(default_factory=lambda: os.getenv("DATAFORSEO_PASSWORD", ""))
+    # Uçuş talebi vekili (Aviasales fiyat önbelleği)
+    travelpayouts_token: str = field(default_factory=lambda: os.getenv("TRAVELPAYOUTS_TOKEN", ""))
+    # SerpApi (Google Hotels): şimdilik yalnızca doğrulama yoklamalarında kullanılıyor
+    serpapi_key: str = field(default_factory=lambda: os.getenv("SERPAPI_KEY", ""))
     predicthq_token: str = field(default_factory=lambda: os.getenv("PREDICTHQ_TOKEN", ""))
     google_maps_key: str = field(default_factory=lambda: os.getenv("GOOGLE_MAPS_KEY", ""))
-    fx_api_key: str = field(default_factory=lambda: os.getenv("FX_API_KEY", ""))
     llm_api_key: str = field(default_factory=lambda: os.getenv("LLM_API_KEY", ""))
     llm_model: str = field(default_factory=lambda: os.getenv("LLM_MODEL", "claude-haiku-5-5"))
 
@@ -82,11 +90,11 @@ class Settings:
 
     def configured_keys(self) -> dict[str, bool]:
         return {
-            "RapidAPI (Makcorps/Caviar)": bool(self.rapidapi_key),
-            "Amadeus": bool(self.amadeus_client_id and self.amadeus_client_secret),
+            "LiteAPI (rakip fiyatı)": bool(self.liteapi_key),
+            "DataForSEO (Google Hotels)": bool(self.dataforseo_login and self.dataforseo_password),
+            "Travelpayouts (uçuş)": bool(self.travelpayouts_token),
             "PredictHQ": bool(self.predicthq_token),
             "Google Places": bool(self.google_maps_key),
-            "Fixer / ExchangeRates": bool(self.fx_api_key),
             "LLM (oda eşleme)": bool(self.llm_api_key),
         }
 

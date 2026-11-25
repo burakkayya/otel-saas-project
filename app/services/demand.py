@@ -1,4 +1,4 @@
-"""Talep sinyali: uçuş arama trendi (Amadeus) + etkinlik (PredictHQ) + tatil takvimi."""
+"""Talep sinyali: uçuş talebi (Travelpayouts fiyat endeksi; demo modda sentetik) + etkinlik (PredictHQ) + tatil takvimi."""
 from __future__ import annotations
 
 from datetime import date, timedelta

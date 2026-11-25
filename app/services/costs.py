@@ -15,13 +15,17 @@ from app.models import ApiUsage, Plan, ProviderCost
 
 DEFAULT_PROVIDER_COSTS = [
     # provider, etiket, birim €, aylık sabit €, dahil istek, not
-    ("rapidapi", "RapidAPI (Makcorps / Caviar)", 0.0010, 0.0, 0, "Yer tutucu. Seçilen RapidAPI planının fiyatıyla güncelleyin."),
-    ("amadeus", "Amadeus (uçuş arama analitiği)", 0.0025, 0.0, 2000, "Yer tutucu. Self-service ücretsiz kota + aşım ücreti doğrulanmalı."),
+    ("liteapi", "LiteAPI (rakip fiyatı, kalan oda)", 0.0, 0.0, 0,
+     "Arama ücretsiz, ancak arama/rezervasyon oranı 5000:1 aşılırsa faturalanabilir; kullanım koşulları teyit edilmeli."),
+    ("dataforseo", "DataForSEO (Google Hotels fiyat takvimi)", 0.0074, 0.0, 0,
+     "Fiyat takvimi isteği ~0,008 $, otel arama ~0,004 $ (25 Kasım 2026 gözlemi). Ön ödemeli bakiye."),
+    ("travelpayouts", "Travelpayouts (uçuş fiyat endeksi)", 0.0, 0.0, 0,
+     "Ücretsiz Data API; satış ortaklığı koşulları teyit edilmeli."),
     ("predicthq", "PredictHQ (etkinlikler)", 0.0, 0.0, 0, "Developer Plan; ticari kullanım kapsamı doğrulanmalı."),
     ("google_places", "Google Places (konum)", 0.028, 0.0, 0, "Yer tutucu. Text Search birim fiyatı; tek seferlik çağrı."),
-    ("fixer", "Fixer (döviz kuru)", 0.0, 12.0, 1000, "Yer tutucu. Aylık plan ücreti."),
     ("llm", "LLM (belirsiz oda eşleme)", 0.0005, 0.0, 0, "Yer tutucu. Yalnızca belirsiz oda adları gönderilir."),
 ]
+REMOVED_PROVIDERS = ("rapidapi", "amadeus", "fixer")  # 25 Kasım 2026'da kaldırıldı
 
 
 @dataclass
@@ -38,6 +42,10 @@ class EconomicsInput:
 
 
 def ensure_provider_costs(db: Session) -> None:
+    for old in REMOVED_PROVIDERS:
+        row = db.get(ProviderCost, old)
+        if row is not None:
+            db.delete(row)
     for provider, label, unit, fee, incl, note in DEFAULT_PROVIDER_COSTS:
         if db.get(ProviderCost, provider) is None:
             db.add(ProviderCost(provider=provider, label=label, unit_cost_eur=unit, monthly_fee_eur=fee,
@@ -48,14 +56,16 @@ def ensure_provider_costs(db: Session) -> None:
 def estimate_monthly_requests(inp: EconomicsInput) -> dict[str, int]:
     tracked = inp.subscribers * (1 + inp.compset_size) * (1 - inp.overlap_pct / 100)
     tracked = max(tracked, inp.subscribers)
-    rate_calls = tracked * inp.horizon_days * inp.scans_per_day * 30 / max(1, inp.dates_per_request)
     months_ahead = max(1, round(inp.horizon_days / 30) + 1)
+    chunks = -(-round(tracked) // 40)  # LiteAPI bir tarih için 40 oteli tek istekte sorgular
     return {
-        "rapidapi": round(rate_calls),
-        "amadeus": inp.provinces * 5 * months_ahead * 30 + 30,  # 5 kaynak pazar, günlük yenileme + token
+        # 1 fiyat isteği + kalan oda merdiveninde ortalama ~2 istek
+        "liteapi": round(inp.horizon_days * inp.scans_per_day * 30 * chunks * 3 + inp.provinces * 8 * 30),
+        # LiteAPI'de teklifi olmayan oteller için günlük Google fiyat takvimi (otel başına 1 istek)
+        "dataforseo": round(tracked * 30 + inp.new_hotels_per_month),
+        "travelpayouts": inp.provinces * 6 * months_ahead * 30,
         "predicthq": inp.provinces * 30 * 2,
         "google_places": inp.new_hotels_per_month,
-        "fixer": 30,
         "llm": inp.llm_rooms_per_month,
     }
 

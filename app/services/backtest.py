@@ -62,9 +62,11 @@ def run_backtest(db: Session, hotel: Hotel, days: int = 45, lead: int = 7, today
                         if final.get(c, {}).get(stay) and final.get(c, {}).get(stay).price_eur]
         if not final_prices:
             continue
-        pi = s.rationale.get("position_index", 1.0)
+        pi = s.rationale.get("position_index", 1.0) * s.rationale.get("room_premium", 1.0)
         # Hedef: otelin konumlamasına göre ayarlanmış, konaklamadan bir gün önceki piyasa fiyatı
         m_final = statistics.median(final_prices) * pi
+        if s.rationale.get("comp_median") is None:
+            continue  # öneri anında rakip fiyatı yoktu: piyasa kıyası yapılamaz
         m_asof = s.rationale["comp_median"] * pi
         own_asof = latest_observations(db, [rt.id], stay, stay, as_of).get((rt.id, stay))
         own_final = latest_observations(db, [rt.id], stay, stay, final_day).get((rt.id, stay))
