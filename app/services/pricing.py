@@ -153,9 +153,9 @@ def pick_scenario(*, action: str, limited_by: str | None, unconstrained: float, 
         return same[0] if same else (
             "no_comp", "Bu kategoride kıyas için yeterli rakip fiyatı yok; öneri kendi fiyatınız, talep ve sezona dayanıyor")
     if action == "raise":
-        return up[0] if up else ("price_low", f"Fiyatınız bu tarih için düşük: benzer oteller €{anchor:.0f} civarında")
+        return up[0] if up else ("price_low", f"Fiyatınız bu tarih için düşük: konumunuza göre piyasa düzeyi €{anchor:.0f}")
     if action == "lower":
-        return down[0] if down else ("price_high", f"Fiyatınız bu tarih için yüksek: benzer oteller €{anchor:.0f} civarında")
+        return down[0] if down else ("price_high", f"Fiyatınız bu tarih için yüksek: konumunuza göre piyasa düzeyi €{anchor:.0f}")
     both = up + down
     return both[0] if both else ("on_track", "Fiyat pazarla uyumlu")
 

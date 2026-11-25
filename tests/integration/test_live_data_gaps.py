@@ -27,7 +27,7 @@ def test_no_competitor_price_is_said_plainly():
     r = res.rationale
     assert r["comp_count"] == 0 and r["comp_median"] is None and r["comp_p90"] is None
     assert r["change_vs_median_pct"] is None
-    assert "rakip fiyatı yok" in r["text"] and "benzer oteller" not in r["headline"]
+    assert "rakip fiyatı yok" in r["text"] and "piyasa düzeyi" not in r["headline"]
     assert "Rakip medyan fiyat" not in r["text"]
 
 
