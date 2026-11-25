@@ -299,3 +299,21 @@ Ayrıntı: `docs/CANLI_TEST_2026-11-24.md`.
 
 Testler: 338 birim/entegrasyon, 11 E2E.
 
+## 16. Butik otelle canlı test, kalan oda ve yeni veri kaynakları (25 Kasım 2026)
+
+Ayrıntı: `docs/CANLI_TEST_2026-11-24.md` (2. bölüm).
+- **Kalan oda (alt sınır):** LiteAPI'de aynı oda tipinden 2, 3, 5, 8 oda istenir; teklifin kesildiği yer o tipte açık oda
+  sayısının alt sınırıdır. Tarih başına birden çok otel tek istekte sorulur; merdivende yalnızca hâlâ oda veren oteller
+  kalır. Tahmini doluluk, rezervasyon hızı ve pazar sıkışması sinyalleri canlı veride artık çalışıyor.
+- **DataForSEO (Google Hotels):** LiteAPI'de teklifi olmayan otellere Google'ın en düşük fiyatı, kanal farkı
+  düzeltilerek eklenir (yeterli eşleşme yoksa kullanılmaz). Google otel kimlikleri `data/cache/` altında saklanır.
+- **Travelpayouts:** uçuş bileşeni artık sabit 50 değil; kaynak pazarlardan bölge havalimanlarına günlük bilet fiyatı
+  endeksi.
+- **Kaldırılanlar:** Amadeus, Makcorps/Caviar (RapidAPI), Fixer. Kur ECB'den (anahtarsız).
+- **Motor düzeltmeleri:** tek rakip piyasa sayılmıyor (en az 2); kategoride konumlama hesaplanamıyorsa standart odadaki
+  konumlama kullanılıyor; aynı kategorideki oda tipleri kendi primini koruyor; geçmişi olan rakipler önce seçiliyor;
+  "benzer oteller €X" yerine "konumunuza göre piyasa düzeyi €X".
+- Arayüz etiketleri: "Uçuş arama" yerine "Uçuş talebi".
+
+Testler: 343 birim/entegrasyon, 11 E2E.
+
